@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>CMake Support for Vim by jalcine</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>CMake Support for Vim</h1>
+        <h2>Incorporates the functionality of CMake into Vim. Because it's AWESOME.</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/jalcine/cmake-support.vim/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/jalcine/cmake-support.vim/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/jalcine/cmake-support.vim" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a name="cmake-project-support-in-vim" class="anchor" href="#cmake-project-support-in-vim"><span class="octicon octicon-link"></span></a>CMake Project Support in Vim</h1>
+
+<p><a href="http://www.cmake.org">CMake</a> is the ONLY way you should be building your C or 
+C++ projects. <a href="http://www.vim.org">Vim</a> is the ultimate text editor. Together, 
+along with the power of gray skull, CMake support in Vim is born.</p>
+
+<p><a href="https://github.com/jalcine/cmake-support.vim"><code>cmake-support.vim</code></a> is a Vim 
+plugin that allows you to build your projects that are based on the CMake 
+meta-build system.</p>
+
+<h2>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
+
+<blockquote>
+<p><strong>NOTE</strong>: This plugin has ONLY been tested on a bleeding edge version of Vim 
+7.3 with <code>--features=huge</code>. Please report any problems you encounter with 
+version information and compilation options included.</p>
+</blockquote>
+
+<p>At the time of writing, <code>cmake-support.vim</code> supports Vim 7.3+ and CMake 
+2.8+. Have fun!</p>
+
+<h2>
+<a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h2>
+
+<p>I recommending using <a href="http://github.com/gmarik/vundle">Vundle</a> to install 
+plugins. The line necessary to add this plugin is as follows:</p>
+
+<div class="highlight"><pre>Bundle <span class="s1">'jalcine/android-dev.vim'</span>
+</pre></div>
+
+<h2>
+<a name="commands" class="anchor" href="#commands"><span class="octicon octicon-link"></span></a>Commands</h2>
+
+<p>Some of the more commonly used commands in the plugin include:</p>
+
+<ul>
+<li>
+<code>:CMakeBuild</code> - invokes <code>make install</code> from the path prescribed by CMake.</li>
+</ul><h2>
+<a name="options" class="anchor" href="#options"><span class="octicon octicon-link"></span></a>Options</h2>
+
+<p>In order for CMake to operate, it <strong>has</strong> to know where the build directory is 
+located.</p>
+      </section>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-21819111-3");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
