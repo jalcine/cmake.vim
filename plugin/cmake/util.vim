@@ -7,7 +7,6 @@ func! cmake#util#rootdir()
 
   " A wise man never repeats oneself.
   if exists("g:cmake_current_binary_dir")
-    echom "[cmake] already discovered dir " . g:cmake_current_binary_dir
     return g:cmake_current_binary_dir
   else
     let current_dir = getcwd()
@@ -31,7 +30,6 @@ func! cmake#util#rootdir()
         let items = split(current_dir, "/")
         if !len(items)
           " Looks like we hit the top of the tree.
-          echoerr "[cmake] Can't find it!"
           return 0
         endif
 
@@ -45,20 +43,18 @@ func! cmake#util#rootdir()
   return g:cmake_current_binary_dir
 endfunc
 
-func! cmake#util#run_cmake(a:argstr)
+func! cmake#util#run_cmake(argstr)
   " To make life SO much easier for us, we'd just execute CMake in a wrapped 
   " call. It'd be nice to just grab stuff.
   let oldcwd = getcwd()
   let l:output = system("clear && cd " . cmake#util#rootdir() . " && cmake . " . a:argstr)
-  echo l:output
   cd oldcwd
   return l:output
 endfunc
 
-func! cmake#util#run_make(a:argstr)
+func! cmake#util#run_make(argstr)
   " To make life SO much easier for us, we'd just execute CMake in a wrapped 
   " call. It'd be nice to just grab stuff.
   let l:output = system("make -C " . cmake#util#rootdir() . " " . a:argstr)
-  echo l:output
   return l:output
 endfunc
