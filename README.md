@@ -34,4 +34,20 @@ Some of the more commonly used commands in the plugin include:
 
 ## Options
 In order for CMake to operate, it **has** to know where the build directory is 
-located.
+located. This is done automatically by the plugin but it does need help in the 
+event that you happen to build your CMake project in a sub-directory. This 
+option and more are listed below.
+
+  + `g:cmake_cxx_compiler`: Defines the default C++ compiler to build your 
+    project with. (default: `clang++`)
+  + `g:cmake_c_compiler`: Defines the default C compiler to build your project 
+    with (default: `clang`)
+  + `g:cmake_build_dirs`: Defines the names of directories at which 
+    a directory would be searched for `CMakeCache.txt`. (default: [ 'build' ])
+  + `g:cmake_build_type`: Defines the build configuration type of the project. 
+    (default ['Debug'])
+  + `g:cmake_install_prefix`: Defines the installation prefix to be used by 
+    CMake. (default: $HOME/.local)
+
+**NOTE**: These variables are defined by `cmake.vim` if the variable itself 
+isn't found *before* it's loaded.
