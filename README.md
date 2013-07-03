@@ -3,7 +3,7 @@
 C++ projects. [Vim](http://www.vim.org) is the ultimate text editor. Together, 
 along with the power of gray skull, CMake support in Vim is born.
 
-[`cmake-support.vim`](https://github.com/jalcine/cmake.vim) `v0.1.0` is a Vim 
+[`cmake.vim`](https://github.com/jalcine/cmake.vim/tree/v0.1.2) `v0.1.2` is a Vim 
 plugin that allows you to build your projects that are based on the CMake 
 meta-build system.
 
@@ -12,8 +12,7 @@ meta-build system.
 > 7.3 with `--features=huge`. Please report any problems you encounter with 
 > version information and compilation options included.
 
-At the time of writing, `cmake-support.vim` supports Vim 7.3+ and CMake 
-2.8+. Have fun!
+At the time of writing, `cmake.vim` supports Vim 7.3+ and CMake 2.8+. Have fun!
 
 ## Installing
 I recommending using [Vundle](http://github.com/gmarik/vundle) to install 
