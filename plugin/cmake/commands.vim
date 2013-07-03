@@ -16,32 +16,24 @@ func! cmake#commands#install()
   call cmake#utils#run_make("install")
 endfunc
 
-func! cmake#commands#preconfigure()
-  if !isdirectory(cmake#util#rootdir())
-    return 0
-  elseif
-    call cmake#utils#run_cmake(cmake#util#rootdir() . " -DCMAKE_INSTALL_PREFIX=" . g:cmake_install_prefix . " -DCMAKE_BUILD_TYPE=" . g:cmake_build_type . " -DBUILD_SHARED_LIBS=" . g:cmake_build_shared_libs)
-  endif
-endfunc
-
-func! cmake#commands#reconfigure()
-  for folder in g:cmake_build_dirs
-    if isdirectory(getcwd() . "/" . folder)
-      system("rm -rv " . getcwd() . "/" . folder)
-      break
-    endif
-  endfor
-
-  cmake#commands#preconfigure()
-endfunc
-
 func! cmake#commands#create_build()
   if !filereadable(getcwd() . "/CMakeLists.txt")
     echoerr "[cmake] No `CMakeLists.txt` found at " . getcwd()
     return
   endif
 
-  mkdir g:cmake_build_dirs[0]
-  cd g:cmake_build_dirs
-  cmake#commands#preconfigure()
-endif
+  " TODO: Create a buildir
+  " TODO: Go into said dir
+  " TODO: Run inital CMake config.
+
+  if cmake#util#cmake_build_exists(getcwd())
+    echoerr "[cmake] CMake project already exists here."
+    return
+  else
+    let buildir = getcwd() . "/" . g:cmake_build_dirs[0]
+    call system("mkdir " . buildir)
+    echomsg "[cmake] Configuring project..."
+    exec "!cd " . buildir ."; cmake .. -DCMAKE_INSTALL_PREFIX=" . g:cmake_install_prefix
+    echomsg "[cmake] Project configured at '" . buildir . "'"
+  endif
+endfunc
