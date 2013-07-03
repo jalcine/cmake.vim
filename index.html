@@ -3,30 +3,48 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=640" />
 
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
 
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
     <title>CMake Support for Vim by jalcine</title>
   </head>
 
   <body>
+    <a id="forkme_banner" href="https://github.com/jalcine/cmake.vim">View on GitHub</a>
+    <div class="shell">
 
-    <header>
-      <div class="container">
-        <h1>CMake Support for Vim</h1>
-        <h2>Incorporates the functionality of CMake into Vim. Because it's AWESOME.</h2>
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>CMake Support for Vim</h1>
+            <h2>Incorporates the functionality of CMake into Vim. Because it's AWESOME.</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
 
-        <section id="downloads">
-          <a href="https://github.com/jalcine/cmake-support.vim/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/jalcine/cmake-support.vim/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/jalcine/cmake-support.vim" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
-      </div>
-    </header>
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/jalcine/cmake.vim/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/jalcine/cmake.vim/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
 
-    <div class="container">
+
+      <span class="banner-fix"></span>
+
+
       <section id="main_content">
         <h1>
 <a name="cmake-project-support-in-vim" class="anchor" href="#cmake-project-support-in-vim"><span class="octicon octicon-link"></span></a>CMake Project Support in Vim</h1>
@@ -35,7 +53,7 @@
 C++ projects. <a href="http://www.vim.org">Vim</a> is the ultimate text editor. Together, 
 along with the power of gray skull, CMake support in Vim is born.</p>
 
-<p><a href="https://github.com/jalcine/cmake-support.vim"><code>cmake-support.vim</code></a> is a Vim 
+<p><a href="https://github.com/jalcine/cmake.vim/tree/v0.1.2"><code>cmake.vim</code></a> <code>v0.1.2</code> is a Vim 
 plugin that allows you to build your projects that are based on the CMake 
 meta-build system.</p>
 
@@ -48,8 +66,7 @@ meta-build system.</p>
 version information and compilation options included.</p>
 </blockquote>
 
-<p>At the time of writing, <code>cmake-support.vim</code> supports Vim 7.3+ and CMake 
-2.8+. Have fun!</p>
+<p>At the time of writing, <code>cmake.vim</code> supports Vim 7.3+ and CMake 2.8+. Have fun!</p>
 
 <h2>
 <a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h2>
@@ -57,7 +74,7 @@ version information and compilation options included.</p>
 <p>I recommending using <a href="http://github.com/gmarik/vundle">Vundle</a> to install 
 plugins. The line necessary to add this plugin is as follows:</p>
 
-<div class="highlight"><pre>Bundle <span class="s1">'jalcine/android-dev.vim'</span>
+<div class="highlight"><pre>Bundle 'jalcine/cmake.<span class="k">vim</span>`
 </pre></div>
 
 <h2>
@@ -67,13 +84,63 @@ plugins. The line necessary to add this plugin is as follows:</p>
 
 <ul>
 <li>
-<code>:CMakeBuild</code> - invokes <code>make install</code> from the path prescribed by CMake.</li>
+<code>:CMakeBuild</code> - invokes <code>make</code> from the path prescribed by CMake.</li>
+<li>
+<code>:CMakeInstall</code> - invokes <code>make install</code> from the path prescribed by CMake.</li>
+<li>
+<code>:CMakeTest</code> - invokes <code>make test</code> from the path prescribed by CMake.</li>
 </ul><h2>
 <a name="options" class="anchor" href="#options"><span class="octicon octicon-link"></span></a>Options</h2>
 
 <p>In order for CMake to operate, it <strong>has</strong> to know where the build directory is 
-located.</p>
+located. This is done automatically by the plugin but it does need help in the 
+event that you happen to build your CMake project in a sub-directory. This 
+option and more are listed below.</p>
+
+<ul>
+<li>
+<code>g:cmake_cxx_compiler</code>: Defines the default C++ compiler to build your 
+project with. (default: <code>clang++</code>)</li>
+<li>
+<code>g:cmake_c_compiler</code>: Defines the default C compiler to build your project 
+with (default: <code>clang</code>)</li>
+<li>
+<code>g:cmake_build_dirs</code>: Defines the names of directories at which 
+a directory would be searched for <code>CMakeCache.txt</code>. (default: [ 'build' ])</li>
+<li>
+<code>g:cmake_build_type</code>: Defines the build configuration type of the project. 
+(default ['Debug'])</li>
+<li>
+<code>g:cmake_install_prefix</code>: Defines the installation prefix to be used by 
+CMake. (default: $HOME/.local)</li>
+</ul><p><strong>NOTE</strong>: These variables are defined by <code>cmake.vim</code> if the variable itself 
+isn't found <em>before</em> it's loaded.</p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>This code is released and available under the MIT license. Multiply and be 
+fruitful.</p>
+
+<h2>
+<a name="author" class="anchor" href="#author"><span class="octicon octicon-link"></span></a>Author</h2>
+
+<p>I'm <a href="https://twitter.com/jackyalcine">Jacky Alcine</a> and I like code. A lot. 
+I also chat a lot like a firehose so follow with caution!</p>
       </section>
+
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/jalcine">jalcine</a> can be found on <a href="https://github.com/jalcine/cmake.vim">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
+      </footer>
+
     </div>
 
               <script type="text/javascript">
