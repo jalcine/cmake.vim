@@ -3,7 +3,7 @@
 C++ projects. [Vim](http://www.vim.org) is the ultimate text editor. Together, 
 along with the power of gray skull, CMake support in Vim is born.
 
-[`cmake-support.vim`](https://github.com/jalcine/cmake.vim) is a Vim 
+[`cmake-support.vim`](https://github.com/jalcine/cmake.vim) `v0.1.0` is a Vim 
 plugin that allows you to build your projects that are based on the CMake 
 meta-build system.
 
@@ -29,8 +29,6 @@ Some of the more commonly used commands in the plugin include:
   + `:CMakeBuild` - invokes `make` from the path prescribed by CMake.
   + `:CMakeInstall` - invokes `make install` from the path prescribed by CMake.
   + `:CMakeTest` - invokes `make test` from the path prescribed by CMake.
-  + `:CMakeGetVariable` - gets the specified variable in your `${CMAKE_BINARY_DIR}/CMakeCache.txt`
-  + `:CMakeSetVariable` - sets the specified variable in your `${CMAKE_BINARY_DIR}/CMakeCache.txt`
 
 ## Options
 In order for CMake to operate, it **has** to know where the build directory is 
@@ -51,3 +49,11 @@ option and more are listed below.
 
 **NOTE**: These variables are defined by `cmake.vim` if the variable itself 
 isn't found *before* it's loaded.
+
+## License
+This code is released and available under the MIT license. Multiply and be 
+fruitful.
+
+## Author
+I'm [Jacky Alcine](https://twitter.com/jackyalcine) and I like code. A lot. 
+I also chat a lot like a firehose so follow with caution!
