@@ -14,7 +14,7 @@ if !exists("g:cmake_build_type")
   let g:cmake_build_type = "Debug"
 endif
 
-if !exists("g:cmake_install_prefix ")
+if !exists("g:cmake_install_prefix")
   let g:cmake_install_prefix = "$HOME/.local"
 endif
 
