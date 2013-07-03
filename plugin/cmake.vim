@@ -18,6 +18,10 @@ if !exists("g:cmake_install_prefix")
   let g:cmake_install_prefix = "$HOME/.local"
 endif
 
+if !exists("g:cmake_build_shared_libs")
+  let g:cmake_build_shared_libs = 1
+endif
+
 " Define the commands for CMake to be used.
 " TODO: Restrict this to only CMake formatted files?
 " TODO: Implement commands that'd return text for variables.
