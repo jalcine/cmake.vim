@@ -11,3 +11,7 @@ endfunc
 func! cmake#commands#test()
   cmake#util#run_make("test")
 endfunc
+
+func! cmake#commands#install()
+  cmake#utils#run_make("install")
+endfunc
