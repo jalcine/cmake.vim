@@ -17,7 +17,11 @@ func! cmake#commands#install()
 endfunc
 
 func! cmake#commands#preconfigure()
-  call cmake#utils#run_cmake(".. -DCMAKE_INSTALL_PREFIX=" . g:cmake_install_prefix . " -DCMAKE_BUILD_TYPE=" . g:cmake_build_type . " -DBUILD_SHARED_LIBS=" . g:cmake_build_shared_libs)
+  if !isdirectory(cmake#util#rootdir())
+    return 0
+  elseif
+    call cmake#utils#run_cmake(cmake#util#rootdir() . " -DCMAKE_INSTALL_PREFIX=" . g:cmake_install_prefix . " -DCMAKE_BUILD_TYPE=" . g:cmake_build_type . " -DBUILD_SHARED_LIBS=" . g:cmake_build_shared_libs)
+  endif
 endfunc
 
 func! cmake#commands#reconfigure()
