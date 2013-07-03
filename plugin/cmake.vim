@@ -14,8 +14,12 @@ if !exists("g:cmake_build_type")
   let g:cmake_build_type = "Debug"
 endif
 
-if !exists("g:cmake_install_prefix ")
+if !exists("g:cmake_install_prefix")
   let g:cmake_install_prefix = "$HOME/.local"
+endif
+
+if !exists("g:cmake_build_shared_libs")
+  let g:cmake_build_shared_libs = 1
 endif
 
 " Define the commands for CMake to be used.
