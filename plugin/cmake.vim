@@ -23,9 +23,8 @@ if !exists("g:cmake_build_shared_libs")
 endif
 
 " Define the commands for CMake to be used.
-" TODO: Restrict this to only CMake formatted files?
-" TODO: Implement commands that'd return text for variables.
 exe "command! -buffer -nargs=0 CMakeBuild :call cmake#commands#build()"
 exe "command! -buffer -nargs=0 CMakeInstall :call cmake#commands#install()"
 exe "command! -buffer -nargs=0 CMakeClean :call cmake#commands#install()"
 exe "command! -buffer -nargs=0 CMakeTest :call cmake#commands#test()"
+exe "command! -buffer -nargs=0 CMakeCreateBuild :call cmake#commands#create_build()"
