@@ -45,6 +45,8 @@ option and more are listed below.
     (default ['Debug'])
   + `g:cmake_install_prefix`: Defines the installation prefix to be used by 
     CMake. (default: $HOME/.local)
+  + `g:cmake_build_shared_libs`: Defines the flag 'BUILD_SHARED_LIBS` in 
+    CMake. (default: true)
 
 **NOTE**: These variables are defined by `cmake.vim` if the variable itself 
 isn't found *before* it's loaded.
