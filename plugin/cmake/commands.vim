@@ -19,18 +19,22 @@ endfunc
 func! cmake#commands#create_build()
   if !filereadable(getcwd() . "/CMakeLists.txt")
     echoerr "[cmake] No `CMakeLists.txt` found at " . getcwd()
-    return
+    return 0
   endif
-  
-  if cmake#util#cmake_build_exists(getcwd())
-    echoerr "[cmake] CMake project already exists here."
-    return
-  else
-    let buildir = getcwd() . "/" . g:cmake_build_dirs[0]
-    let cmakecachefile = buildir . "/CMakeCache.txt"
-    exec "!mkdir" buildir "; touch" cmakecachefile
+
+  if !isdirectory(cmake#util#find_cmake_build_dir(getcwd()))
+    let l:buildir = getcwd() . "/" . g:cmake_build_dirs[0]
+    let l:cmakecachefile = buildir . "/CMakeCache.txt"
+
+    echo system("mkdir " . buildir)
+    echo system("touch " . cmakecachefile)
     echomsg "[cmake] Configuring project..."
-    call cmake#util#run_cmake(" ")
-    echomsg "[cmake] Project configured at '" . buildir . "'"
+    echo cmake#util#run_cmake(" ")
+    echomsg "[cmake] Created build."
+  else 
+    echoerr "[cmake] Found an existing project build."
+    return 0
   endif
+
+  return 1
 endfunc
