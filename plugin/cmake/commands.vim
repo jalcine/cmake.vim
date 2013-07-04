@@ -38,3 +38,16 @@ func! cmake#commands#create_build()
 
   return 1
 endfunc
+
+func! cmake#commands#delete_build()
+  if !filereadable(getcwd() . "/CMakeLists.txt")
+    echoerr "[cmake] No `CMakeLists.txt` found at " .getcwd()
+    return 0
+  endif
+
+  if isdirectory(cmake#util#find_cmake_build_dir(getcwd()))
+    echo system("rm -rv" . cmake#util#find_cmake_build_dir(getcwd()))
+  endif
+
+  return 1
+endfunc
