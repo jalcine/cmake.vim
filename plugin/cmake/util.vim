@@ -5,51 +5,31 @@ func! cmake#util#rootdir()
   " our way up. Using some of the names of folders to include in a search like 
   " `build`, `bin`, etc would help sharpen the search.
 
-  " A wise man never repeats oneself.
-  if exists("g:cmake_current_binary_dir")
-    return g:cmake_current_binary_dir
-  else
-    let current_dir = getcwd()
-    while 1
-      if filereadable(current_dir . "/CMakeCache.txt")
-        let g:cmake_current_binary_dir = current_dir
-        break
-      elseif exists("g:cmake_build_dirs")
-        " Before we move up to the east side of Harlem, check out what the 
-        " user might have wanted us to look for.
-        for folder in g:cmake_build_dirs
-          if filereadable(current_dir . "/" . folder . "/CMakeCache.txt")
-            " WE FOUND IT!
-            let g:cmake_current_binary_dir = current_dir . "/" . folder
-            break
-          else
-            continue
-          endif
-        endfor
-      else
-        let items = split(current_dir, "/")
-        if !len(items)
-          " Looks like we hit the top of the tree.
-          return 0
-        endif
-
-        let current_dir = substitute(current_dir, "/" . items[-1], "", "g")
-        continue
+  let current_dir = getcwd()
+  while 1
+    let dir = cmake#util#cmake_build_exists(current_dir)
+    if dir
+      let l:cmake_current_binary_dir = dir
+      break
+    else
+      let items = split(current_dir, "/")
+      if !len(items)
+        " Looks like we hit the top of the tree.
+        return 0
       endif
-    endwhile
-  endif
 
-  echo g:cmake_current_binary_dir
-  return g:cmake_current_binary_dir
+      let current_dir = substitute(current_dir, "/" . items[-1], "", "g")
+      continue
+    endif
+
+  endwhile
+  return l:cmake_current_binary_dir
 endfunc
 
 func! cmake#util#run_cmake(argstr)
   " To make life SO much easier for us, we'd just execute CMake in a wrapped 
   " call. It'd be nice to just grab stuff.
-  let oldcwd = getcwd()
-  let l:output = system("clear && cd " . cmake#util#rootdir() . " && cmake . " . a:argstr)
-  cd oldcwd
-  return l:output
+  exec "!clear; cd " . cmake#util#rootdir() ."; cmake . -DCMAKE_INSTALL_PREFIX:FILEPATH=" . g:cmake_install_prefix . " -DCMAKE_BUILD_TYPE:STRING=" . g:cmake_build_type . " -DBUILD_SHARED_LIBS:BOOL=" . g:cmake_build_shared_libs . " " .a:argstr
 endfunc
 
 func! cmake#util#run_make(argstr)
@@ -57,4 +37,19 @@ func! cmake#util#run_make(argstr)
   " call. It'd be nice to just grab stuff.
   let l:output = system("make -C " . cmake#util#rootdir() . " " . a:argstr)
   return l:output
+endfunc
+
+" TODO: Refactor this method, it's possible.
+func! cmake#util#cmake_build_exists(dir)
+  if filereadable(a:dir . "/CMakeCache.txt")
+    return a:dir
+  else
+    for folder in g:cmake_build_dirs
+      if filereadable(a:dir . "/" . folder . "/CMakeCache.txt")
+        return a:dir . "/" . folder
+      endif
+    endfor
+  endif
+
+  return 0
 endfunc
