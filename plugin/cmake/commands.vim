@@ -21,19 +21,16 @@ func! cmake#commands#create_build()
     echoerr "[cmake] No `CMakeLists.txt` found at " . getcwd()
     return
   endif
-
-  " TODO: Create a buildir
-  " TODO: Go into said dir
-  " TODO: Run inital CMake config.
-
+  
   if cmake#util#cmake_build_exists(getcwd())
     echoerr "[cmake] CMake project already exists here."
     return
   else
     let buildir = getcwd() . "/" . g:cmake_build_dirs[0]
-    call system("mkdir " . buildir)
+    let cmakecachefile = buildir . "/CMakeCache.txt"
+    exec "!mkdir" buildir "; touch" cmakecachefile
     echomsg "[cmake] Configuring project..."
-    exec "!cd " . buildir ."; cmake .. -DCMAKE_INSTALL_PREFIX=" . g:cmake_install_prefix
+    call cmake#util#run_cmake(" ")
     echomsg "[cmake] Project configured at '" . buildir . "'"
   endif
 endfunc
