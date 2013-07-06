@@ -40,17 +40,29 @@ func! cmake#util#run_cmake(argstr)
   else
     let l:command =  [ "cd", l:dir, "&&"]
     let l:command += [ "cmake", l:dir . "/.." ]
-    let l:command += [ "-DCMAKE_INSTALL_PREFIX:FILEPATH="  . g:cmake_install_prefix ]
-    let l:command += [ "-DCMAKE_BUILD_TYPE:STRING="        . g:cmake_build_type ]
-    let l:command += [ "-DCMAKE_CXX_COMPILER:FILEPATH="    . g:cmake_cxx_compiler ]
-    let l:command += [ "-DCMAKE_C_COMPILER:FILEPATH="      . g:cmake_c_compiler ] 
-    let l:command += [ "-DBUILD_SHARED_LIBS:BOOL="         . g:cmake_build_shared_libs ]
+    let l:command += [ a:args ]
     let l:command += [ a:argstr ]
     let l:commandstr = join(l:command, " ")
     let l:output = system(l:commandstr)
     return l:output
   endif
 endfunc
+
+func! cmake#util#init_cmake()
+  let l:dir = cmake#util#rootdir()
+  if !isdirectory(l:dir)
+    echoerr "[cmake] Can't find build directory."
+    return 0
+  else
+    let l:command = [ "-DCMAKE_INSTALL_PREFIX:FILEPATH="  . g:cmake_install_prefix ]
+    let l:command += [ "-DCMAKE_BUILD_TYPE:STRING="        . g:cmake_build_type ]
+    let l:command += [ "-DCMAKE_CXX_COMPILER:FILEPATH="    . g:cmake_cxx_compiler ]
+    let l:command += [ "-DCMAKE_C_COMPILER:FILEPATH="      . g:cmake_c_compiler ] 
+    let l:command += [ "-DBUILD_SHARED_LIBS:BOOL="         . g:cmake_build_shared_libs ]
+    let l:commandstr = join(l:command, " ")
+    return cmake#util#run_cmake(l:commandstr)
+  endif
+endfunc!
 
 func! cmake#util#run_make(argstr)
   " To make life SO much easier for us, we'd just execute CMake in a wrapped 
