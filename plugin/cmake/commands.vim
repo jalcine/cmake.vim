@@ -1,19 +1,22 @@
 func! cmake#commands#build()
-  " Build the KRAKEN!
-  call cmake#util#run_make("all")
+  echomsg "[cmake] Building target 'all'..."
+  let l:output = cmake#util#run_make("all")
+  echo l:output
 endfunc
 
 func! cmake#commands#clean()
-  " Clean your room.
+  echomsg "[cmake] Cleaning..."
   call cmake#util#run_make("clean")
 endfunc
 
 func! cmake#commands#test()
+  echomsg "[cmake] Running target 'test'..."
   call cmake#util#run_make("test")
 endfunc
 
 func! cmake#commands#install()
-  call cmake#utils#run_make("install")
+  echomsg "[cmake] Installing project..."
+  call cmake#util#run_make("install")
 endfunc
 
 func! cmake#commands#create_build()
@@ -29,14 +32,12 @@ func! cmake#commands#create_build()
     echo system("mkdir " . buildir)
     echo system("touch " . cmakecachefile)
     echomsg "[cmake] Configuring project..."
-    echo cmake#util#run_cmake(" ")
+    echo cmake#util#init_cmake()
     echomsg "[cmake] Created build."
   else 
     echoerr "[cmake] Found an existing project build."
     return 0
   endif
-
-  return 1
 endfunc
 
 func! cmake#commands#delete_build()
@@ -50,4 +51,4 @@ func! cmake#commands#delete_build()
   endif
 
   return 1
-endfunc
+endfun
