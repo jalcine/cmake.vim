@@ -18,14 +18,13 @@ func! s:init_commands()
 endfunc
 
 func! s:tweak_makeprg()
-  if g:cmake_set_makeprg == 1 && cmake#util#rootdir() != 0
+  if g:cmake_set_makeprg == 1 && isdirectory(cmake#util#rootdir())
     let &mp="make -C " . cmake#util#rootdir()
   endif
 endfunc
 
-"" Pre-launch code.
-if !exists("b:cmake_loaded_plugin")
-  let b:cmake_loaded_plugin=1
+if !exists("b:cmake_plugin_loaded") 
+  let b:cmake_plugin_loaded = 1
   call s:init_config()
   call s:init_commands()
   call s:tweak_makeprg()
