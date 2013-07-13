@@ -1,5 +1,5 @@
 func! cmake#util#rootdir()
-  if exists("g:cmake_current_binary_dir") && g:cmake_current_binary_dir != 0
+  if exists("g:cmake_current_binary_dir")
     return g:cmake_current_binary_dir
   else
     let current_dir = getcwd()
