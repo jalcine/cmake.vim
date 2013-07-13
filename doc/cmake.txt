@@ -33,12 +33,14 @@ VimScript as possible. This plugin doesn't try to make too many assumptions
 except for determining the location of the CMake binary directory (referred as
 the 'build' directory) from here on out.
 
-1.1. USING VIMUX                            |cmake-with-vimux|
+1.1. USING VIMUX ~
+                                            |cmake-with-vimux|
 
 I'm considering moving a lot of the work to the actual shell using 'vimux',
 but this has to be explored.
 
-2. QUICK START                             |cmake-quickstart|
+2. QUICK START ~
+                                            |cmake-quickstart|
 
 Just install it. The plugin won't operate if it can't find a valid build
 directory (more directly, if it can't find a 'CMakeCache.txt' file). It'd be
