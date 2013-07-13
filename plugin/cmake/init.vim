@@ -30,4 +30,4 @@ func! cmake#init#boot()
     call s:init_commands()
     call s:tweak_makeprg()
   endif
-enndfunc
+endfunc
