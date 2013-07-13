@@ -1,4 +1,4 @@
-func s:init_config()
+func! s:init_config()
   if !exists("g:cmake_cxx_compiler")
     let g:cmake_cxx_compiler = "clang++"
   endif
@@ -24,7 +24,7 @@ func s:init_config()
   endif
 endfunc
 
-func s:init_commands()
+func! s:init_commands()
   exe "command! -buffer -nargs=0 CMakeBuild :call cmake#commands#build()"
   exe "command! -buffer -nargs=0 CMakeInstall :call cmake#commands#install()"
   exe "command! -buffer -nargs=0 CMakeClean :call cmake#commands#install()"
@@ -33,7 +33,7 @@ func s:init_commands()
   exe "command! -buffer -nargs=0 CMakeDeleteBuild :call cmake#commands#delete_build()"
 endfunc
 
-func s:tweak_makeprg()
+func! s:tweak_makeprg()
   if g:cmake_set_makeprg == 1
     if cmake#util#rootdir() != 0
     set makeprg="make -C " . cmake#util#rootdir()
