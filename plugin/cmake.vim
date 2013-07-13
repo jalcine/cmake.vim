@@ -22,6 +22,10 @@ func! s:init_config()
   if !exists("g:cmake_build_shared_libs")
     let g:cmake_build_shared_libs = 1
   endif
+
+  if !exists("g:cmake_set_makeprg")
+    let g:cmake_set_makeprg = 1
+  endif
 endfunc
 
 func! s:init_commands()
