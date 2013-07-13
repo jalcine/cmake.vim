@@ -1,38 +1,29 @@
 func! cmake#util#rootdir()
-  " We need to find the folder at which the file `CMakeCache.txt` can be 
-  " found. Hopefully we don't have to transverse up the tree too far to find 
-  " it. We'd start from the current working directory and begin to work 
-  " our way up. Using some of the names of folders to include in a search like 
-  " `build`, `bin`, etc would help sharpen the search.
-
-  if exists("b:cmake_current_binary_dir")
-    return b:cmake_current_binary_dir
+  if exists("g:cmake_current_binary_dir") && g:cmake_current_binary != 0
+    return g:cmake_current_binary_dir
   else
     let current_dir = getcwd()
-    while 1
-      let current_dir = cmake#util#find_cmake_build_dir(current_dir)
-      if !isdirectory(current_dir)
-        let items = split(current_dir, "/")
-        if !len(items)
-          return 0
-        endif
+    let items = split(current_dir, "/")
 
-        let current_dir = substitute(current_dir, "/" . items[-1], "", "g")
+    for item in items
+      let current_dir = cmake#util#find_cmake_build_dir(current_dir)
+
+      if !len(items) | return 0 | endif
+
+      if !isdirectory(current_dir)
+        let current_dir = substitute(current_dir, "/" . item, "", "g")
         continue
       else
-        let b:cmake_current_binary_dir = current_dir
+        let g:cmake_current_binary_dir = current_dir
         break
       endif
-    endwhile
+    endfor
   endif
 
-  return b:cmake_current_binary_dir
+  return g:cmake_current_binary_dir
 endfunc
 
-" TODO: Proper detection of the build directory.
 func! cmake#util#run_cmake(argstr)
-  " To make life SO much easier for us, we'd just execute CMake in a wrapped 
-  " call. It'd be nice to just grab stuff.
   let l:dir = cmake#util#rootdir()
   if !isdirectory(l:dir)
     echoerr "[cmake] Can't find build directory."
@@ -80,14 +71,16 @@ endfunc
 func! cmake#util#find_cmake_build_dir(dir)
   if filereadable(a:dir . "/CMakeCache.txt")
     return a:dir
-  else
+  else if len(g:cmake_build_dirs) != 0
     for folder in g:cmake_build_dirs
       if filereadable(a:dir . "/" . folder . "/CMakeCache.txt")
+        echomsg "[cmake] " a.dir . "/" . folder
         return a:dir . "/" .folder
       else
         continue
       endif
     endfor
   endif
+
   return 0
 endfunc
