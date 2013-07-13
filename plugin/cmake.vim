@@ -19,7 +19,7 @@ endfunc
 
 func! s:tweak_makeprg()
   if g:cmake_set_makeprg == 1 && cmake#util#rootdir() != 0
-    set makeprg="make -C " . cmake#util#rootdir()
+    let &mp="make -C " . cmake#util#rootdir()
   endif
 endfunc
 
