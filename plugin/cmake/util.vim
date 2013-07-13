@@ -1,5 +1,5 @@
 func! cmake#util#rootdir()
-  if exists("g:cmake_current_binary_dir") && g:cmake_current_binary != 0
+  if exists("g:cmake_current_binary_dir") && g:cmake_current_binary_dir != 0
     return g:cmake_current_binary_dir
   else
     let current_dir = getcwd()
@@ -17,7 +17,9 @@ func! cmake#util#rootdir()
         let g:cmake_current_binary_dir = current_dir
         break
       endif
+
     endfor
+
   endif
 
   return g:cmake_current_binary_dir
@@ -45,7 +47,7 @@ func! cmake#util#init_cmake()
     echoerr "[cmake] Can't find build directory."
     return 0
   else
-    let l:command = [ "-DCMAKE_INSTALL_PREFIX:FILEPATH="  . g:cmake_install_prefix ]
+    let l:command =  [ "-DCMAKE_INSTALL_PREFIX:FILEPATH="  . g:cmake_install_prefix ]
     let l:command += [ "-DCMAKE_BUILD_TYPE:STRING="        . g:cmake_build_type ]
     let l:command += [ "-DCMAKE_CXX_COMPILER:FILEPATH="    . g:cmake_cxx_compiler ]
     let l:command += [ "-DCMAKE_C_COMPILER:FILEPATH="      . g:cmake_c_compiler ] 
@@ -56,8 +58,6 @@ func! cmake#util#init_cmake()
 endfunc!
 
 func! cmake#util#run_make(argstr)
-  " To make life SO much easier for us, we'd just execute CMake in a wrapped 
-  " call. It'd be nice to just grab stuff.
   let l:dir = cmake#util#rootdir()
   if !isdirectory(l:dir)
     echoerr "[cmake] Can't find build directory."
