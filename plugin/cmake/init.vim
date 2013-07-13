@@ -1,4 +1,4 @@
-func! s:init_config()
+func! cmake#init#config()
   if !exists("g:cmake_cxx_compiler")       |  let g:cmake_cxx_compiler      = "clang++"       |  endif
   if !exists("g:cmake_c_compiler")         |  let g:cmake_c_compiler        = "clang"         |  endif
   if !exists("g:cmake_build_dirs")         |  let g:cmake_build_dirs        = [ "build" ]     |  endif
@@ -8,7 +8,7 @@ func! s:init_config()
   if !exists("g:cmake_set_makeprg")        |  let g:cmake_set_makeprg       = 1               |  endif
 endfunc
 
-func! s:init_commands()
+func! cmake#init#commands()
   command! -buffer -nargs=0 CMakeBuild       :call cmake#commands#build()
   command! -buffer -nargs=0 CMakeInstall     :call cmake#commands#install()
   command! -buffer -nargs=0 CMakeClean       :call cmake#commands#install()
@@ -17,15 +17,17 @@ func! s:init_commands()
   command! -buffer -nargs=0 CMakeDeleteBuild :call cmake#commands#delete_build()
 endfunc
 
-func! s:tweak_makeprg()
+func! cmake#init#makeprg()
   if g:cmake_set_makeprg == 1 && isdirectory(cmake#util#rootdir())
     let &mp="make -C " . cmake#util#rootdir()
   endif
 endfunc
 
-if !exists("g:cmake_plugin_loaded") 
-  let g:cmake_plugin_loaded = 1
-  call s:init_config()
-  call s:init_commands()
-  call s:tweak_makeprg()
-endif
+func! cmake#init#boot()
+  if !exists("g:cmake_plugin_loaded") 
+    let g:cmake_plugin_loaded = 1
+    call s:init_config()
+    call s:init_commands()
+    call s:tweak_makeprg()
+  endif
+enndfunc
