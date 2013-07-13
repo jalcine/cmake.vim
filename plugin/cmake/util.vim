@@ -17,9 +17,13 @@ func! cmake#util#rootdir()
         let g:cmake_current_binary_dir = current_dir
         break
       endif
-
     endfor
-    return g:cmake_current_binary_dir
+
+    if !exists("g:cmake_current_binary_dir")
+      return 0
+    else
+      return g:cmake_current_binary_dir
+    endif
   endif
 endfunc
 
