@@ -23,8 +23,8 @@ func! s:tweak_makeprg()
   endif
 endfunc
 
-if !exists("b:cmake_plugin_loaded") 
-  let b:cmake_plugin_loaded = 1
+if !exists("g:cmake_plugin_loaded") 
+  let g:cmake_plugin_loaded = 1
   call s:init_config()
   call s:init_commands()
   call s:tweak_makeprg()
