@@ -3,7 +3,7 @@
 C++ projects. [Vim](http://www.vim.org) is the ultimate text editor. Together, 
 along with the power of gray skull, CMake support in Vim is born.
 
-[`cmake.vim`](https://github.com/jalcine/cmake.vim/tree/v0.1.4) `v0.1.4` is a Vim 
+[`cmake.vim`](https://github.com/jalcine/cmake.vim/tree/v0.1.5) `v0.1.5` is a Vim 
 plugin that allows you to build your projects that are based on the CMake 
 meta-build system.
 
