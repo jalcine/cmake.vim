@@ -19,10 +19,8 @@ func! cmake#util#rootdir()
       endif
 
     endfor
-
+    return g:cmake_current_binary_dir
   endif
-
-  return g:cmake_current_binary_dir
 endfunc
 
 func! cmake#util#run_cmake(argstr)
