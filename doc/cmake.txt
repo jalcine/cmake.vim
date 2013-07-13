@@ -5,6 +5,7 @@ CONTENTS ~
 =============================================================================
 
 1. About                                    |cmake-about|
+  1.1. Using Vimux                          |cmake-with-vimux|
 2. Quick Start                              |cmake-quickstart|
 3. Commands                                 |cmake-commands|
   3.1. Create Project Build                 |cmake-command-createbuild|
@@ -23,5 +24,25 @@ CONTENTS ~
   4.7. Installation Prefix                  |cmake-options-install-prefix|
 
 =============================================================================
+
+ABOUT                                       *cmake-about*
+
+CMake integration into Vim is a personal feature that I've wanted for quite
+some time and this plugin aims to push as much of the logic into Vim in pure
+VimScript as possible. This plugin doesn't try to make too many assumptions
+except for determining the location of the CMake binary directory (referred as
+the 'build' directory) from here on out.
+
+1.1. USING VIMUX                            |cmake-with-vimux|
+
+I'm considering moving a lot of the work to the actual shell using 'vimux',
+but this has to be explored.
+
+2. QUICK START                             |cmake-quickstart|
+
+Just install it. The plugin won't operate if it can't find a valid build
+directory (more directly, if it can't find a 'CMakeCache.txt' file). It'd be
+good to check out the options for tweaking (the defaults are quite
+opinionated).
 
 vim:tw=78:ts=8:ft=help:norl:
