@@ -33,6 +33,13 @@ func s:init_commands()
   exe "command! -buffer -nargs=0 CMakeDeleteBuild :call cmake#commands#delete_build()"
 endfunc
 
+func s:tweak_makeprg()
+  if g:cmake_set_makeprg == 1
+    if cmake#util#rootdir() != 0
+    set makeprg="make -C " . cmake#util#rootdir()
+  endif
+endfunc
+
 if !exists("b:cmake_loaded_plugin")
   let b:cmake_loaded_plugin
   call s:init_config()
