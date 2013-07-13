@@ -33,8 +33,8 @@ func s:init_commands()
   exe "command! -buffer -nargs=0 CMakeDeleteBuild :call cmake#commands#delete_build()"
 endfunc
 
-if !exists("g:cmake_init_loaded")
-  let g:cmake_init_loaded=1
+if !exists("b:cmake_loaded_plugin")
+  let b:cmake_loaded_plugin
   call s:init_config()
   call s:init_commands()
 endif
