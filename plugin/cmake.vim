@@ -41,7 +41,7 @@ func! s:tweak_makeprg()
 endfunc
 
 if !exists("b:cmake_loaded_plugin")
-  let b:cmake_loaded_plugin
+  let b:cmake_loaded_plugin=1
   call s:init_config()
   call s:init_commands()
   call s:tweak_makeprg()
