@@ -13,7 +13,7 @@ if !exists("g:cmake_plugin_loaded")
   " Set Ex commands.
   command! -buffer -nargs=0 CMakeBuild       :call cmake#commands#build()
   command! -buffer -nargs=0 CMakeInstall     :call cmake#commands#install()
-  command! -buffer -nargs=0 CMakeClean       :call cmake#commands#install()
+  command! -buffer -nargs=0 CMakeClean       :call cmake#commands#clean()
   command! -buffer -nargs=0 CMakeTest        :call cmake#commands#test()
   command! -buffer -nargs=0 CMakeCreateBuild :call cmake#commands#create_build()
   command! -buffer -nargs=0 CMakeDeleteBuild :call cmake#commands#delete_build()
