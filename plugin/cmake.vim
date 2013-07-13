@@ -18,7 +18,7 @@ if !exists("g:cmake_plugin_loaded")
   command! -buffer -nargs=0 CMakeCreateBuild :call cmake#commands#create_build()
   command! -buffer -nargs=0 CMakeDeleteBuild :call cmake#commands#delete_build()
 
-  if g:cmake_set_makeprg == 1 && isdirectory(cmake#util#rootdir())
+  if g:cmake_set_makeprg == 1
     let &mp="make -C " . cmake#util#rootdir()
   endif
 endif
