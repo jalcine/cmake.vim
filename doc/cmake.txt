@@ -1,0 +1,27 @@
+*cmake.txt* CMake Integration in Vim *cmake*
+
+CONTENTS ~
+                                            *cmake-contents*
+=============================================================================
+
+1. About                                    |cmake-about|
+2. Quick Start                              |cmake-quickstart|
+3. Commands                                 |cmake-commands|
+  3.1. Create Project Build                 |cmake-command-createbuild|
+  3.2. Delete Project Build                 |cmake-command-deletebuild|
+  3.3. Build Project                        |cmake-command-build|
+  3.4. Clean Project                        |cmake-command-clean|
+  3.5. Test Project                         |cmake-command-test|
+  3.6. Install Project                      |cmake-command-install|
+4. Options                                  |cmake-options|
+  4.1. C++ Compiler                         |cmake-options-cpp-compiler|
+  4.2. C Compiler                           |cmake-options-c-compiler|
+  4.3. Build Directory Names                |cmake-options-build-dirs|
+  4.4. Build Type                           |cmake-options-build-type|
+  4.5. Shared Libraries by Default          |cmake-options-shared-libs|
+  4.6. Configure :make                      |cmake-options-makeprg|
+  4.7. Installation Prefix                  |cmake-options-install-prefix|
+
+=============================================================================
+
+vim:tw=78:ts=8:ft=help:norl:
