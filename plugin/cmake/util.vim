@@ -76,7 +76,7 @@ func! cmake#util#find_cmake_build_dir(dir)
   elseif exists("g:cmake_build_dirs") && len(g:cmake_build_dirs) > 0
     for folder in g:cmake_build_dirs
       if filereadable(a:dir . "/" . folder . "/CMakeCache.txt")
-        echomsg "[cmake] " a.dir . "/" . folder
+        echomsg "[cmake] " a:dir . "/" . folder
         return a:dir . "/" .folder
       else
         continue
