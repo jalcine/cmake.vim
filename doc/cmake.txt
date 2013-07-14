@@ -1,50 +1,99 @@
-*cmake.txt* CMake Integration in Vim *cmake*
+*cmake.txt* CMake Integration for Vim                *cmake*
 
 CONTENTS ~
-                                            *cmake-contents*
-=============================================================================
+                                                   *cmake-contents*
+===========================================================================
 
-1. About                                    |cmake-about|
-  1.1. Using Vimux                          |cmake-with-vimux|
-2. Quick Start                              |cmake-quickstart|
-3. Commands                                 |cmake-commands|
-  3.1. Create Project Build                 |cmake-command-createbuild|
-  3.2. Delete Project Build                 |cmake-command-deletebuild|
-  3.3. Build Project                        |cmake-command-build|
-  3.4. Clean Project                        |cmake-command-clean|
-  3.5. Test Project                         |cmake-command-test|
-  3.6. Install Project                      |cmake-command-install|
-4. Options                                  |cmake-options|
-  4.1. C++ Compiler                         |cmake-options-cpp-compiler|
-  4.2. C Compiler                           |cmake-options-c-compiler|
-  4.3. Build Directory Names                |cmake-options-build-dirs|
-  4.4. Build Type                           |cmake-options-build-type|
-  4.5. Shared Libraries by Default          |cmake-options-shared-libs|
-  4.6. Configure :make                      |cmake-options-makeprg|
-  4.7. Installation Prefix                  |cmake-options-install-prefix|
+1. About                                           |cmake-about|
+2. Quick start                                     |cmake-quickstart|
+  2.1. Discovering CMake                           |cmake-quickstart-discover|
+  2.2. Installing the Plugin                       |cmake-quickstart-install|
+3. Options                                         |cmake-options|
+4. Methods                                         |cmake-methods|
 
-=============================================================================
+===========================================================================
 
-ABOUT                                       *cmake-about*
+ABOUT                                              *cmake-about*
 
-CMake integration into Vim is a personal feature that I've wanted for quite
-some time and this plugin aims to push as much of the logic into Vim in pure
-VimScript as possible. This plugin doesn't try to make too many assumptions
-except for determining the location of the CMake binary directory (referred as
-the 'build' directory) from here on out.
+CMake is a "Cross-Platform Makefile generator". However, CMake can generate
+more than Makefiles; including Eclipse and KDevelop build systems, making it
+quite diverse in its output.
 
-1.1. USING VIMUX ~
-                                            |cmake-with-vimux|
-
-I'm considering moving a lot of the work to the actual shell using 'vimux',
-but this has to be explored.
+The act of integrating CMake with Vim allows for developers to use the
+facilities of CMake without having to constantly switch back and forth. This
+plugin goes a step further and automatically sets 'makeprg' for you to help
+other tools related to Java, C++, C, Objective C or Fortan-based programming
+easily invoke CMake's version of the build system.
 
 2. QUICK START ~
-                                            |cmake-quickstart|
+                                                    *cmake-quickstart*
+Ensure that you have a working (discoverable in '$PATH' by Vim) version of
+CMake. You can check that CMake is invokable by Vim by running the following
+command: >
 
-Just install it. The plugin won't operate if it can't find a valid build
-directory (more directly, if it can't find a 'CMakeCache.txt' file). It'd be
-good to check out the options for tweaking (the defaults are quite
-opinionated).
+  !cmake --version
+
+You should get output similar to the following: >
+
+  cmake version 2.8.10.1
+
+
+3. OPTIONS ~
+
+The options described are reflected with their default values.
+
+3.1. C++ COMPILER ~
+                   *cmake-options-cxx-compiler* *cmake-options-cpp-compiler*
+>
+  let g:cmake_cxx_compiler = 'clang++'
+
+Defines the C++ compiler that CMake will use. 
+
+3.2. C99 COMPILER ~
+
+                  *cmake-options-c-compiler* *cmake-options-c99-compiler*
+>
+  let g:cmake_c_compiler = 'clang'
+
+Defines the C compiler that CMake will use.
+
+3.3. BUILD DIRECTORIES ~
+                                                    *cmake-options-build-dirs*
+>
+  let g:cmake_build_dirs = [ "build" ]
+
+Defines a list of the names of directories to search for 'CMakeCache.txt'.
+
+3.4. BUILD CONFIGURATION TYPE ~
+                                                    *cmake-options-build-type*
+>
+  let g:cmake_build_type = "Debug"
+
+Defines the build configuration type to invoke CMake with. Some typical values
+for this is DEBUG, RELEASE, and RELWITHDEBINFO.
+
+3.5. INSTALLATION PREFIX ~
+                                                    *cmake-options-install-prefix*
+>
+  let g:cmake_install_prefix = "$HOME/.local"
+
+Defines the installation prefix at which the project will be installed at.
+
+3.6. BUILD SHARED LIBRARIES ~
+                                                    *cmake-options-build-shared-libs*
+>
+  let g:cmake_build_shared_libs = 1
+
+Determines whether or not libraries will be built as shared libraries by
+default.
+
+3.7. BUILD SHARED LIBRARIES ~
+                                                    *cmake-options-set-makeprg*
+>
+  let g:cmake_set_makeprg = 1
+
+Determines whether or not the 'makeprg' value in Vim will be set to a tweaked
+'make' where it builds using the files in your specified build directory.
+
 
 vim:tw=78:ts=8:ft=help:norl:
