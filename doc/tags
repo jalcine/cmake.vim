@@ -1,0 +1,14 @@
+cmake	cmake.txt	/*cmake*
+cmake-about	cmake.txt	/*cmake-about*
+cmake-contents	cmake.txt	/*cmake-contents*
+cmake-options-build-dirs	cmake.txt	/*cmake-options-build-dirs*
+cmake-options-build-shared-libs	cmake.txt	/*cmake-options-build-shared-libs*
+cmake-options-build-type	cmake.txt	/*cmake-options-build-type*
+cmake-options-c-compiler	cmake.txt	/*cmake-options-c-compiler*
+cmake-options-c99-compiler	cmake.txt	/*cmake-options-c99-compiler*
+cmake-options-cpp-compiler	cmake.txt	/*cmake-options-cpp-compiler*
+cmake-options-cxx-compiler	cmake.txt	/*cmake-options-cxx-compiler*
+cmake-options-install-prefix	cmake.txt	/*cmake-options-install-prefix*
+cmake-options-set-makeprg	cmake.txt	/*cmake-options-set-makeprg*
+cmake-quickstart	cmake.txt	/*cmake-quickstart*
+cmake.txt	cmake.txt	/*cmake.txt*
