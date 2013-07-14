@@ -46,7 +46,7 @@ You should get output similar to the following: >
 The options described are reflected with their default values.
 
 3.1. C++ COMPILER ~
-                   *cmake-options-cxx-compiler* *cmake-options-cpp-compiler*
+                     *cmake-options-cxx-compiler* *cmake-options-cpp-compiler*
 >
   let g:cmake_cxx_compiler = 'clang++'
 
@@ -54,7 +54,7 @@ Defines the C++ compiler that CMake will use.
 
 3.2. C99 COMPILER ~
 
-                  *cmake-options-c-compiler* *cmake-options-c99-compiler*
+                        *cmake-options-c-compiler* *cmake-options-c99-compiler*
 >
   let g:cmake_c_compiler = 'clang'
 
