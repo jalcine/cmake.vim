@@ -7,6 +7,8 @@ along with the power of gray skull, CMake support in Vim is born.
 plugin that allows you to build your projects that are based on the CMake 
 meta-build system.
 
+If lost, run `:help cmake` for more information.
+
 ## Requirements
 > **NOTE**: This plugin has ONLY been tested on a bleeding edge version of Vim 
 > 7.3 with `--features=huge`. Please report any problems you encounter with 
