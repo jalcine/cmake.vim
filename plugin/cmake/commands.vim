@@ -6,17 +6,20 @@ endfunc
 
 func! cmake#commands#clean()
   echomsg "[cmake] Cleaning..."
-  call cmake#util#run_make("clean")
+  let l:output = call cmake#util#run_make("clean")
+  echo l:output
 endfunc
 
 func! cmake#commands#test()
   echomsg "[cmake] Running target 'test'..."
-  call cmake#util#run_make("test")
+  let l:output = call cmake#util#run_make("test")
+  echo l:output
 endfunc
 
 func! cmake#commands#install()
   echomsg "[cmake] Installing project..."
-  call cmake#util#run_make("install")
+  let l:output = call cmake#util#run_make("install")
+  echo l:output
 endfunc
 
 func! cmake#commands#create_build()
