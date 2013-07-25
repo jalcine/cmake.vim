@@ -1,30 +1,30 @@
 func! cmake#commands#build()
-  echomsg "[cmake] Building target 'all'..."
+  echomsg "[cmake] Building all targets..."
   let l:output = cmake#util#run_make("all")
   echo l:output
 endfunc
 
 func! cmake#commands#clean()
   echomsg "[cmake] Cleaning..."
-  let l:output = call cmake#util#run_make("clean")
+  let l:output = cmake#util#run_make("clean")
   echo l:output
 endfunc
 
 func! cmake#commands#test()
-  echomsg "[cmake] Running target 'test'..."
-  let l:output = call cmake#util#run_make("test")
+  echomsg "[cmake] Testing project..."
+  let l:output = cmake#util#run_make("test")
   echo l:output
 endfunc
 
 func! cmake#commands#install()
   echomsg "[cmake] Installing project..."
-  let l:output = call cmake#util#run_make("install")
+  let l:output = cmake#util#run_make("install")
   echo l:output
 endfunc
 
 func! cmake#commands#create_build()
-  if !filereadable(getcwd() . "/CMakeLists.txt")
-    echoerr "[cmake] No `CMakeLists.txt` found at " . getcwd()
+  if !cmake#util#check_for_cmake_definition(getcwd())
+    echoerr "[cmake] Cannot find `CMakeLists.txt` in '" . getcwd() . "'."
     return 0
   endif
 
