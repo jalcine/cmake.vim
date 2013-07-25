@@ -18,6 +18,8 @@ if !exists("g:cmake_plugin_loaded")
   command! -buffer -nargs=0 CMakeCreateBuild :call cmake#commands#create_build()
   command! -buffer -nargs=0 CMakeDeleteBuild :call cmake#commands#delete_build()
 
+  " Change the `:make` command.
+  " TODO: Should this happen only in `CMakeLists.txt` files?
   if g:cmake_set_makeprg == 1
     let s:dir = cmake#util#rootdir()
     if s:dir != 0 | let &mp="make -C " . s:dir | endif
