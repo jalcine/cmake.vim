@@ -1,7 +1,10 @@
 # CMake Project Support in Vim
+
 [CMake](http://www.cmake.org) is the ONLY way you should be building your C or 
 C++ projects. [Vim](http://www.vim.org) is the ultimate text editor. Together, 
 along with the power of gray skull, CMake support in Vim is born.
+
+---
 
 [`cmake.vim`](https://github.com/jalcine/cmake.vim/tree/v0.1.6) `v0.1.6` is a Vim 
 plugin that allows you to build your projects that are based on the CMake 
@@ -31,8 +34,7 @@ The commands available by `cmake.vim` are listed below.
   + `:CMakeInstall` - invokes `make install` from the path prescribed by CMake.
   + `:CMakeTest` - invokes `make test` from the path prescribed by CMake.
   + `:CMakeClean` - invokes `make clean` from the path prescribed by CMake.
-  + `:CMakeCreateBuild` - handles the work of creating the initial CMake build 
-    directory.
+  + `:CMakeCreateBuild` - handles the work of creating the initial CMake build directory.
   + `:CMakeDeleteBuild` - handles the work of deleting the CMake build.
 
 ## Options
