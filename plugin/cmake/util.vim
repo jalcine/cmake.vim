@@ -8,7 +8,9 @@ func! cmake#util#rootdir()
     for item in items
       let current_dir = cmake#util#find_cmake_build_dir(current_dir)
 
-      if !len(items) | return 0 | endif
+      if !len(items)
+				return 0
+			endif
 
       if !isdirectory(current_dir)
         let current_dir = substitute(current_dir, "/" . item, "", "g")
@@ -88,6 +90,5 @@ func! cmake#util#find_cmake_build_dir(dir)
 endfunc
 
 func! cmake#util#check_for_cmake_definition(dir)
-  if !filereadable(dir . "/CMakeLists.txt") | return 0 | endif
-  return 1
+  return !filereadable(dir . "/CMakeLists.txt")
 endfunc
