@@ -6,7 +6,7 @@ along with the power of gray skull, CMake support in Vim is born.
 
 ---
 
-[`cmake.vim`](https://github.com/jalcine/cmake.vim/tree/v0.1.6) `v0.1.6` is a Vim 
+[`cmake.vim`](https://github.com/jalcine/cmake.vim/tree/master) `v0.1.6-3` is a Vim 
 plugin that allows you to build your projects that are based on the CMake 
 meta-build system.
 
