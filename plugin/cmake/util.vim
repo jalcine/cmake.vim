@@ -90,5 +90,5 @@ func! cmake#util#find_cmake_build_dir(dir)
 endfunc
 
 func! cmake#util#check_for_cmake_definition(dir)
-  return !filereadable(dir . "/CMakeLists.txt")
+  return !filereadable(a:dir . "/CMakeLists.txt")
 endfunc
