@@ -22,6 +22,8 @@ if !exists("g:cmake_plugin_loaded")
   " TODO: Should this happen only in `CMakeLists.txt` files?
   if g:cmake_set_makeprg == 1
     let s:dir = cmake#util#rootdir()
-    if s:dir != 0 | let &mp="make -C " . s:dir | endif
+    if s:dir != 0
+			let &mp="make -C " . s:dir
+		endif
   endif
 endif
