@@ -38,7 +38,7 @@ func! cmake#commands#create_build()
     echo cmake#util#init_cmake()
     echomsg "[cmake] Created build."
   else 
-    echoerr "[cmake] Found an existing project build."
+    echom "[cmake] Found an existing project build."
     return 0
   endif
 endfunc
