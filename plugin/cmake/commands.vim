@@ -23,12 +23,12 @@ func! cmake#commands#install()
 endfunc
 
 func! cmake#commands#create_build()
-  if !isdirectory(cmake#util#root_dir())
+  if !isdirectory(cmake#util#rootdir())
     echoerr "[cmake] Cannot find `CMakeLists.txt` in '" . getcwd() . "'."
     return 0
   endif
 
-	if !isdirectory(cmake#util#find_cmake_build_dir(cmake#util#root_dir()))
+	if !isdirectory(cmake#util#find_cmake_build_dir(cmake#util#rootdir()))
     let l:buildir = getcwd() . "/" . g:cmake_build_dirs[0]
     let l:cmakecachefile = buildir . "/CMakeCache.txt"
 
