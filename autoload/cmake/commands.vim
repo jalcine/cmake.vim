@@ -1,57 +1,53 @@
 func! cmake#commands#build()
-  echomsg "[cmake] Building all targets..."
-  let l:output = cmake#util#run_make("all")
-  echo l:output
+	echomsg "[cmake] Building all targets..."
+	let l:output = cmake#util#run_make("all",getcwd())
+	echo l:output
 endfunc
 
 func! cmake#commands#clean()
-  echomsg "[cmake] Cleaning..."
-  let l:output = cmake#util#run_make("clean")
-  echo l:output
+	echomsg "[cmake] Cleaning..."
+	let l:output = cmake#util#run_make("clean",getcwd())
+	echo l:output
 endfunc
 
 func! cmake#commands#test()
-  echomsg "[cmake] Testing project..."
-  let l:output = cmake#util#run_make("test")
-  echo l:output
+	echomsg "[cmake] Testing project..."
+	let l:output = cmake#util#run_make("test",getcwd())
+	echo l:output
 endfunc
 
 func! cmake#commands#install()
-  echomsg "[cmake] Installing project..."
-  let l:output = cmake#util#run_make("install")
-  echo l:output
+	echomsg "[cmake] Installing project..."
+	let l:output = cmake#util#run_make("install",getcwd())
+	echo l:output
 endfunc
 
+" TODO: Allow choosing of build directory name?
 func! cmake#commands#create_build()
-  if !isdirectory(cmake#util#rootdir())
-    echoerr "[cmake] Cannot find `CMakeLists.txt` in '" . getcwd() . "'."
-    return 0
-  endif
+	let srcdir = cmake#util#find_source_dir(getcwd())
+	if !isdirectory(srcdir)
+		echom "[cmake] Can't find sources for CMake."
+	endif
 
-	if !isdirectory(cmake#util#find_cmake_build_dir(cmake#util#rootdir()))
-    let l:buildir = getcwd() . "/" . g:cmake_build_dirs[0]
-    let l:cmakecachefile = buildir . "/CMakeCache.txt"
+	let bindir = cmake#util#find_binary_dir(srcdir)
+	if !isdirectory(bindir)
+		echo "[cmake] Making build directory '" . bindir . "'..."
+		echo system("mkdir -p " . bindir)
+	endif
 
-    echo system("mkdir " . buildir)
-    echo system("touch " . cmakecachefile)
-    echomsg "[cmake] Configuring project..."
-    echo cmake#util#init_cmake()
-    echomsg "[cmake] Created build."
-  else 
-    echom "[cmake] Found an existing project build."
-    return 0
-  endif
+	echomsg "[cmake] Configuring project..."
+	echo cmake#util#init_cmake(bindir)
+	echomsg "[cmake] Created build."
 endfunc
 
 func! cmake#commands#delete_build()
-  if !filereadable(getcwd() . "/CMakeLists.txt")
-    echoerr "[cmake] No `CMakeLists.txt` found at " .getcwd()
-    return 0
-  endif
+	let bindir = cmake#util#find_binary_dir(getcwd())
 
-  if isdirectory(cmake#util#find_cmake_build_dir(getcwd()))
-    echo system("rm -rv" . cmake#util#find_cmake_build_dir(getcwd()))
-  endif
-
-  return 1
-endfun
+	if !isdirectory(bindir)
+		echom "[cmake] No CMake build system found."
+		return 0
+	else
+		echom "[cmake] Deleting files under " . bindir . "...")
+		return system("rm -rv" . bindir)
+	endif
+endfunc
