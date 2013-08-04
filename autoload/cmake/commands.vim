@@ -48,6 +48,6 @@ func! cmake#commands#delete_build()
 		return 0
 	else
 		echom "[cmake] Deleting files under " . bindir . "...")
-		return system("rm -rv" . bindir)
+		cmake#util#shell_exec("rm -rv" . bindir)
 	endif
 endfunc
