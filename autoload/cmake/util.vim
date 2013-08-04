@@ -13,12 +13,21 @@ func! cmake#util#init_cmake(dir)
 	endif
 endfunc!
 
+func! cmake#util#shell_exec(cmd)
+	if g:cmake_use_vimux == 1 && g:loaded_vimux == 1
+		call VimuxRunCommand(a:cmd)
+		return 0
+	else
+		return system(a:cmd)
+	endif
+endfunc
+
 func! cmake#util#run_make(argstr, dir)
 	if !isdirectory(a:dir)
 		echoerr "[cmake] Can't find directory to execute CMake's Makefile at '" . a:dir . "'"
 		return 0
 	endif
-	return system("make -C " . a:dir . " " . a:argstr)
+	return cmake#util#shell_exec("make -C " . a:dir . " " . a:argstr)
 endfunc
 
 func! cmake#util#run_cmake(argstr, dir)
@@ -26,7 +35,7 @@ func! cmake#util#run_cmake(argstr, dir)
 		echoerr "[cmake] Can't find directory to execute CMake at '" . a:dir . "'"
 		return 0
 	endif
-	return system("cd " . a:dir . " && cmake .. " . a:argstr)
+	return cmake#util#shell_exec("cd " . a:dir . " && cmake .. " . a:argstr)
 endfunc
 
 func! cmake#util#find_source_dir(dir)
