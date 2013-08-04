@@ -1,51 +1,35 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=640" />
+    <title>cmake.vim by jalcine</title>
 
-    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
-    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
-
-    <script type="text/javascript" src="javascripts/modernizr.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
-    <script type="text/javascript">
-      $(document).ready(function () {
-        $('#main_content').headsmart()
-      })
-    </script>
-    <title>CMake Support for Vim by jalcine</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
-
   <body>
-    <a id="forkme_banner" href="https://github.com/jalcine/cmake.vim">View on GitHub</a>
-    <div class="shell">
-
+    <div class="wrapper">
       <header>
-        <span class="ribbon-outer">
-          <span class="ribbon-inner">
-            <h1>CMake Support for Vim</h1>
-            <h2>Incorporates the functionality of CMake into Vim. Because it's AWESOME.</h2>
-          </span>
-          <span class="left-tail"></span>
-          <span class="right-tail"></span>
-        </span>
+        <h1 class="header">cmake.vim</h1>
+        <p class="header">Incorporates the functionality of CMake into Vim.</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/jalcine/cmake.vim/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/jalcine/cmake.vim/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/jalcine/cmake.vim">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/jalcine">jalcine</a></p>
+
+
       </header>
-
-      <section id="downloads">
-        <span class="inner">
-          <a href="https://github.com/jalcine/cmake.vim/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/jalcine/cmake.vim/tarball/master" class="tgz"><em>download</em> .TGZ</a>
-        </span>
-      </section>
-
-
-      <span class="banner-fix"></span>
-
-
-      <section id="main_content">
+      <section>
         <h1>
 <a name="cmake-project-support-in-vim" class="anchor" href="#cmake-project-support-in-vim"><span class="octicon octicon-link"></span></a>CMake Project Support in Vim</h1>
 
@@ -53,20 +37,17 @@
 C++ projects. <a href="http://www.vim.org">Vim</a> is the ultimate text editor. Together, 
 along with the power of gray skull, CMake support in Vim is born.</p>
 
-<p><a href="https://github.com/jalcine/cmake.vim/tree/v0.1.3"><code>cmake.vim</code></a> <code>v0.1.3</code> is a Vim 
+<hr><p><a href="https://github.com/jalcine/cmake.vim/tree/master"><code>cmake.vim</code></a> <code>v0.1.8</code> is a Vim 
 plugin that allows you to build your projects that are based on the CMake 
 meta-build system.</p>
+
+<p>If lost, run <code>:help cmake</code> for more information.</p>
 
 <h2>
 <a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
 
-<blockquote>
-<p><strong>NOTE</strong>: This plugin has ONLY been tested on a bleeding edge version of Vim 
-7.3 with <code>--features=huge</code>. Please report any problems you encounter with 
-version information and compilation options included.</p>
-</blockquote>
-
-<p>At the time of writing, <code>cmake.vim</code> supports Vim 7.3+ and CMake 2.8+. Have fun!</p>
+<p>At the time of writing, <code>cmake.vim</code> has been tested with Vim 7.3+ in nocp mode 
+and CMake 2.8.</p>
 
 <h2>
 <a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h2>
@@ -80,76 +61,33 @@ plugins. The line necessary to add this plugin is as follows:</p>
 <h2>
 <a name="commands" class="anchor" href="#commands"><span class="octicon octicon-link"></span></a>Commands</h2>
 
-<p>Some of the more commonly used commands in the plugin include:</p>
+<p><code>cmake.vim</code> defines a few methods for generic interaction with CMake. Check
+out <code>:help cmake-methods</code> for more information.</p>
 
-<ul>
-<li>
-<code>:CMakeBuild</code> - invokes <code>make</code> from the path prescribed by CMake.</li>
-<li>
-<code>:CMakeInstall</code> - invokes <code>make install</code> from the path prescribed by CMake.</li>
-<li>
-<code>:CMakeTest</code> - invokes <code>make test</code> from the path prescribed by CMake.</li>
-<li>
-<code>:CMakeCreateBuild</code> - handles the work of creating the initial CMake build 
-directory.</li>
-</ul><h2>
+<h2>
 <a name="options" class="anchor" href="#options"><span class="octicon octicon-link"></span></a>Options</h2>
 
 <p>In order for CMake to operate, it <strong>has</strong> to know where the build directory is 
 located. This is done automatically by the plugin but it does need help in the 
-event that you happen to build your CMake project in a sub-directory. This 
-option and more are listed below.</p>
+event that you happen to build your CMake project in a sub-directory. Check
+out <code>:help cmake-options</code> for more information.</p>
 
-<ul>
-<li>
-<code>g:cmake_cxx_compiler</code>: Defines the default C++ compiler to build your 
-project with. (default: <code>clang++</code>)</li>
-<li>
-<code>g:cmake_c_compiler</code>: Defines the default C compiler to build your project 
-with (default: <code>clang</code>)</li>
-<li>
-<code>g:cmake_build_dirs</code>: Defines the names of directories at which 
-a directory would be searched for <code>CMakeCache.txt</code>. (default: [ 'build' ])</li>
-<li>
-<code>g:cmake_build_type</code>: Defines the build configuration type of the project. 
-(default ['Debug'])</li>
-<li>
-<code>g:cmake_install_prefix</code>: Defines the installation prefix to be used by 
-CMake. (default: $HOME/.local)</li>
-<li>
-<code>g:cmake_build_shared_libs</code>: Defines the flag 'BUILD_SHARED_LIBS` in 
-CMake. (default: true)</li>
-</ul><p><strong>NOTE</strong>: These variables are defined by <code>cmake.vim</code> if the variable itself 
-isn't found <em>before</em> it's loaded.</p>
-
-<h2>
-<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
-
-<p>This code is released and available under the MIT license. Multiply and be 
+<hr><p>**## License
+This code is released and available under the MIT license. Multiply and be 
 fruitful.</p>
 
 <h2>
 <a name="author" class="anchor" href="#author"><span class="octicon octicon-link"></span></a>Author</h2>
 
-<p>I'm <a href="https://twitter.com/jackyalcine">Jacky Alcine</a> and I like code. A lot. 
+<p>I'm <a href="http://jackyalcine.com">Jacky Alcine</a> and I like code. A lot. 
 I also chat a lot like a firehose so follow with caution!</p>
       </section>
-
       <footer>
-        <span class="ribbon-outer">
-          <span class="ribbon-inner">
-            <p>this project by <a href="https://github.com/jalcine">jalcine</a> can be found on <a href="https://github.com/jalcine/cmake.vim">GitHub</a></p>
-          </span>
-          <span class="left-tail"></span>
-          <span class="right-tail"></span>
-        </span>
-        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
-        <span class="octocat"></span>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
       </footer>
-
     </div>
-
-              <script type="text/javascript">
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		          <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
