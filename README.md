@@ -34,7 +34,7 @@ located. This is done automatically by the plugin but it does need help in the
 event that you happen to build your CMake project in a sub-directory. Check
 out `:help cmake-options` for more information.
 
-**## License
+## License
 This code is released and available under the MIT license. Multiply and be 
 fruitful.
 
