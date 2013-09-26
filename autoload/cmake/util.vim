@@ -61,8 +61,7 @@ func! cmake#util#read_from_cache(property)
   let l:property_line = system("grep -E \"^" . a:property . ":\" " . l:cmake_cache_file)
   if empty(l:property_line)
     return 0
-  else
-    if 
+  endif
 
   " Chop down the response to size.
   let l:property_meta_value = system("echo '" . l:property_line . "' | cut -b " . l:property_width . "-")
