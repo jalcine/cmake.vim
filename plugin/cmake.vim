@@ -1,24 +1,31 @@
+" If we're here, don't reload man.
 if exists("g:cmake_plugin_loaded") 
-	finish
+  finish
+else
+  let g:cmake_plugin_loaded = 1
 end
 
-let g:cmake_plugin_loaded = 1
-
 func! s:setauto(name, value)
-	if !exists(a:name)
-		let {a:name} = a:value
-	endif
+  if !exists(a:name)
+    let {a:name} = a:value
+  endif
 endfunc
 
 " Set configuration options.
-call s:setauto("g:cmake_cxx_compiler", "clang++")
-call s:setauto("g:cmake_c_compiler", "clang")
-call s:setauto("g:cmake_build_dirs", [ "build" ])
-call s:setauto("g:cmake_build_type", "Debug" )
-call s:setauto("g:cmake_install_prefix", "$HOME/.local")
-call s:setauto("g:cmake_build_shared_libs", 1)
-call s:setauto("g:cmake_set_makeprg", 1)
-call s:setauto("g:cmake_use_vimux", 0)
+let s:options = { \
+  "g:cmake_cxx_compiler":       "clang++",    \
+  "g:cmake_c_compiler":         "clang",      \
+  "g:cmake_build_directories":  [ "build"],   \
+  "g:cmake_build_type":         "Debug",      \
+  "g:cmake_install_prefix":     "/usr/local", \
+  "g:cmake_build_shared_libs":  0,            \
+  "g:cmake_set_makeprg":        0,            \
+  "g:cmake_use_vimux":          0             \
+}
+
+for aOption in keys(s:options)
+  call s:setauto(aOption, s:options[aOption])
+endfor
 
 " Set Ex commands.
 command! -buffer -nargs=0 CMakeBuild       :call cmake#commands#build()
