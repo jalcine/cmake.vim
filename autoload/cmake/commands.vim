@@ -30,8 +30,13 @@ func! cmake#commands#create_build(directory)
   endif
 
   " Make the directory.
-  if !isdirectory(a:directory)
-    call mkdir(a:directory, "p")
+  call mkdir(a:directory, "p")
+  if filereadable(a:directory . "/CMakeCache.txt")
+    if confirm("[cmake] Remove existing project configuration?", "&Yes\&No") == 1
+      call system("rm " a:directory . "/CMakeCache.txt") 
+    else
+      return
+    endif
   endif
 
   " Prepopulate options for new CMake build.
