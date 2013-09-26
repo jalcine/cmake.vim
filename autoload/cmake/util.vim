@@ -11,6 +11,8 @@ func! cmake#util#binary_dir()
     return g:cmake_binary_dir
   endif
 
+  let l:proposed_dir = 0
+
   " Check in the currenty directory as well.
   let l:directories = g:cmake_build_directories + [ getcwd() ]
 
@@ -22,11 +24,14 @@ func! cmake#util#binary_dir()
       " If we found it, drop off that CMakeCache.txt reference and cache the
       " value.
       let l:proposed_dir = substitute(l:proposed_cmake_file, "/CMakeCache.txt", "", "")
-      return l:proposed_dir
     endif
   endfor
 
-  return 0
+  if l:proposed_dir != 0
+    let l:proposed_dir = expand(l:proposed_dir, ':p')
+  endif
+
+  return l:proposed_dir
 endfunc!
 
 " TODO; Resolve path to absolute-ness.
