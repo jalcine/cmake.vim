@@ -20,7 +20,7 @@ let s:options = {
   \  "g:cmake_install_prefix":      "/usr/local", 
   \  "g:cmake_build_shared_libs":   0,
   \  "g:cmake_set_makeprg":         0,
-  \ "g:cmake_use_vimux":            0
+  \  "g:cmake_use_vimux":           0
   \ }
 
 for aOption in keys(s:options)
@@ -32,3 +32,4 @@ command! -buffer -nargs=0 CMakeBuild       :call cmake#commands#build()
 command! -buffer -nargs=0 CMakeInstall     :call cmake#commands#install()
 command! -buffer -nargs=0 CMakeClean       :call cmake#commands#clean()
 command! -buffer -nargs=0 CMakeTest        :call cmake#commands#test()
+command! -buffer -nargs=1 CMakeCreateBuild :call cmake#commands#create_build("<args>")
