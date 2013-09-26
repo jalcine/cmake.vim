@@ -1,70 +1,84 @@
-func! cmake#util#init_cmake(dir)
-	if !isdirectory(a:dir)
-		echomsg "[cmake] Can't find build directory."
-		return 0
-	else
-		let l:command =  [ "-DCMAKE_INSTALL_PREFIX:FILEPATH="  . g:cmake_install_prefix ]
-		let l:command += [ "-DCMAKE_BUILD_TYPE:STRING="        . g:cmake_build_type ]
-		let l:command += [ "-DCMAKE_CXX_COMPILER:FILEPATH="    . g:cmake_cxx_compiler ]
-		let l:command += [ "-DCMAKE_C_COMPILER:FILEPATH="      . g:cmake_c_compiler ] 
-		let l:command += [ "-DBUILD_SHARED_LIBS:BOOL="         . g:cmake_build_shared_libs ]
-		let l:commandstr = join(l:command, " ")
-		return cmake#util#run_cmake(l:commandstr, a:dir)
-	endif
+""""""""""""""""""""""""""""""""""""""""
+" @author: Jacky Alciné <me@jalcine.me>
+" @date:   2013-09-26 00:31:53 EDT
+"
+" Utility methods to manipulate CMake.
+""""""""""""""""""""""""""""""""""""""""
+
+func! cmake#util#binary_dir()
+  " If we found it already, don't waste effort.
+  if exists("g:cmake_binary_dir")
+    return g:cmake_binary_dir
+  endif
+
+  " Check in the currenty directory as well.
+  let l:directories = g:cmake_build_directories + [ getcwd() ]
+
+  for directory in l:directories
+    " TODO: Make paths absolute.
+    let l:proposed_cmake_file = findfile(directory . "/CMakeCache.txt", ".;")
+
+    if filereadable(l:proposed_cmake_file)
+      " If we found it, drop off that CMakeCache.txt reference and cache the
+      " value.
+      let l:proposed_dir = substitute(l:proposed_cmake_file, "/CMakeCache.txt", "", "")
+      return l:proposed_dir
+    endif
+  endfor
+
+  return 0
 endfunc!
 
-func! cmake#util#shell_exec(cmd)
-	if g:cmake_use_vimux == 1 && g:loaded_vimux == 1
-		call VimuxRunCommand(a:cmd)
-		return 0
-	else
-		return system(a:cmd)
-	endif
-endfunc
+" TODO; Resolve path to absolute-ness.
+func! cmake#util#source_dir()
+  if cmake#util#binary_dir() == 0
+    return ""
+  endif
 
-func! cmake#util#run_make(argstr, dir)
-	if !isdirectory(a:dir)
-		echoerr "[cmake] Can't find directory to execute CMake's Makefile at '" . a:dir . "'"
-		return 0
-	endif
-	return cmake#util#shell_exec("make -C " . a:dir . " " . a:argstr)
-endfunc
+  return cmake#util#read_from_cache("Project_SOURCE_DIR")
+endfunc!
 
-func! cmake#util#run_cmake(argstr, dir)
-	if !isdirectory(a:dir)
-		echoerr "[cmake] Can't find directory to execute CMake at '" . a:dir . "'"
-		return 0
-	endif
-	return cmake#util#shell_exec("cd " . a:dir . " && cmake .. " . a:argstr)
-endfunc
+func! cmake#util#cmake_cache_file_path()
+  let l:dir = cmake#util#binary_dir()
+  if isdirectory(l:dir)
+    return l:dir . "/CMakeCache.txt"
+  endif
 
-func! cmake#util#find_source_dir(dir)
-	if !isdirectory(a:dir)
-		echomsg "[cmake] Not a directory '" . a:dir . "'"
-		return 0
-	endif
+  return ""
+endfunc!
 
-	if filereadable(a:dir . "/CMakeLists.txt")
-		return a:dir
-	else
-		if !isdirectory(a:dir) || a:dir == "/" || a:dir == "/home" || a:dir == "/Users"
-			return 0
-		else
-			let the_dir = system("dirname -z " . shellescape(a:dir))
-			return cmake#util#find_source_dir(the_dir)
-		endif
-	endif
-endfunc
+func! cmake#util#read_from_cache(property)
+  let l:cmake_cache_file = cmake#util#cmake_cache_file_path()
+  let l:property_width = strlen(a:property) + 2
 
-func! cmake#util#find_binary_dir(dir)
-	let srcdir = cmake#util#find_source_dir(a:dir)
-	if isdirectory(srcdir)
-		return srcdir . "/build"
-	else
-		return 0
-	endif
-endfunc
+  " If we can't find the cache file, then there's no point in trying to read
+  " it.
+  if !filereadable(cmake#util#cmake_cache_file_path())
+    return ""
+  endif
 
-func! cmake#util#has_cmake_build(dir)
-	return isdirectory(cmake#util#find_binary_dir(a:dir))
-endfunc
+  " First, grep out this property.
+  let l:property_line = system("grep -E \"^" . a:property . ":\" " . l:cmake_cache_file)
+  if empty(l:property_line)
+    return 0
+  else
+    if 
+
+  " Chop down the response to size.
+  let l:property_meta_value = system("echo '" . l:property_line . "' | cut -b " . l:property_width . "-")
+
+  " Split it in half to get the resulting value and its type.
+  let l:property_fields = split(l:property_meta_value, "=", 1)
+  let l:property_fields[1] = substitute(l:property_fields[1], "\n", "", "")
+  let l:property_fields[1] = substitute(l:property_fields[1], "\n", "", "")
+
+  return l:property_fields
+endfunc!
+
+func! cmake#util#write_to_cache(property,value)
+  " TODO: Use 'sed'.
+endfunc!
+
+func! cmake#util#run_make(command)
+  return system("make -C " . cmake#util#binary_dir() . " " . a:command)
+endfunc!

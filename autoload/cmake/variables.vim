@@ -3,8 +3,8 @@
 " NAME:TEXT=VALUE.
 
 func! cmake#variables#exists(variable)
-  let output = system("grep " . a:variable . " " . cmake#util#rootdir() . "/CMakeCache.txt")
-  return strlen(output) > 0 ? 1 : 0
+  let l:val = cmake#util#read_from_cache(variable)
+  return l:val != 0
 endfunc!
 
 func! cmake#variables#get(variable)
@@ -12,14 +12,13 @@ func! cmake#variables#get(variable)
     return 0
   endif
 
-  let output = system("grep " . a:variable . " " . cmake#util#rootdir() . "/CMakeCache.txt")
-  return substitute(output, a:variable . "=", "", "g")
+  return cmake#util#read_from_cache(a:variable)[1]
 endfunc
 
 func! cmake#variables#set(variableName,newVariableValue)
   if !cmake#variables#exists(a:variable)
     return 0
   endif
-  " TODO: Grab cache data.
-  " TODO: Set variable.
+
+  cmake#util#write_to_cache(a:variable, a:newVariableValue)
 endfunc!
