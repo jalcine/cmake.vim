@@ -81,7 +81,7 @@ endfunc!
 func! cmake#util#run_make(command)
   let l:command = "make -C " . cmake#util#binary_dir() . " " . a:command
   if g:cmake_use_vimux == 1 && g:loaded_vimux == 1
-    call VimuxRunCommand("cd " . cmake#util#source_dir() . " && " . l:command)
+    call VimuxRunCommand(l:command)
   else
     return system(l:command)
   endif
