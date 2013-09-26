@@ -16,7 +16,8 @@ func! cmake#util#binary_dir()
   " Check in the currenty directory as well.
   let l:directories = g:cmake_build_directories + [ getcwd() ]
 
-  for directory in l:directories
+  for l:directory in l:directories
+    let l:directory = expand(l:directory . ':p')
     " TODO: Make paths absolute.
     let l:proposed_cmake_file = findfile(directory . "/CMakeCache.txt", ".;")
 
@@ -26,10 +27,6 @@ func! cmake#util#binary_dir()
       let l:proposed_dir = substitute(l:proposed_cmake_file, "/CMakeCache.txt", "", "")
     endif
   endfor
-
-  if l:proposed_dir != 0
-    let l:proposed_dir = expand(l:proposed_dir, ':p')
-  endif
 
   return l:proposed_dir
 endfunc!
