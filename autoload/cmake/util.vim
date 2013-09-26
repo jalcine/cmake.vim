@@ -78,3 +78,7 @@ endfunc!
 func! cmake#util#write_to_cache(property,value)
   " TODO: Use 'sed'.
 endfunc!
+
+func! cmake#util#run_make(command)
+  return system("make -C " . cmake#util#binary_dir() . " " . a:command)
+endfunc!
