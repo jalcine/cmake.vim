@@ -1,21 +1,39 @@
 func! cmake#commands#build()
   echomsg "[cmake] Building all targets..."
-  echomsg cmake#util#run_make("all")
+  let l:output = cmake#util#run_cmake("--build", "","")
+  if l:output != 0
+    echomsg l:output
+    echomsg "[cmake] Built all targets."
+  end
+endfunc
+
+func! cmake#commands#invoke_target(target)
+  echomsg "[cmake] Invoking target '" . a:target . "'..."
+  call cmake#util#run_cmake("--build ". cmake#util#binary_dir() . " --target " . a:target. " --", "", "")
 endfunc
 
 func! cmake#commands#clean()
-  echomsg "[cmake] Cleaning..."
-  echomsg cmake#util#run_make("clean")
+  echomsg "[cmake] Cleaning build..."
+  let l:output = cmake#util#run_make("clean")
+  if l:output != 0
+    echomsg l:output
+  end
 endfunc
 
 func! cmake#commands#test()
-  echomsg "[cmake] Testing project..."
-  echomsg cmake#util#run_make("test")
+  echomsg "[cmake] Testing build..."
+  let l:output = cmake#util#run_make("test")
+  if l:output != 0
+    echomsg l:output
+  end
 endfunc
 
 func! cmake#commands#install()
   echomsg "[cmake] Installing project..."
-  echomsg cmake#util#run_make("install")
+  let l:output = cmake#util#run_make("install")
+  if l:output != 0
+    echomsg l:output
+  end
 endfunc
 
 " TODO: Check if there was a failure of sorts on configuring.
@@ -26,13 +44,16 @@ func! cmake#commands#create_build(directory)
   endif
 
   " Make the directory.
-  call mkdir(a:directory, "p")
   if filereadable(a:directory . "/CMakeCache.txt")
     if confirm("[cmake] Remove existing project configuration?", "&Yes\&No") == 1
-      call system("rm " a:directory . "/CMakeCache.txt") 
+      call delete(a:directory . '/CMakeCache.txt')
     else
       return
     endif
+  endif
+
+  if !isdirectory(a:directory)
+    call mkdir(a:directory, "p")
   endif
 
   " Prepopulate options for new CMake build.
@@ -40,18 +61,22 @@ func! cmake#commands#create_build(directory)
 
   " Make the build.
   echomsg "[cmake] Configuring project for the first time..."
-  let l:command = "cd " . getcwd() . "/" . a:directory . " && " .
-        \ "cmake .. " . l:build_options)
-  if g:cmake_use_vimux == 1 && g:loaded_vimux
-    call VimuxRunCommand(l:command)
-  else
-    echomsg system(l:command)
-  end
+  call cmake#util#run_cmake(l:build_options, getcwd() . "/" . a:directory, getcwd())
   echomsg "[cmake] Project configured."
 endfunc
 
+
+func! cmake#commands#get_var(variable)
+  return cmake#util#read_from_cache(a:variable)
+endfunc!
+
+func! cmake#commands#set_var(variable,value)
+  call cmake#util#write_to_cache(a:variable,a:value)
+endfunc!
+
 func! s:get_build_opts()
-  let l:command =  [ "-DCMAKE_INSTALL_PREFIX:FILEPATH="  . g:cmake_install_prefix ]
+  let l:command =  [ '-G "Unix Makefiles" ']
+  let l:command += [ "-DCMAKE_INSTALL_PREFIX:FILEPATH="  . g:cmake_install_prefix ]
   let l:command += [ "-DCMAKE_BUILD_TYPE:STRING="        . g:cmake_build_type ]
   let l:command += [ "-DCMAKE_CXX_COMPILER:FILEPATH="    . g:cmake_cxx_compiler ]
   let l:command += [ "-DCMAKE_C_COMPILER:FILEPATH="      . g:cmake_c_compiler ] 

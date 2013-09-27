@@ -10,9 +10,17 @@ CONTENTS ~
   2.2. Installing the Plugin                       |cmake-quickstart-install|
 3. Options                                         |cmake-options|
 4. Methods                                         |cmake-methods|
-  4.1 Creating a Project                           |cmake-methods-create-project|
-  4.2 Building                                     |cmake-methods-build|
-  4.3 Cleaning                                     |cmake-methods-clean|
+  4.1 Creating a Project                           |:CMakeCreateBuild|
+  4.2 Building                                     |:CMakeBuild|
+  4.3 Cleaning                                     |:CMakeClean|
+  4.4 Testing                                      |:CMakeTest|
+  4.5 Installing                                   |:CMakeInstall|
+  4.6 Get Cache Variable's Value                   |:CMakeGetVar|
+  4.7 Invoking Targets                             |:CMakeTarget|
+  4.8 Cleaning & Building At Once                  |:CMakeCleanBuild|
+5. Integrations                                    |cmake-integrations|
+  5.1 Syntastic                                    |cmake-integrations-syntastic|
+  5.2 YouCompleteMe                                |cmake-integrations-ycm| 
 
 ===========================================================================
 
@@ -103,17 +111,15 @@ Determines whether or not the 'makeprg' value in Vim will be set to a tweaked
 
 NOTE: This is a future support option and currently does nothing.
 
-
-4. METHODS
-
-                                                            |cmake-methods|
+4. METHODS ~
+                                                               *cmake-methods*
 
 There's a few methods binded to the editor for use of the developer. In the
 future, some of these methods might be automatically mapped to the keyboard
 within CMake files for easy use.
 
-4.1 CREATING A BUILD
-                              |cmake-methods-create-build| |:CMakeCreateBuild|
+4.1 CREATING A BUILD ~
+                                                           *:CMakeCreateBuild*
 
 
 `:CMakeCreateBuild` takes only one argument, the name of the directory that
@@ -123,16 +129,89 @@ provided in `g:cmake_build_directories` so take care to use one of those.
 It'll make the directory if it doesn't exist, remove `CMakeCache.txt` if it
 exists (with confirmation) and invoke CMake within that directory.
 
-4.2 BUILDING A PROJECT
-                                        |cmake-methods-build| |:CMakeBuild|
+4.2 BUILDING ~
+                                                                 *:CMakeBuild*
 
-Invokes `make -C $CMAKE_BINARY_DIR all`, building all CMake targets at once.
+Invokes `cmake --build $CMAKE_BINARY_DIR --target all`, building all CMake 
+targets at once.
 
-4.3 BUILDING A PROJECT
-                                        |cmake-methods-clean| |:CMakeClean|
+4.3 CLEANING ~
+                                                                 *:CMakeClean*
 
-Invokes `make -C $CMAKE_BINARY_DIR clean`, cleaning the project of build
-artificats. 
+Invokes `cmake --build $CMAKE_BINARY_DIR --target clean`, cleaning the project
+of build artificats. 
+
+4.4 TESTING ~
+                                                                  *:CMakeTest*
+
+Invokes `make -C $CMAKE_BINARY_DIR test`, running whatever you got for that
+target.
+
+4.5 INSTALLING ~
+                                                                *:CMakeInstall*
+
+Invokes `make -C $CMAKE_BINARY_DIR install`, installs all of the things!
+Doesn't take into consideration file permissions or access, silly ol' make.
+
+4.6 GET CACHE VARIABLE'S VALUE ~
+                                                                *:CMakeGetVar*
+
+Obtains the specified variable's value from CMake's cache. Note that fact, it
+has to be set into the cache for it to be retrieved.
+
+4.7 INVOKING TARGETS ~
+                                                                *:CMakeTarget*
+
+Invokes `cmake --build $CMAKE_BINARY_DIR --target <target>`, <target> being
+the target you'd choose to invoke.
+
+4.8 CLEANING & BUILDING AT ONCE ~
+                                                            *:CMakeCleanBuild*
+
+Invokes `:CMakeClean` and then `:CMakeBuild`.
+
+5. INTEGRATIONS ~
+                                                          *cmake-integrations*
+
+Life isn't fun if a plug-in doesn't integrate to another. `cmake.vim`, with a
+bit of lost sleep, can work with syntastic and You Complete Me with with the
+enabling of an option.
+
+5.1. SYNTASTIC ~
+                                                *cmake-integrations-syntastic*
+
+No extra work is required. `cmake.vim` adds the necessary flags to all of the
+C and C++ checkers. Work is planned to refactor this logic and allow explicit
+checker parameters (since it's targeted for the gcc/ycm checkers and not
+cpplint).
+
+5.2. YOU COMPLETE ME ~
+                                                      *cmake-integrations-ycm*
+
+In order for this to work (currently), you need to have a custom-written
+`.ycm_extra_conf` file that has the following lines at the start of your
+`FlagsForFile(filename)` method:
+
+    vim.command("call cmake#flags#inject_to_ycm('<target>')")
+    cmake_flags = vim.eval('b:cmake_flags[&ft]')
+
+This calls `cmake.vim` to get the options for this target (should be just
+"c" or "cpp" for now) and then get a list of the flags. <target> should
+be replaced with the target whose flags you want to obtain. At the 
+moment, this is the only way of getting flags. It HAS to be a valid
+target, no checking is done (since there isn't a way to).
+
+Just make sure that when you return the method, you ADD the
+flags to the value passed as the "flags" value in the return hash, like so:
+
+    final_flags += cmake_flags
+
+    return {
+      'flags' : final_tags,
+      'do_cache' : True
+    }
+
+With that, any include directories 
 
 
 vim:tw=78:ts=8:ft=help:norl:
