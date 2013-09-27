@@ -48,6 +48,11 @@ located. This is done automatically by the plugin but it does need help in the
 event that you happen to build your CMake project in a sub-directory. Check
 out `:help cmake-options` for more information.
 
+## Integrations
+
+See [`:help cmake-integrations`][doc/cmake.txt] for tips on integrations `cmake.vim` with
+other plug-ins like `syntastic` or `YouCompleteMe`.
+
 ## Known Issues
 
   * You can't pass in options for configuring the project at first-run (or
