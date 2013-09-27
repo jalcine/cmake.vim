@@ -67,6 +67,9 @@ other plug-ins like `syntastic` or `YouCompleteMe`.
       information.
   * Improve integration's use flag lookup and discovery on a per-target basis
     and a per-file basis (restricted to source files).
+  * Pass an argument string to `:CMakeCreateBuild`.
+  * Allow setting and getting values using `:CMakeGetVar` and `:CMakeSetVar`.
+  * Expose `cmake.vim`'s buffer commands only in `worthy` buffers.
 
 ## License
 This code is released and available under the MIT license. Multiply and be 
