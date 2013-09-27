@@ -28,8 +28,8 @@ for aOption in keys(s:options)
 endfor
 
 " Set Ex commands.
-command! -buffer -nargs=0 CMakeBuild       :call cmake#commands#build()
-command! -buffer -nargs=0 CMakeInstall     :call cmake#commands#install()
-command! -buffer -nargs=0 CMakeClean       :call cmake#commands#clean()
-command! -buffer -nargs=0 CMakeTest        :call cmake#commands#test()
-command! -buffer -nargs=1 CMakeCreateBuild :call cmake#commands#create_build("<args>")
+command! -nargs=0 CMakeBuild       :call cmake#commands#build()
+command! -nargs=0 CMakeInstall     :call cmake#commands#install()
+command! -nargs=0 CMakeClean       :call cmake#commands#clean()
+command! -nargs=0 CMakeTest        :call cmake#commands#test()
+command! -nargs=1 CMakeCreateBuild :call cmake#commands#create_build("<args>")
