@@ -1,21 +1,33 @@
 func! cmake#commands#build()
   echomsg "[cmake] Building all targets..."
-  echomsg cmake#util#run_make("all")
+  let l:output = cmake#util#run_make("all")
+  if l:output != 0
+    echomsg l:output
+  end
 endfunc
 
 func! cmake#commands#clean()
   echomsg "[cmake] Cleaning..."
-  echomsg cmake#util#run_make("clean")
+  let l:output=make#util#run_make("clean")
+  if l:output != 0
+    echomsg l:output
+  end
 endfunc
 
 func! cmake#commands#test()
   echomsg "[cmake] Testing project..."
-  echomsg cmake#util#run_make("test")
+  let l:output=make#util#run_make("test")
+  if l:output != 0
+    echomsg l:output
+  end
 endfunc
 
 func! cmake#commands#install()
   echomsg "[cmake] Installing project..."
-  echomsg cmake#util#run_make("install")
+  let l:output=make#util#run_make("install")
+  if l:output != 0
+    echomsg l:output
+  end
 endfunc
 
 " TODO: Check if there was a failure of sorts on configuring.
