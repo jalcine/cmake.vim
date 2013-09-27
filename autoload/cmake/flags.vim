@@ -10,6 +10,11 @@ func! cmake#flags#target(target)
         \  }
 endfunc!
 
+func! cmake#flags#inject(target)
+  call cmake#flags#inject_to_syntastic(a:target)
+  call cmake#flags#inject_to_ycm(a:target)
+endfunc
+
 func! cmake#flags#inject_to_syntastic(target)
   let l:flags = cmake#flags#target(a:target)
 
@@ -33,3 +38,9 @@ func! cmake#flags#inject_to_ycm(target)
   let l:flags = cmake#flags#target(a:target)
   exec("let b:cmake_flags=". string(l:flags))
 endfunc!
+
+augroup cmake_inject
+  au!
+  au VimEnter * :call cmake#flags#inject()
+  au BufEnter * :call cmake#flags#inject()
+augroup END
