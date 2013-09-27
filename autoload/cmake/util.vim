@@ -11,10 +11,13 @@ func! cmake#util#binary_dir()
     return g:cmake_binary_dir
   endif
 
+  let l:proposed_dir = 0
+
   " Check in the currenty directory as well.
   let l:directories = g:cmake_build_directories + [ getcwd() ]
 
-  for directory in l:directories
+  for l:directory in l:directories
+    let l:directory = fnamemodify(l:directory, ':p')
     " TODO: Make paths absolute.
     let l:proposed_cmake_file = findfile(directory . "/CMakeCache.txt", ".;")
 
@@ -22,11 +25,10 @@ func! cmake#util#binary_dir()
       " If we found it, drop off that CMakeCache.txt reference and cache the
       " value.
       let l:proposed_dir = substitute(l:proposed_cmake_file, "/CMakeCache.txt", "", "")
-      return l:proposed_dir
     endif
   endfor
 
-  return 0
+  return l:proposed_dir
 endfunc!
 
 " TODO; Resolve path to absolute-ness.
@@ -61,8 +63,7 @@ func! cmake#util#read_from_cache(property)
   let l:property_line = system("grep -E \"^" . a:property . ":\" " . l:cmake_cache_file)
   if empty(l:property_line)
     return 0
-  else
-    if 
+  endif
 
   " Chop down the response to size.
   let l:property_meta_value = system("echo '" . l:property_line . "' | cut -b " . l:property_width . "-")
@@ -80,5 +81,10 @@ func! cmake#util#write_to_cache(property,value)
 endfunc!
 
 func! cmake#util#run_make(command)
-  return system("make -C " . cmake#util#binary_dir() . " " . a:command)
+  let l:command = "make -C " . cmake#util#binary_dir() . " " . a:command
+  if g:cmake_use_vimux == 1 && g:loaded_vimux == 1
+    call VimuxRunCommand(l:command)
+  else
+    return system(l:command)
+  endif
 endfunc!

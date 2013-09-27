@@ -1,25 +1,21 @@
 func! cmake#commands#build()
   echomsg "[cmake] Building all targets..."
-  let l:output = cmake#util#run_make("all")
-  echo l:output
+  echomsg cmake#util#run_make("all")
 endfunc
 
 func! cmake#commands#clean()
   echomsg "[cmake] Cleaning..."
-  let l:output = cmake#util#run_make("clean")
-  echo l:output
+  echomsg cmake#util#run_make("clean")
 endfunc
 
 func! cmake#commands#test()
   echomsg "[cmake] Testing project..."
-  let l:output = cmake#util#run_make("test")
-  echo l:output
+  echomsg cmake#util#run_make("test")
 endfunc
 
 func! cmake#commands#install()
   echomsg "[cmake] Installing project..."
-  let l:output = cmake#util#run_make("install")
-  echo l:output
+  echomsg cmake#util#run_make("install")
 endfunc
 
 " TODO: Check if there was a failure of sorts on configuring.
@@ -44,8 +40,13 @@ func! cmake#commands#create_build(directory)
 
   " Make the build.
   echomsg "[cmake] Configuring project for the first time..."
-  let l:output = system("cd " . getcwd() . "/" . a:directory . " && " .
+  let l:command = "cd " . getcwd() . "/" . a:directory . " && " .
         \ "cmake .. " . l:build_options)
+  if g:cmake_use_vimux == 1 && g:loaded_vimux
+    call VimuxRunCommand(l:command)
+  else
+    echomsg system(l:command)
+  end
   echomsg "[cmake] Project configured."
 endfunc
 
