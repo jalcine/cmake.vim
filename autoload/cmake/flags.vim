@@ -5,9 +5,9 @@ func! cmake#flags#target(target)
   endif
 
   return { 
-    \ "c"   : system("grep 'C_FLAGS = ' " . l:flags_file . " | cut -b 11-"),
-    \ "cpp" : system("grep 'CXX_FLAGS = ' " . l:flags_file . " | cut -b 13-")
-    \  }
+        \ "c"   : system("grep 'C_FLAGS = ' " . l:flags_file . " | cut -b 11-"),
+        \ "cpp" : system("grep 'CXX_FLAGS = ' " . l:flags_file . " | cut -b 13-")
+        \  }
 endfunc!
 
 func! cmake#flags#inject_to_syntastic(target)
@@ -20,4 +20,16 @@ func! cmake#flags#inject_to_syntastic(target)
       exec("let g:syntastic_" . l:language . "_" . l:checker . "_args = \"" . l:args . "\"")
     endfor
   endfor
+endfunc!
+
+func! cmake#flags#inject_to_ycm(target)
+  " The only way I've seen flags been 'injected' to YCM is via Python.
+  " However, it only happened when YCM picked it up the Python source as
+  " an external file to be used with the platform. This means that the
+  " end user has to *want* to have us in that file. For now, we drop the
+  " tags here, according to type and have the clever Python extension
+  " we've added pick that up in the user's .ycm_extra_conf.py file a lá
+  " `vim.cmake`.
+  let l:flags = cmake#flags#target(a:target)
+  exec("let b:cmake_flags=". string(l:flags))
 endfunc!
