@@ -8,7 +8,7 @@ endfunc
 
 func! cmake#commands#clean()
   echomsg "[cmake] Cleaning..."
-  let l:output=make#util#run_make("clean")
+  let l:output = cmake#util#run_make("clean")
   if l:output != 0
     echomsg l:output
   end
@@ -16,7 +16,7 @@ endfunc
 
 func! cmake#commands#test()
   echomsg "[cmake] Testing project..."
-  let l:output=make#util#run_make("test")
+  let l:output = cmake#util#run_make("test")
   if l:output != 0
     echomsg l:output
   end
@@ -24,7 +24,7 @@ endfunc
 
 func! cmake#commands#install()
   echomsg "[cmake] Installing project..."
-  let l:output=make#util#run_make("install")
+  let l:output = cmake#util#run_make("install")
   if l:output != 0
     echomsg l:output
   end
