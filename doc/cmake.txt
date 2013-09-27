@@ -13,6 +13,11 @@ CONTENTS ~
   4.1 Creating a Project                           |:CMakeCreateBuild|
   4.2 Building                                     |:CMakeBuild|
   4.3 Cleaning                                     |:CMakeClean|
+  4.4 Testing                                      |:CMakeTest|
+  4.5 Installing                                   |:CMakeInstall|
+  4.6 Get Cache Variable's Value                   |:CMakeGetVar|
+  4.7 Invoking Targets                             |:CMakeTarget|
+  4.8 Cleaning & Building At Once                  |:CMakeCleanBuild|
 5. Integrations                                    |cmake-integrations|
   5.1 Syntastic                                    |cmake-integrations-syntastic|
   5.2 YouCompleteMe                                |cmake-integrations-ycm| 
@@ -124,16 +129,46 @@ provided in `g:cmake_build_directories` so take care to use one of those.
 It'll make the directory if it doesn't exist, remove `CMakeCache.txt` if it
 exists (with confirmation) and invoke CMake within that directory.
 
-4.2 BUILDING A PROJECT ~
+4.2 BUILDING ~
                                                                  *:CMakeBuild*
 
-Invokes `make -C $CMAKE_BINARY_DIR all`, building all CMake targets at once.
+Invokes `cmake --build $CMAKE_BINARY_DIR --target all`, building all CMake 
+targets at once.
 
-4.3 BUILDING A PROJECT ~
+4.3 CLEANING ~
                                                                  *:CMakeClean*
 
-Invokes `make -C $CMAKE_BINARY_DIR clean`, cleaning the project of build
-artificats. 
+Invokes `cmake --build $CMAKE_BINARY_DIR --target clean`, cleaning the project
+of build artificats. 
+
+4.4 TESTING ~
+                                                                  *:CMakeTest*
+
+Invokes `make -C $CMAKE_BINARY_DIR test`, running whatever you got for that
+target.
+
+4.5 INSTALLING ~
+                                                                *:CMakeInstall*
+
+Invokes `make -C $CMAKE_BINARY_DIR install`, installs all of the things!
+Doesn't take into consideration file permissions or access, silly ol' make.
+
+4.6 GET CACHE VARIABLE'S VALUE ~
+                                                                *:CMakeGetVar*
+
+Obtains the specified variable's value from CMake's cache. Note that fact, it
+has to be set into the cache for it to be retrieved.
+
+4.7 INVOKING TARGETS ~
+                                                                *:CMakeTarget*
+
+Invokes `cmake --build $CMAKE_BINARY_DIR --target <target>`, <target> being
+the target you'd choose to invoke.
+
+4.8 CLEANING & BUILDING AT ONCE ~
+                                                            *:CMakeCleanBuild*
+
+Invokes `:CMakeClean` and then `:CMakeBuild`.
 
 5. INTEGRATIONS ~
                                                           *cmake-integrations*
