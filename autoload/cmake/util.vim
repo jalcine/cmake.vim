@@ -77,7 +77,7 @@ func! cmake#util#read_from_cache(property)
 endfunc!
 
 func! cmake#util#write_to_cache(property,value)
-  " TODO: Use 'sed'.
+  call cmake#util#run_cmake('-D' . a:property . '=' . shellescape(a:value))
 endfunc!
 
 func! cmake#util#run_make(command)
@@ -88,3 +88,49 @@ func! cmake#util#run_make(command)
     return system(l:command)
   endif
 endfunc!
+
+func! cmake#util#shell_exec(command)
+  if g:cmake_use_vimux == 1 && g:loaded_vimux == 1
+    call VimuxRunCommand(a:command)
+    return 0
+  else
+    return system(a:command)
+  endif
+endfunc!
+
+func! cmake#util#targets()
+  let dirs = glob(cmake#util#binary_dir() ."**/*.dir", 0, 1)
+  for dir in dirs
+    let oldir = dir
+    let dir = substitute(dir, cmake#util#binary_dir(), "", "g")
+    let dir = substitute(dir, "**CMakeFiles/", "", "g")
+    let dir = substitute(dir, ".dir", "", "g")
+    let dirs[get(dirs, oldir)] = dir
+  endfor
+  echo dirs
+endfunc
+
+func! cmake#util#run_cmake(command, binary_dir, source_dir)
+  let l:binary_dir = a:binary_dir
+  let l:source_dir = a:source_dir
+
+  if empty(l:binary_dir) && empty(l:source_dir)
+    let l:binary_dir = cmake#util#binary_dir()
+  endif
+
+  if empty(l:source_dir) && !empty(l:binary_dir)
+    let l:source_dir = cmake#util#source_dir()
+  endif
+
+  if !empty(l:source_dir) && empty(l:binary_dir)
+    let l:binary_dir = "/tmp/vim-cmake-" . tempname()
+    call mkdir(l:binary_dir)
+  endif
+
+  let l:command = 'PWD=' . l:binary_dir . ' cmake ' . a:command . ' ' .
+   \ l:binary_dir . ' ' . l:source_dir
+
+  return cmake#util#shell_exec(l:command)
+endfunc!
+
+
