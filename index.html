@@ -1,33 +1,36 @@
 <!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="cmake.vim : Incorporates the functionality of CMake into Vim." />
 
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-    <title>cmake.vim by jalcine</title>
+    <title>cmake.vim</title>
   </head>
 
   <body>
 
-    <header>
-      <div class="container">
-        <h1>cmake.vim</h1>
-        <h2>Incorporates the functionality of CMake into Vim.</h2>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/jalcine/cmake.vim">View on GitHub</a>
 
-        <section id="downloads">
-          <a href="https://github.com/jalcine/cmake.vim/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/jalcine/cmake.vim/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/jalcine/cmake.vim" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
-      </div>
-    </header>
+          <h1 id="project_title">cmake.vim</h1>
+          <h2 id="project_tagline">Incorporates the functionality of CMake into Vim.</h2>
 
-    <div class="container">
-      <section id="main_content">
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/jalcine/cmake.vim/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/jalcine/cmake.vim/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h1>
 <a name="cmake-project-support-in-vim" class="anchor" href="#cmake-project-support-in-vim"><span class="octicon octicon-link"></span></a>CMake Project Support in Vim</h1>
 
@@ -37,11 +40,11 @@ C++ projects. <a href="http://www.vim.org">Vim</a> is the ultimate text editor. 
 along with the power of gray skull, CMake support in Vim is born.</p>
 </blockquote>
 
-<hr><p><a href="https://github.com/jalcine/cmake.vim/tree/v0.1.9"><code>cmake.vim</code></a> <code>v0.1.9</code> is a Vim 
+<hr><p><a href="https://github.com/jalcine/cmake.vim/tree/v0.2.0"><code>cmake.vim</code></a> <code>v0.2.0</code> is a Vim 
 plugin that allows you to build your projects that are based on the CMake 
 meta-build system.</p>
 
-<p>If lost, run <code>:help cmake</code> for more information.</p>
+<p>If lost, run <code>:help cmake</code> for a bit of guidance.</p>
 
 <h2>
 <a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
@@ -86,11 +89,36 @@ event that you happen to build your CMake project in a sub-directory. Check
 out <code>:help cmake-options</code> for more information.</p>
 
 <h2>
+<a name="integrations" class="anchor" href="#integrations"><span class="octicon octicon-link"></span></a>Integrations</h2>
+
+<p>See [<code>:help cmake-integrations</code>][doc/cmake.txt] for tips on integrations <code>cmake.vim</code> with
+other plug-ins like <code>syntastic</code> or <code>YouCompleteMe</code>.</p>
+
+<h2>
 <a name="known-issues" class="anchor" href="#known-issues"><span class="octicon octicon-link"></span></a>Known Issues</h2>
 
 <ul>
 <li>You can't pass in options for configuring the project at first-run (or
-later on, actually).</li>
+later on, actually). At the moment, you can <em>obtain</em> values from the cache
+by using <code>:CMakeGetVar</code>.</li>
+</ul><h2>
+<a name="to-dos" class="anchor" href="#to-dos"><span class="octicon octicon-link"></span></a>To-Dos</h2>
+
+<ul>
+<li>Provide <code>:CMakeBuildTarget</code> that'd build the target provided. If a file is
+to be provided, find the target for that file and build the target it
+belongs to (restricted to source files).
+
+<ul>
+<li>Also for <code>:CMakeCleanTarget</code> since we can determine pre-target cleaning
+information.</li>
+</ul>
+</li>
+<li>Improve integration's use flag lookup and discovery on a per-target basis
+and a per-file basis (restricted to source files).</li>
+<li>Pass an argument string to <code>:CMakeCreateBuild</code>.</li>
+<li>Allow setting and getting values using <code>:CMakeGetVar</code> and <code>:CMakeSetVar</code>.</li>
+<li>Expose <code>cmake.vim</code>'s buffer commands only in <code>worthy</code> buffers.</li>
 </ul><h2>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
@@ -105,6 +133,14 @@ I also chat a lot like a firehose so follow with caution!</p>
       </section>
     </div>
 
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">cmake.vim maintained by <a href="https://github.com/jalcine">jalcine</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -115,6 +151,7 @@ I also chat a lot like a firehose so follow with caution!</p>
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
+
 
   </body>
 </html>
