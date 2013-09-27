@@ -31,5 +31,9 @@ func! cmake#flags#inject_to_ycm(target)
   " we've added pick that up in the user's .ycm_extra_conf.py file a lá
   " `vim.cmake`.
   let l:flags = cmake#flags#target(a:target)
+  for l:flag in keys(l:flags)
+    let l:bck = remove(l:flags, l:flag)
+    let l:flags[l:flag] = split(l:bck, " ", 0)
+  endfor
   exec("let b:cmake_flags=". string(l:flags))
 endfunc!
