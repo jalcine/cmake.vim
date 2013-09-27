@@ -5,8 +5,8 @@ func! cmake#flags#target(target)
   endif
 
   return { 
-        \ "c"   : system("grep 'C_FLAGS = ' " . l:flags_file . " | cut -b 11-"),
-        \ "cpp" : system("grep 'CXX_FLAGS = ' " . l:flags_file . " | cut -b 13-")
+        \ "c"   : split(system("grep 'C_FLAGS = ' " . l:flags_file . " | cut -b 11-")),
+        \ "cpp" : split(system("grep 'CXX_FLAGS = ' " . l:flags_file . " | cut -b 13-"))
         \  }
 endfunc!
 
@@ -17,7 +17,7 @@ func! cmake#flags#inject_to_syntastic(target)
     let l:checkers = eval("g:syntastic_" . l:language . "_checkers")
     for l:checker in l:checkers
       let l:args = l:flags[l:language]
-      exec("let g:syntastic_" . l:language . "_" . l:checker . "_args = \"" . l:args . "\"")
+      exec("let g:syntastic_" . l:language . "_" . l:checker . "_args ='" . join(l:args, " ") . "'")
     endfor
   endfor
 endfunc!
@@ -31,9 +31,5 @@ func! cmake#flags#inject_to_ycm(target)
   " we've added pick that up in the user's .ycm_extra_conf.py file a lá
   " `vim.cmake`.
   let l:flags = cmake#flags#target(a:target)
-  for l:flag in keys(l:flags)
-    let l:bck = remove(l:flags, l:flag)
-    let l:flags[l:flag] = split(l:bck, " ", 0)
-  endfor
   exec("let b:cmake_flags=". string(l:flags))
 endfunc!
