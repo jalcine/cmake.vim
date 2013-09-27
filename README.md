@@ -58,6 +58,16 @@ other plug-ins like `syntastic` or `YouCompleteMe`.
   * You can't pass in options for configuring the project at first-run (or
     later on, actually).
 
+## To-Dos
+
+  * Provide `:CMakeBuildTarget` that'd build the target provided. If a file is
+    to be provided, find the target for that file and build the target it
+    belongs to (restricted to source files).
+    * Also for `:CMakeCleanTarget` since we can determine pre-target cleaning
+      information.
+  * Improve integration's use flag lookup and discovery on a per-target basis
+    and a per-file basis (restricted to source files).
+
 ## License
 This code is released and available under the MIT license. Multiply and be 
 fruitful.
