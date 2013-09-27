@@ -6,16 +6,15 @@
 
 ---
 
-[`cmake.vim`](https://github.com/jalcine/cmake.vim/tree/v0.1.9-1) `v0.1.9-1` is a Vim 
+[`cmake.vim`](https://github.com/jalcine/cmake.vim/tree/v0.2.0) `v0.2.0` is a Vim 
 plugin that allows you to build your projects that are based on the CMake 
 meta-build system.
 
-If lost, run `:help cmake` for more information.
+If lost, run `:help cmake` for a bit of guidance.
 
 ## Requirements
 At the time of writing, `cmake.vim` has been tested with Vim 7.3+ in nocp mode 
 and CMake 2.8.
-
 
 ## Installing
 I recommending using [Vundle](http://github.com/gmarik/vundle) to install 
@@ -56,7 +55,8 @@ other plug-ins like `syntastic` or `YouCompleteMe`.
 ## Known Issues
 
   * You can't pass in options for configuring the project at first-run (or
-    later on, actually).
+    later on, actually). At the moment, you can *obtain* values from the cache
+    by using `:CMakeGetVar`.
 
 ## To-Dos
 
