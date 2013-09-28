@@ -1,3 +1,11 @@
+" File:             autoload/cmake/commands.vim
+" Description:      The "API" of cmake.vim.
+" Author:           Jacky Alciné <me@jalcine.me>
+" License:          MIT
+" Website:          https://jalcine.github.io/cmake.vim
+" Version:          0.2.0
+" Last Modified:    2013-09-28 15:21:51 EDT
+
 func! cmake#commands#build()
   echomsg "[cmake] Building all targets..."
   let l:output = cmake#util#run_cmake("--build", "","")

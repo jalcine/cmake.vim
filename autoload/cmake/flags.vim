@@ -1,3 +1,11 @@
+" File:             autoload/cmake/flags.vim
+" Description:      Handles the act of injecting flags into Vim.
+" Author:           Jacky Alciné <me@jalcine.me>
+" License:          MIT
+" Website:          https://jalcine.github.io/cmake.vim
+" Version:          0.2.0
+" Last Modified:    2013-09-28 15:21:21 EDT
+
 func! cmake#flags#target(target)
   let l:flags_file = glob(cmake#util#binary_dir() . '**/' . a:target . '.dir/**/*flags.make', 1)
   if len(l:flags_file) == 0

@@ -1,9 +1,10 @@
-""""""""""""""""""""""""""""""""""""""""
-" @author: Jacky Alciné <me@jalcine.me>
-" @date:   2013-09-26 00:31:53 EDT
-"
-" Utility methods to manipulate CMake.
-""""""""""""""""""""""""""""""""""""""""
+" File:             autoload/cmake/util.vim
+" Description:      Power methods for cmake.vim.
+" Author:           Jacky Alciné <me@jalcine.me>
+" License:          MIT
+" Website:          https://jalcine.github.io/cmake.vim
+" Version:          0.2.0
+" Last Modified:    2013-09-28 15:21:31 EDT
 
 func! cmake#util#binary_dir()
   " If we found it already, don't waste effort.

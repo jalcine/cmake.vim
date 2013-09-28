@@ -1,3 +1,10 @@
+" File:             plugin/cmake.vim
+" Description:      Primary plug-in entry point for cmake.vim
+" Author:           Jacky Alciné <me@jalcine.me>
+" License:          MIT
+" Website:          https://jalcine.github.io/cmake.vim
+" Version:          0.2.0
+
 " If we're here, don't reload man.
 if exists("g:loaded_cmake") 
   finish
