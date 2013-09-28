@@ -42,22 +42,22 @@ func! cmake#util#source_dir()
   return cmake#util#read_from_cache("Project_SOURCE_DIR")
 endfunc!
 
-func! cmake#util#cmake_cache_file_path()
+func! cmake#util#cache_file_path()
   let l:dir = cmake#util#binary_dir()
-  if isdirectory(l:dir)
+  if isdirectory(l:dir) && filereadable(l:dir . "/CMakeCache.txt")
     return l:dir . "/CMakeCache.txt"
   endif
 
-  return ""
+  return 0
 endfunc!
 
 func! cmake#util#read_from_cache(property)
-  let l:cmake_cache_file = cmake#util#cmake_cache_file_path()
+  let l:cmake_cache_file = cmake#util#cache_file_path()
   let l:property_width = strlen(a:property) + 2
 
   " If we can't find the cache file, then there's no point in trying to read
   " it.
-  if !filereadable(cmake#util#cmake_cache_file_path())
+  if !filereadable(cmake#util#cache_file_path())
     return ""
   endif
 
@@ -72,8 +72,7 @@ func! cmake#util#read_from_cache(property)
 
   " Split it in half to get the resulting value and its type.
   let l:property_fields = split(l:property_meta_value, "=", 1)
-  let l:property_fields[1] = substitute(l:property_fields[1], "\n", "", "")
-  let l:property_fields[1] = substitute(l:property_fields[1], "\n", "", "")
+  let l:property_fields[1] = substitute(l:property_fields[1], "\n", "", "g")
 
   return l:property_fields
 endfunc!
@@ -100,18 +99,6 @@ func! cmake#util#shell_exec(command)
   endif
 endfunc!
 
-func! cmake#util#targets()
-  let dirs = glob(cmake#util#binary_dir() ."**/*.dir", 0, 1)
-  for dir in dirs
-    let oldir = dir
-    let dir = substitute(dir, cmake#util#binary_dir(), "", "g")
-    let dir = substitute(dir, "**CMakeFiles/", "", "g")
-    let dir = substitute(dir, ".dir", "", "g")
-    let dirs[get(dirs, oldir)] = dir
-  endfor
-  echo dirs
-endfunc
-
 func! cmake#util#run_cmake(command, binary_dir, source_dir)
   let l:binary_dir = a:binary_dir
   let l:source_dir = a:source_dir
@@ -136,12 +123,6 @@ func! cmake#util#run_cmake(command, binary_dir, source_dir)
 endfunc!
 
 func! cmake#util#handle_injection()
-  let curFileName = fnamemodify(bufname('%'), ':p')
-  let theTarget   = cmake#targets#for_file(curFileName)
-
   call cmake#commands#install_ex()
-
-  if !empty(theTarget) && exists("g:cmake_inject_tags")
-    call cmake#flags#inject(theTarget)
-  endif
+  call cmake#flags#inject()
 endfunc!
