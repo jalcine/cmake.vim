@@ -12,9 +12,9 @@ func! cmake#targets#build(target)
         \ " --target " . a:target . " -- ", "", "")
 endfunc!
 
-func! cmake#targets#clean()
+"func! cmake#targets#clean(target)
   " TODO: This requires a bit of magic.
-endfunc!
+"endfunc!
 
 func! cmake#targets#binary_dir(target)
   let l:dir = glob(cmake#util#binary_dir() . '**/' . a:target . '.dir', 1)
