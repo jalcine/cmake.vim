@@ -21,29 +21,30 @@ endfunc!
 func! cmake#flags#parse(flagstr)
   let l:flags = split(a:flagstr)
 
-  for flag in flags
-    let l:index = index(flags, flag)
-    let l:isAInclude = stridx(flag, '-I')
-    let l:isAIncludeFlagger = stridx(flag, '-i')
-    let l:isAWarning = stridx(flag, '-W')
-    let l:isValidFlag = !(isAInclude == -1 && 
-    \ isAWarning == -1 &&
-    \ isAIncludeFlagger == -1
-    \ )
+  if g:cmake_flags.filter == 1
+    for flag in flags
+      let l:index = index(flags, flag)
+      let l:isAInclude = stridx(flag, '-I')
+      let l:isAIncludeFlagger = stridx(flag, '-i')
+      let l:isAWarning = stridx(flag, '-W')
+      let l:isValidFlag = !(isAInclude == -1 && 
+      \ isAWarning == -1 &&
+      \ isAIncludeFlagger == -1
+      \ )
 
-    if !isValidFlag
-      echo flag . " " . index . " " . isAInclude . " " . isAIncludeFlagger . " " . isAWarning
-      unlet flags[index]
-      continue
-    else
-      if isdirectory(flag) && 
-            \ (stridx(flags[index - 1], '-i') || stridx(flags[index - 1], '-I'))
+      if !isValidFlag
+        echo flag . " " . index . " " . isAInclude . " " . isAIncludeFlagger . " " . isAWarning
+        unlet flags[index]
         continue
+      else
+        if isdirectory(flag) && 
+              \ (stridx(flags[index - 1], '-i') || stridx(flags[index - 1], '-I'))
+          continue
+        endif
       endif
-    endif
-  endfor
+    endfor
+  endif
 
-  echo "Result: " . join(flags, " ")
   return flags
 endfunc!
 
