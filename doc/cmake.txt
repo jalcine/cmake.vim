@@ -112,6 +112,21 @@ Determines whether or not the 'makeprg' value in Vim will be set to a tweaked
 
 NOTE: This is a future support option and currently does nothing.
 
+3.8. USING VIMUX AS SHELL ~
+                                                    *cmake-options-use-vimux*
+
+Toggles the use of Vimux as the tool to execute shell commands with.
+
+NOTE: Using Vimux currently disables the automatic population of `:cwindow`.
+This is a known bug.
+
+3.9. INTEGRATIONS ~
+                                                 *cmake-options-inject-flags*
+
+Determines which known integrations are to be enabled like Syntastic or
+YouCompleteMe. By default, `cmake.vim` checks if each plug-in exists and
+enables if they are present. To disable, set the value to 0.
+
 4. METHODS ~
                                                                *cmake-methods*
 
