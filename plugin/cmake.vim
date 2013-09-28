@@ -3,7 +3,8 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.2.0
+" Version:          0.2.1
+" Last Modified:    2013-09-28 19:32:47 EDT
 
 " If we're here, don't reload man.
 if exists("g:loaded_cmake") 

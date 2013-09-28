@@ -6,7 +6,7 @@
 
 ---
 
-[`cmake.vim`](https://github.com/jalcine/cmake.vim/tree/v0.2.0) `v0.2.0` is a Vim 
+[`cmake.vim`](https://github.com/jalcine/cmake.vim/tree/v0.2.1) `v0.2.1` is a Vim 
 plugin that allows you to build your projects that are based on the CMake 
 meta-build system.
 
