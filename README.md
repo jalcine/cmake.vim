@@ -30,7 +30,10 @@ After you installed the plugin, just `cd` into the directory where the
 top-level CMakeLists.txt can be found and run:
 
 ```viml
+" Create a new binary directory for your clean project.
 :CMakeCreateProject <build-dir-name>
+
+" Build all of the targets.
 :CMakeBuild
 ```
 
@@ -51,6 +54,9 @@ out `:help cmake-options` for more information.
 
 See [`:help cmake-integrations`][doc/cmake.txt] for tips on integrations `cmake.vim` with
 other plug-ins like `syntastic` or `YouCompleteMe`.
+
+*target-specific*, allowing for fine-grained integration for every single
+file. **Awesome!**
 
 ## Known Issues
 

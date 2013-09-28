@@ -21,6 +21,7 @@ CONTENTS ~
 5. Integrations                                    |cmake-integrations|
   5.1 Syntastic                                    |cmake-integrations-syntastic|
   5.2 YouCompleteMe                                |cmake-integrations-ycm| 
+  5.2 YouCompleteMe                                |cmake-integrations-ycm| 
 
 ===========================================================================
 
@@ -114,6 +115,17 @@ NOTE: This is a future support option and currently does nothing.
 4. METHODS ~
                                                                *cmake-methods*
 
+This is a known bug.
+
+3.9. INTEGRATIONS ~
+                                                 *cmake-options-inject-flags*
+
+Determines which known integrations are to be enabled like Syntastic or
+YouCompleteMe. By default, `cmake.vim` checks if each plug-in exists and
+enables if they are present. To disable, set the value to 0.
+
+4. METHODS ~
+                                                               *cmake-methods*
 There's a few methods binded to the editor for use of the developer. In the
 future, some of these methods might be automatically mapped to the keyboard
 within CMake files for easy use.
@@ -212,6 +224,21 @@ flags to the value passed as the "flags" value in the return hash, like so:
     }
 
 With that, any include directories 
+
+Just make sure that when you return the method, you ADD the
+flags to the value passed as the "flags" value in the return hash, like so:
+
+    final_flags += cmake_flags
+
+    return {
+      'flags' : final_tags,
+      'do_cache' : True
+    }
+
+With that, any include directories defined by that specific target are
+included to that file.
+
+This can be disabled by setting `b:cmake_integrations.ycm` to 0.
 
 
 vim:tw=78:ts=8:ft=help:norl:
