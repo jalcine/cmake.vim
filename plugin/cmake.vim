@@ -41,8 +41,8 @@ endfor
 
 " Set the command!
 if exists("g:cmake_set_makeprg") && g:cmake_set_makeprg == 1
-  let l:build_dir = cmake#util#binary_dir()
-  if !empty(l:build_dir)
-    set makeprg="make -C " . l:build_dir
+  let build_dir = cmake#util#binary_dir()
+  if !empty(build_dir)
+    set makeprg="make -C " . build_dir
   endif
 endif
