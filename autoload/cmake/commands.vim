@@ -106,7 +106,7 @@ function! cmake#commands#install_ex()
   command! -buffer -nargs=0 CMakeClearBufferOpts
         \ :unlet b:cmake_binary_dir
   command! -buffer -nargs=0 CMakeBuildCurrent
-        \ :call cmake#commands#build_target_for_file(fnamemodify(bufname('%')))
+        \ :call cmake#commands#build_target_for_file(fnamemodify(bufname('%'), ':p'))
 
   command! -buffer -nargs=1 CMakeTarget
         \ :call cmake#targets#build("<args>")
