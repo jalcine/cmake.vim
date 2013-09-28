@@ -6,18 +6,6 @@
 " Version:          0.2.0
 " Last Modified:    2013-09-28 15:21:21 EDT
 
-func! cmake#flags#target(target)
-  let l:flags_file = glob(cmake#util#binary_dir() . '**/' . a:target . '.dir/**/*flags.make', 1)
-  if len(l:flags_file) == 0 || !filereadable(l:flags_file)
-    return 0
-  endif
-
-  return { 
-    \ "c"   : cmake#flags#parse(system("grep 'C_FLAGS = ' " . l:flags_file . " | cut -b 11-")),
-    \ "cpp" : cmake#flags#parse(system("grep 'CXX_FLAGS = ' " . l:flags_file . " | cut -b 13-"))
-    \  }
-endfunc!
-
 func! cmake#flags#parse(flagstr)
   let l:flags = split(a:flagstr)
 
@@ -48,13 +36,14 @@ func! cmake#flags#parse(flagstr)
   return flags
 endfunc!
 
-func! cmake#flags#inject(target)
-  call cmake#flags#inject_to_syntastic(a:target)
-  call cmake#flags#inject_to_ycm(a:target)
+func! cmake#flags#inject()
+  let target = cmake#targets#corresponding_target(fnamemodify(bufname('%')))
+  call cmake#flags#inject_to_syntastic(target)
+  call cmake#flags#inject_to_ycm(target)
 endfunc
 
 func! cmake#flags#inject_to_syntastic(target)
-  if exists("g:loaded_syntastic_checker") && !empty(g:cmake_inject_flags['syntastic'])
+  if exists("g:loaded_syntastic_checker") && !empty(g:cmake_inject_flags.syntastic)
     let l:flags = cmake#flags#target(a:target)
     for l:language in keys(l:flags)
       let l:checkers = eval("g:syntastic_" . l:language . "_checkers")
@@ -67,7 +56,7 @@ func! cmake#flags#inject_to_syntastic(target)
 endfunc!
 
 func! cmake#flags#inject_to_ycm(target)
-  if exists("g:ycm_check_if_ycm_core_present") && !empty(g:cmake_inject_flags['ycm'])
+  if exists("g:ycm_check_if_ycm_core_present") && !empty(g:cmake_inject_flags.ycm)
     " The only way I've seen flags been 'injected' to YCM is via Python.
     " However, it only happened when YCM picked it up the Python source as
     " an external file to be used with the platform. This means that the
