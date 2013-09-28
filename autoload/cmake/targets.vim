@@ -64,7 +64,7 @@ func! cmake#targets#corresponding_file(filepath)
     endif
     let files = cmake#targets#files(target)
 
-    if !empty(files) && index(files, fnamemodify(bufname('%'), ':p')) != -1 
+    if !empty(files) && index(files, fnamemodify(filepath, ':p')) != -1 
       let b:cmake_corresponding_target = l:target
       break
     else
