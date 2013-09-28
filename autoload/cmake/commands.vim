@@ -20,6 +20,15 @@ func! cmake#commands#invoke_target(target)
   call cmake#util#run_cmake("--build ". cmake#util#binary_dir() . " --target " . a:target. " --", "", "")
 endfunc
 
+func! cmake#commands#build_target_for_file(file)
+  let target = cmake#targets#corresponding_file(a:file)
+  if empty(target)
+    return 0
+  endif
+
+  call cmake#targets#build(target)
+endfunc
+
 func! cmake#commands#clean()
   echomsg "[cmake] Cleaning build..."
   let l:output = cmake#util#run_make("clean")
@@ -96,9 +105,11 @@ function! cmake#commands#install_ex()
         \ :call cmake#commands#install()
   command! -buffer -nargs=0 CMakeClearBufferOpts
         \ :unlet b:cmake_binary_dir
+  command! -buffer -nargs=0 CMakeBuildCurrent
+        \ :call cmake#commads#build_target_for_file(fnamemodify(bufname('%')))
 
   command! -buffer -nargs=1 CMakeTarget
-        \ :call cmake#commands#invoke_target("<args>")
+        \ :call cmake#targets#build("<args>")
   command! -buffer -nargs=1 CMakeCreateBuild
         \ :call cmake#commands#create_build("<args>")
   command! -buffer -nargs=1 CMakeGetVar
