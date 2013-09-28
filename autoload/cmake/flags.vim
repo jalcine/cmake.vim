@@ -8,14 +8,43 @@
 
 func! cmake#flags#target(target)
   let l:flags_file = glob(cmake#util#binary_dir() . '**/' . a:target . '.dir/**/*flags.make', 1)
-  if len(l:flags_file) == 0
+  if len(l:flags_file) == 0 || !filereadable(l:flags_file)
     return 0
   endif
 
   return { 
-    \ "c"   : split(system("grep 'C_FLAGS = ' " . l:flags_file . " | cut -b 11-")),
-    \ "cpp" : split(system("grep 'CXX_FLAGS = ' " . l:flags_file . " | cut -b 13-"))
+    \ "c"   : cmake#flags#parse(system("grep 'C_FLAGS = ' " . l:flags_file . " | cut -b 11-")),
+    \ "cpp" : cmake#flags#parse(system("grep 'CXX_FLAGS = ' " . l:flags_file . " | cut -b 13-"))
     \  }
+endfunc!
+
+func! cmake#flags#parse(flagstr)
+  let l:flags = split(a:flagstr)
+
+  for flag in flags
+    let l:index = index(flags, flag)
+    let l:isAInclude = stridx(flag, '-I')
+    let l:isAIncludeFlagger = stridx(flag, '-i')
+    let l:isAWarning = stridx(flag, '-W')
+    let l:isValidFlag = !(isAInclude == -1 && 
+    \ isAWarning == -1 &&
+    \ isAIncludeFlagger == -1
+    \ )
+
+    if !isValidFlag
+      echo flag . " " . index . " " . isAInclude . " " . isAIncludeFlagger . " " . isAWarning
+      unlet flags[index]
+      continue
+    else
+      if isdirectory(flag) && 
+            \ (stridx(flags[index - 1], '-i') || stridx(flags[index - 1], '-I'))
+        continue
+      endif
+    endif
+  endfor
+
+  echo "Result: " . join(flags, " ")
+  return flags
 endfunc!
 
 func! cmake#flags#inject(target)
