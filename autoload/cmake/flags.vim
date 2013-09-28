@@ -37,7 +37,7 @@ func! cmake#flags#parse(flagstr)
 endfunc!
 
 func! cmake#flags#inject()
-  if empty(g:cmake_inject_tags)
+  if empty(g:cmake_inject_flags)
     return 0
   endif
 
