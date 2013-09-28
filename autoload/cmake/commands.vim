@@ -86,6 +86,8 @@ function! cmake#commands#install_ex()
         \ :call cmake#commands#test()
   command! -buffer -nargs=0 CMakeInstall
         \ :call cmake#commands#install()
+  command! -buffer -nargs=0 CMakeClearBufferOpts
+        \ :unlet b:cmake_binary_dir
 
   command! -buffer -nargs=1 CMakeTarget
         \ :call cmake#commands#invoke_target("<args>")

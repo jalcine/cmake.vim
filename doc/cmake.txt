@@ -18,6 +18,7 @@ CONTENTS ~
   4.6 Get Cache Variable's Value                   |:CMakeGetVar|
   4.7 Invoking Targets                             |:CMakeTarget|
   4.8 Cleaning & Building At Once                  |:CMakeCleanBuild|
+  4.9 Clearing Buffer Options                      |:CMakeClearBufferOpts|
 5. Integrations                                    |cmake-integrations|
   5.1 Syntastic                                    |cmake-integrations-syntastic|
   5.2 YouCompleteMe                                |cmake-integrations-ycm| 
@@ -169,6 +170,14 @@ the target you'd choose to invoke.
                                                             *:CMakeCleanBuild*
 
 Invokes `:CMakeClean` and then `:CMakeBuild`.
+
+4.9 CLEARING BUFFER OPTIONS ~
+                                                       *:CMakeClearBufferOpts*
+
+In order to make things quick, the path to $CMAKE_BINARY_DIR is cached in the
+buffer to speed things up. It's not saved globally since you can have
+different CMake projects open in one Vim session (though you would have to
+`:cd` Vim first to even get it to notice that, but that's a bug).
 
 5. INTEGRATIONS ~
                                                           *cmake-integrations*
