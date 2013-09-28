@@ -74,6 +74,32 @@ func! cmake#commands#set_var(variable,value)
   call cmake#util#write_to_cache(a:variable,a:value)
 endfunc!
 
+function! cmake#commands#install_ex()
+  " Set Ex commands.
+  command! -buffer -nargs=0 CMakeBuild
+        \ :call cmake#commands#build()
+  command! -buffer -nargs=0 CMakeClean
+        \ :call cmake#commands#clean()
+  command! -buffer -nargs=0 CMakeCleanBuild 
+        \ :call s:clean_then_build()
+  command! -buffer -nargs=0 CMakeTest
+        \ :call cmake#commands#test()
+  command! -buffer -nargs=0 CMakeInstall
+        \ :call cmake#commands#install()
+
+  command! -buffer -nargs=1 CMakeTarget
+        \ :call cmake#commands#invoke_target("<args>")
+  command! -buffer -nargs=1 CMakeCreateBuild
+        \ :call cmake#commands#create_build("<args>")
+  command! -buffer -nargs=1 CMakeGetVar
+        \ :echo cmake#commands#get_var("<args>")
+endfunc!
+
+func! s:clean_then_build()
+  call cmake#commands#clean()
+  call cmake#commands#build()
+endfunc
+
 func! s:get_build_opts()
   let l:command =  [ '-G "Unix Makefiles" ']
   let l:command += [ "-DCMAKE_INSTALL_PREFIX:FILEPATH="  . g:cmake_install_prefix ]

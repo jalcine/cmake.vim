@@ -5,9 +5,9 @@ func! cmake#flags#target(target)
   endif
 
   return { 
-        \ "c"   : split(system("grep 'C_FLAGS = ' " . l:flags_file . " | cut -b 11-")),
-        \ "cpp" : split(system("grep 'CXX_FLAGS = ' " . l:flags_file . " | cut -b 13-"))
-        \  }
+    \ "c"   : split(system("grep 'C_FLAGS = ' " . l:flags_file . " | cut -b 11-")),
+    \ "cpp" : split(system("grep 'CXX_FLAGS = ' " . l:flags_file . " | cut -b 13-"))
+    \  }
 endfunc!
 
 func! cmake#flags#inject(target)
@@ -16,7 +16,7 @@ func! cmake#flags#inject(target)
 endfunc
 
 func! cmake#flags#inject_to_syntastic(target)
-  if exists("g:loaded_syntastic_checker")
+  if exists("g:loaded_syntastic_checker") && !empty(g:cmake_inject_flags['syntastic'])
     let l:flags = cmake#flags#target(a:target)
     for l:language in keys(l:flags)
       let l:checkers = eval("g:syntastic_" . l:language . "_checkers")
@@ -29,7 +29,7 @@ func! cmake#flags#inject_to_syntastic(target)
 endfunc!
 
 func! cmake#flags#inject_to_ycm(target)
-  if exists("g:ycm_check_if_ycm_core_present")
+  if exists("g:ycm_check_if_ycm_core_present") && !empty(g:cmake_inject_flags['ycm'])
     " The only way I've seen flags been 'injected' to YCM is via Python.
     " However, it only happened when YCM picked it up the Python source as
     " an external file to be used with the platform. This means that the
@@ -44,16 +44,3 @@ func! cmake#flags#inject_to_ycm(target)
     exec("let b:cmake_flags=". string(cmake#flags#target(a:target)))
   endif
 endfunc!
-
-func! s:check_to_inject()
-  " TODO: When we can do file-based target detection, we use that file to
-  " determine the target. If &ft is in the keys for b:cmake_flags then we use
-  " only those flags in cmake#flags#inject_to_*.
-
-  " Better yet, just use ftdetect/{cpp,c}/cmake.vim to do the magic.
-endfunc!
-
-augroup cmake_inject
-  au!
-  au BufReadPost * :call s:check_to_inject()
-augroup END

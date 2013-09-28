@@ -128,9 +128,18 @@ func! cmake#util#run_cmake(command, binary_dir, source_dir)
   endif
 
   let l:command = 'PWD=' . l:binary_dir . ' cmake ' . a:command . ' ' .
-   \ l:binary_dir . ' ' . l:source_dir
+        \ l:binary_dir . ' ' . l:source_dir
 
   return cmake#util#shell_exec(l:command)
 endfunc!
 
+func! cmake#util#handle_injection()
+  let curFileName = fnamemodify(bufname('%'), ':p')
+  let theTarget   = cmake#targets#for_file(curFileName)
 
+  if !empty(theTarget) && exists("g:cmake_inject_tags")
+    call cmake#flags#inject(theTarget)
+  endif
+
+  call cmake#commands#install_ex()
+endfunc!
