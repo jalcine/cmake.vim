@@ -30,7 +30,7 @@ let s:options = {
   \  "g:cmake_use_vimux":           exists("g:loaded_vimux"),
   \  "g:cmake_inject_flags":        {
       \ "syntastic":                exists("g:loaded_syntastic_plugin"),
-      \ "ycm"                       exists("g:ycm_check_if_ycm_core_present")
+      \ "ycm":                      exists("g:ycm_check_if_ycm_core_present")
       \ }
   \ }
 
