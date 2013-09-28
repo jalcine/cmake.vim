@@ -1,3 +1,11 @@
+" File:             autoload/cmake/commands.vim
+" Description:      The "API" of cmake.vim.
+" Author:           Jacky Alciné <me@jalcine.me>
+" License:          MIT
+" Website:          https://jalcine.github.io/cmake.vim
+" Version:          0.2.0
+" Last Modified:    2013-09-28 15:21:51 EDT
+
 func! cmake#commands#build()
   echomsg "[cmake] Building all targets..."
   let l:output = cmake#util#run_cmake("--build", "","")
@@ -10,6 +18,15 @@ endfunc
 func! cmake#commands#invoke_target(target)
   echomsg "[cmake] Invoking target '" . a:target . "'..."
   call cmake#util#run_cmake("--build ". cmake#util#binary_dir() . " --target " . a:target. " --", "", "")
+endfunc
+
+func! cmake#commands#build_target_for_file(file)
+  let target = cmake#targets#corresponding_file(a:file)
+  if empty(target)
+    return 0
+  endif
+
+  call cmake#targets#build(target)
 endfunc
 
 func! cmake#commands#clean()
@@ -73,6 +90,36 @@ endfunc!
 func! cmake#commands#set_var(variable,value)
   call cmake#util#write_to_cache(a:variable,a:value)
 endfunc!
+
+function! cmake#commands#install_ex()
+  " Set Ex commands.
+  command! -buffer -nargs=0 CMakeBuild
+        \ :call cmake#commands#build()
+  command! -buffer -nargs=0 CMakeClean
+        \ :call cmake#commands#clean()
+  command! -buffer -nargs=0 CMakeCleanBuild 
+        \ :call s:clean_then_build()
+  command! -buffer -nargs=0 CMakeTest
+        \ :call cmake#commands#test()
+  command! -buffer -nargs=0 CMakeInstall
+        \ :call cmake#commands#install()
+  command! -buffer -nargs=0 CMakeClearBufferOpts
+        \ :unlet b:cmake_binary_dir
+  command! -buffer -nargs=0 CMakeBuildCurrent
+        \ :call cmake#commands#build_target_for_file(fnamemodify(bufname('%'), ':p'))
+
+  command! -buffer -nargs=1 CMakeTarget
+        \ :call cmake#targets#build("<args>")
+  command! -buffer -nargs=1 CMakeCreateBuild
+        \ :call cmake#commands#create_build("<args>")
+  command! -buffer -nargs=1 CMakeGetVar
+        \ :echo cmake#commands#get_var("<args>")
+endfunc!
+
+func! s:clean_then_build()
+  call cmake#commands#clean()
+  call cmake#commands#build()
+endfunc
 
 func! s:get_build_opts()
   let l:command =  [ '-G "Unix Makefiles" ']

@@ -18,6 +18,7 @@ CONTENTS ~
   4.6 Get Cache Variable's Value                   |:CMakeGetVar|
   4.7 Invoking Targets                             |:CMakeTarget|
   4.8 Cleaning & Building At Once                  |:CMakeCleanBuild|
+  4.9 Clearing Buffer Options                      |:CMakeClearBufferOpts|
 5. Integrations                                    |cmake-integrations|
   5.1 Syntastic                                    |cmake-integrations-syntastic|
   5.2 YouCompleteMe                                |cmake-integrations-ycm| 
@@ -111,6 +112,21 @@ Determines whether or not the 'makeprg' value in Vim will be set to a tweaked
 
 NOTE: This is a future support option and currently does nothing.
 
+3.8. USING VIMUX AS SHELL ~
+                                                    *cmake-options-use-vimux*
+
+Toggles the use of Vimux as the tool to execute shell commands with.
+
+NOTE: Using Vimux currently disables the automatic population of `:cwindow`.
+This is a known bug.
+
+3.9. INTEGRATIONS ~
+                                                 *cmake-options-inject-flags*
+
+Determines which known integrations are to be enabled like Syntastic or
+YouCompleteMe. By default, `cmake.vim` checks if each plug-in exists and
+enables if they are present. To disable, set the value to 0.
+
 4. METHODS ~
                                                                *cmake-methods*
 
@@ -170,12 +186,22 @@ the target you'd choose to invoke.
 
 Invokes `:CMakeClean` and then `:CMakeBuild`.
 
+4.9 CLEARING BUFFER OPTIONS ~
+                                                       *:CMakeClearBufferOpts*
+
+In order to make things quick, the path to $CMAKE_BINARY_DIR is cached in the
+buffer to speed things up. It's not saved globally since you can have
+different CMake projects open in one Vim session (though you would have to
+`:cd` Vim first to even get it to notice that, but that's a bug).
+
 5. INTEGRATIONS ~
                                                           *cmake-integrations*
 
 Life isn't fun if a plug-in doesn't integrate to another. `cmake.vim`, with a
 bit of lost sleep, can work with syntastic and You Complete Me with with the
-enabling of an option.
+enabling of an option. Each of these can be disabled by setting the
+corresponding value to 0 in `b:cmake_integrations` or all of them by just
+setting `b:cmake_integrations` itself to 0.
 
 5.1. SYNTASTIC ~
                                                 *cmake-integrations-syntastic*
@@ -185,6 +211,8 @@ C and C++ checkers. Work is planned to refactor this logic and allow explicit
 checker parameters (since it's targeted for the gcc/ycm checkers and not
 cpplint).
 
+This can be disabled by setting `b:cmake_integrations.syntastic` to 0.
+
 5.2. YOU COMPLETE ME ~
                                                       *cmake-integrations-ycm*
 
@@ -192,7 +220,7 @@ In order for this to work (currently), you need to have a custom-written
 `.ycm_extra_conf` file that has the following lines at the start of your
 `FlagsForFile(filename)` method:
 
-    vim.command("call cmake#flags#inject_to_ycm('<target>')")
+    vim.command("call cmake#flags#inject()")
     cmake_flags = vim.eval('b:cmake_flags[&ft]')
 
 This calls `cmake.vim` to get the options for this target (should be just
@@ -211,7 +239,10 @@ flags to the value passed as the "flags" value in the return hash, like so:
       'do_cache' : True
     }
 
-With that, any include directories 
+With that, any include directories defined by that specific target are
+included to that file.
+
+This can be disabled by setting `b:cmake_integrations.ycm` to 0.
 
 
 vim:tw=78:ts=8:ft=help:norl:

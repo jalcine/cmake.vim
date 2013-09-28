@@ -1,14 +1,15 @@
-""""""""""""""""""""""""""""""""""""""""
-" @author: Jacky Alciné <me@jalcine.me>
-" @date:   2013-09-26 00:31:53 EDT
-"
-" Utility methods to manipulate CMake.
-""""""""""""""""""""""""""""""""""""""""
+" File:             autoload/cmake/util.vim
+" Description:      Power methods for cmake.vim.
+" Author:           Jacky Alciné <me@jalcine.me>
+" License:          MIT
+" Website:          https://jalcine.github.io/cmake.vim
+" Version:          0.2.0
+" Last Modified:    2013-09-28 15:21:31 EDT
 
 func! cmake#util#binary_dir()
   " If we found it already, don't waste effort.
-  if exists("g:cmake_binary_dir")
-    return g:cmake_binary_dir
+  if exists("b:cmake_binary_dir")
+    return b:cmake_binary_dir
   endif
 
   let l:proposed_dir = 0
@@ -23,8 +24,9 @@ func! cmake#util#binary_dir()
 
     if filereadable(l:proposed_cmake_file)
       " If we found it, drop off that CMakeCache.txt reference and cache the
-      " value.
+      " value to this buffer.
       let l:proposed_dir = substitute(l:proposed_cmake_file, "/CMakeCache.txt", "", "")
+      let b:cmake_binary_dir = l:proposed_dir
     endif
   endfor
 
@@ -40,22 +42,22 @@ func! cmake#util#source_dir()
   return cmake#util#read_from_cache("Project_SOURCE_DIR")
 endfunc!
 
-func! cmake#util#cmake_cache_file_path()
+func! cmake#util#cache_file_path()
   let l:dir = cmake#util#binary_dir()
-  if isdirectory(l:dir)
+  if isdirectory(l:dir) && filereadable(l:dir . "/CMakeCache.txt")
     return l:dir . "/CMakeCache.txt"
   endif
 
-  return ""
+  return 0
 endfunc!
 
 func! cmake#util#read_from_cache(property)
-  let l:cmake_cache_file = cmake#util#cmake_cache_file_path()
+  let l:cmake_cache_file = cmake#util#cache_file_path()
   let l:property_width = strlen(a:property) + 2
 
   " If we can't find the cache file, then there's no point in trying to read
   " it.
-  if !filereadable(cmake#util#cmake_cache_file_path())
+  if !filereadable(cmake#util#cache_file_path())
     return ""
   endif
 
@@ -70,8 +72,7 @@ func! cmake#util#read_from_cache(property)
 
   " Split it in half to get the resulting value and its type.
   let l:property_fields = split(l:property_meta_value, "=", 1)
-  let l:property_fields[1] = substitute(l:property_fields[1], "\n", "", "")
-  let l:property_fields[1] = substitute(l:property_fields[1], "\n", "", "")
+  let l:property_fields[1] = substitute(l:property_fields[1], "\n", "", "g")
 
   return l:property_fields
 endfunc!
@@ -98,18 +99,6 @@ func! cmake#util#shell_exec(command)
   endif
 endfunc!
 
-func! cmake#util#targets()
-  let dirs = glob(cmake#util#binary_dir() ."**/*.dir", 0, 1)
-  for dir in dirs
-    let oldir = dir
-    let dir = substitute(dir, cmake#util#binary_dir(), "", "g")
-    let dir = substitute(dir, "**CMakeFiles/", "", "g")
-    let dir = substitute(dir, ".dir", "", "g")
-    let dirs[get(dirs, oldir)] = dir
-  endfor
-  echo dirs
-endfunc
-
 func! cmake#util#run_cmake(command, binary_dir, source_dir)
   let l:binary_dir = a:binary_dir
   let l:source_dir = a:source_dir
@@ -128,9 +117,12 @@ func! cmake#util#run_cmake(command, binary_dir, source_dir)
   endif
 
   let l:command = 'PWD=' . l:binary_dir . ' cmake ' . a:command . ' ' .
-   \ l:binary_dir . ' ' . l:source_dir
+        \ l:binary_dir . ' ' . l:source_dir
 
   return cmake#util#shell_exec(l:command)
 endfunc!
 
-
+func! cmake#util#handle_injection()
+  call cmake#commands#install_ex()
+  call cmake#flags#inject()
+endfunc!

@@ -1,22 +1,56 @@
-func! cmake#flags#target(target)
-  let l:flags_file = glob(cmake#util#binary_dir() . '**/' . a:target . '.dir/**/*flags.make', 1)
-  if len(l:flags_file) == 0
+" File:             autoload/cmake/flags.vim
+" Description:      Handles the act of injecting flags into Vim.
+" Author:           Jacky Alciné <me@jalcine.me>
+" License:          MIT
+" Website:          https://jalcine.github.io/cmake.vim
+" Version:          0.2.0
+" Last Modified:    2013-09-28 15:21:21 EDT
+
+func! cmake#flags#parse(flagstr)
+  let l:flags = split(a:flagstr)
+
+  if g:cmake_flags.filter == 1
+    for flag in flags
+      let l:index = index(flags, flag)
+      let l:isAInclude = stridx(flag, '-I')
+      let l:isAIncludeFlagger = stridx(flag, '-i')
+      let l:isAWarning = stridx(flag, '-W')
+      let l:isValidFlag = !(isAInclude == -1 && 
+      \ isAWarning == -1 &&
+      \ isAIncludeFlagger == -1
+      \ )
+
+      if !isValidFlag
+        echo flag . " " . index . " " . isAInclude . " " . isAIncludeFlagger . " " . isAWarning
+        unlet flags[index]
+        continue
+      else
+        if isdirectory(flag) && 
+              \ (stridx(flags[index - 1], '-i') || stridx(flags[index - 1], '-I'))
+          continue
+        endif
+      endif
+    endfor
+  endif
+
+  return flags
+endfunc!
+
+func! cmake#flags#inject()
+  if empty(g:cmake_inject_tags)
     return 0
   endif
 
-  return { 
-        \ "c"   : split(system("grep 'C_FLAGS = ' " . l:flags_file . " | cut -b 11-")),
-        \ "cpp" : split(system("grep 'CXX_FLAGS = ' " . l:flags_file . " | cut -b 13-"))
-        \  }
-endfunc!
+  let target = cmake#targets#corresponding_file(fnamemodify(bufname('%'), ':p'))
 
-func! cmake#flags#inject(target)
-  call cmake#flags#inject_to_syntastic(a:target)
-  call cmake#flags#inject_to_ycm(a:target)
+  if !empty(target)
+    call cmake#flags#inject_to_syntastic(target)
+    call cmake#flags#inject_to_ycm(target)
+  endif
 endfunc
 
 func! cmake#flags#inject_to_syntastic(target)
-  if exists("g:loaded_syntastic_checker")
+  if exists("g:loaded_syntastic_checker") && !empty(g:cmake_inject_flags.syntastic)
     let l:flags = cmake#flags#target(a:target)
     for l:language in keys(l:flags)
       let l:checkers = eval("g:syntastic_" . l:language . "_checkers")
@@ -29,7 +63,7 @@ func! cmake#flags#inject_to_syntastic(target)
 endfunc!
 
 func! cmake#flags#inject_to_ycm(target)
-  if exists("g:ycm_check_if_ycm_core_present")
+  if exists("g:ycm_check_if_ycm_core_present") && !empty(g:cmake_inject_flags.ycm)
     " The only way I've seen flags been 'injected' to YCM is via Python.
     " However, it only happened when YCM picked it up the Python source as
     " an external file to be used with the platform. This means that the
@@ -44,16 +78,3 @@ func! cmake#flags#inject_to_ycm(target)
     exec("let b:cmake_flags=". string(cmake#flags#target(a:target)))
   endif
 endfunc!
-
-func! s:check_to_inject()
-  " TODO: When we can do file-based target detection, we use that file to
-  " determine the target. If &ft is in the keys for b:cmake_flags then we use
-  " only those flags in cmake#flags#inject_to_*.
-
-  " Better yet, just use ftdetect/{cpp,c}/cmake.vim to do the magic.
-endfunc!
-
-augroup cmake_inject
-  au!
-  au BufReadPost * :call s:check_to_inject()
-augroup END
