@@ -137,9 +137,9 @@ func! cmake#util#handle_injection()
   let curFileName = fnamemodify(bufname('%'), ':p')
   let theTarget   = cmake#targets#for_file(curFileName)
 
+  call cmake#commands#install_ex()
+
   if !empty(theTarget) && exists("g:cmake_inject_tags")
     call cmake#flags#inject(theTarget)
   endif
-
-  call cmake#commands#install_ex()
 endfunc!
