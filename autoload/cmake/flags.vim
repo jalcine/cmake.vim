@@ -41,7 +41,7 @@ func! cmake#flags#inject()
     return 0
   endif
 
-  let target = cmake#targets#corresponding_target(fnamemodify(bufname('%')))
+  let target = cmake#targets#corresponding_file(fnamemodify(bufname('%')))
 
   if !empty(target)
     call cmake#flags#inject_to_syntastic(target)
