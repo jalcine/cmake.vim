@@ -17,3 +17,16 @@ endfunc!
 
 func! cmake#targets#files()
 endfunc!
+
+func! cmake#targets#flags(target)
+  let l:flags_file = glob(cmake#util#binary_dir() . '**/' . a:target . '.dir/**/*flags.make', 1)
+  if len(l:flags_file) == 0 || !filereadable(l:flags_file)
+    return 0
+  endif
+
+  return { 
+    \ "c"   : cmake#flags#parse(system("grep 'C_FLAGS = ' " . l:flags_file . " | cut -b 11-")),
+    \ "cpp" : cmake#flags#parse(system("grep 'CXX_FLAGS = ' " . l:flags_file . " | cut -b 13-"))
+    \  }
+endfunc!
+
