@@ -37,9 +37,16 @@ func! cmake#flags#parse(flagstr)
 endfunc!
 
 func! cmake#flags#inject()
+  if empty(g:cmake_inject_tags)
+    return 0
+  endif
+
   let target = cmake#targets#corresponding_target(fnamemodify(bufname('%')))
-  call cmake#flags#inject_to_syntastic(target)
-  call cmake#flags#inject_to_ycm(target)
+
+  if !empty(target)
+    call cmake#flags#inject_to_syntastic(target)
+    call cmake#flags#inject_to_ycm(target)
+  endif
 endfunc
 
 func! cmake#flags#inject_to_syntastic(target)
