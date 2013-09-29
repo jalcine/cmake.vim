@@ -6,7 +6,7 @@
 
 ---
 
-[`cmake.vim`](https://github.com/jalcine/cmake.vim/tree/v0.2.0) `v0.2.0` is a Vim 
+[`cmake.vim`](https://github.com/jalcine/cmake.vim/tree/v0.2.1) `v0.2.1` is a Vim 
 plugin that allows you to build your projects that are based on the CMake 
 meta-build system.
 
@@ -53,8 +53,8 @@ out `:help cmake-options` for more information.
 ## Integrations
 
 See [`:help cmake-integrations`][doc/cmake.txt] for tips on integrations `cmake.vim` with
-other plug-ins like `syntastic` or `YouCompleteMe`.
-
+other plug-ins like `syntastic` or `YouCompleteMe`. Long story short, it's
+freaking awesome. With this version, the integrations are now
 *target-specific*, allowing for fine-grained integration for every single
 file. **Awesome!**
 
