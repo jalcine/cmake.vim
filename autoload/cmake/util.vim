@@ -43,9 +43,9 @@ func! cmake#util#source_dir()
 endfunc!
 
 func! cmake#util#cache_file_path()
-  let l:dir = cmake#util#binary_dir()
-  if isdirectory(l:dir) && filereadable(l:dir . "/CMakeCache.txt")
-    return l:dir . "/CMakeCache.txt"
+  let l:bindir = cmake#util#binary_dir()
+  if isdirectory(l:dir) && filereadable(l:bindir . "/CMakeCache.txt")
+    return l:bindir . "/CMakeCache.txt"
   endif
 
   return 0

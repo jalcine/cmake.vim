@@ -17,9 +17,9 @@ endfunc!
 "endfunc!
 
 func! cmake#targets#binary_dir(target)
-  let l:dir = glob(cmake#util#binary_dir() . '**/' . a:target . '.dir', 1)
-  if isdirectory(l:dir)
-    return l:dir
+  let l:bindir = glob(cmake#util#binary_dir() . '**/' . a:target . '.dir', 1)
+  if isdirectory(l:bindir)
+    return l:bindir
   endif
 
   return 0
