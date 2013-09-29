@@ -62,9 +62,7 @@ func! cmake#flags#inject_to_syntastic(target)
         for l:checker in l:checkers
           let l:args = l:flags[l:language]
           let l:sy_flag = "g:syntastic_" . l:language . "_" . l:checker . "_args"
-          if exists(l:sy_flag)
-            exec(l:sy_flag . "='" . join(l:args, " ") . "'")
-          endif
+          exec("let " . l:sy_flag . "='" . join(l:args, " ") . "'")
         endfor
       endfor
     endif
