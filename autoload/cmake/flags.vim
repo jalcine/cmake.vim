@@ -51,7 +51,7 @@ endfunc
 
 func! cmake#flags#inject_to_syntastic(target)
   if exists("g:loaded_syntastic_checker") && !empty(g:cmake_inject_flags.syntastic)
-    let l:flags = cmake#flags#target(a:target)
+    let l:flags = cmake#targets#flags(a:target)
     for l:language in keys(l:flags)
       let l:checkers = eval("g:syntastic_" . l:language . "_checkers")
       for l:checker in l:checkers
@@ -75,6 +75,6 @@ func! cmake#flags#inject_to_ycm(target)
       unlet b:cmake_flags
     endif
 
-    exec("let b:cmake_flags=". string(cmake#flags#target(a:target)))
+    exec("let b:cmake_flags=". string(cmake#targets#flags(a:target)))
   endif
 endfunc!
