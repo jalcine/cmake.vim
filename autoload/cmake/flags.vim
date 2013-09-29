@@ -9,19 +9,18 @@
 func! cmake#flags#parse(flagstr)
   let l:flags = split(a:flagstr)
 
-  if g:cmake_flags.filter == 1
+  if g:cmake_filter_flags == 1
     for flag in flags
       let l:index = index(flags, flag)
       let l:isAInclude = stridx(flag, '-I')
       let l:isAIncludeFlagger = stridx(flag, '-i')
       let l:isAWarning = stridx(flag, '-W')
       let l:isValidFlag = !(isAInclude == -1 && 
-      \ isAWarning == -1 &&
-      \ isAIncludeFlagger == -1
-      \ )
+            \ isAWarning == -1 &&
+            \ isAIncludeFlagger == -1
+            \ )
 
       if !isValidFlag
-        echo flag . " " . index . " " . isAInclude . " " . isAIncludeFlagger . " " . isAWarning
         unlet flags[index]
         continue
       else
@@ -52,13 +51,23 @@ endfunc
 func! cmake#flags#inject_to_syntastic(target)
   if exists("g:loaded_syntastic_checker") && !empty(g:cmake_inject_flags.syntastic)
     let l:flags = cmake#targets#flags(a:target)
-    for l:language in keys(l:flags)
-      let l:checkers = eval("g:syntastic_" . l:language . "_checkers")
-      for l:checker in l:checkers
-        let l:args = l:flags[l:language]
-        exec("let g:syntastic_" . l:language . "_" . l:checker . "_args ='" . join(l:args, " ") . "'")
+    if !empty(l:flags)
+      for l:language in keys(l:flags)
+        let l:checker_val = "g:syntastic_" . l:language . "_checkers"
+        if !exists(l:checker_val)
+          continue
+        endif
+
+        let l:checkers = eval(l:checker_val)
+        for l:checker in l:checkers
+          let l:args = l:flags[l:language]
+          let l:sy_flag = "g:syntastic_" . l:language . "_" . l:checker . "_args"
+          if exists(l:sy_flag)
+            exec(l:sy_flag . "='" . join(l:args, " ") . "'")
+          endif
+        endfor
       endfor
-    endfor
+    endif
   endif
 endfunc!
 
