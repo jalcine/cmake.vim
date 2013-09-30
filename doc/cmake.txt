@@ -21,7 +21,6 @@ CONTENTS ~
 5. Integrations                                    |cmake-integrations|
   5.1 Syntastic                                    |cmake-integrations-syntastic|
   5.2 YouCompleteMe                                |cmake-integrations-ycm| 
-  5.2 YouCompleteMe                                |cmake-integrations-ycm| 
 
 ===========================================================================
 
@@ -109,8 +108,6 @@ default.
 
 Determines whether or not the 'makeprg' value in Vim will be set to a tweaked
 'make' where it builds using the files in your specified build directory.
-
-NOTE: This is a future support option and currently does nothing.
 
 4. METHODS ~
                                                                *cmake-methods*
@@ -204,14 +201,13 @@ In order for this to work (currently), you need to have a custom-written
 `.ycm_extra_conf` file that has the following lines at the start of your
 `FlagsForFile(filename)` method:
 
-    vim.command("call cmake#flags#inject_to_ycm('<target>')")
+    vim.command("call cmake#util#handle_injection()")
     cmake_flags = vim.eval('b:cmake_flags[&ft]')
 
 This calls `cmake.vim` to get the options for this target (should be just
-"c" or "cpp" for now) and then get a list of the flags. <target> should
-be replaced with the target whose flags you want to obtain. At the 
-moment, this is the only way of getting flags. It HAS to be a valid
-target, no checking is done (since there isn't a way to).
+"c" or "cpp" for now) and then get a list of the flags. `cmake.vim` will
+determine the target that the corresponding file is relating to and work with
+that.
 
 Just make sure that when you return the method, you ADD the
 flags to the value passed as the "flags" value in the return hash, like so:
@@ -223,22 +219,13 @@ flags to the value passed as the "flags" value in the return hash, like so:
       'do_cache' : True
     }
 
-With that, any include directories 
+With that, any options in CMake would be passed into YCM for auto-completion.
 
-Just make sure that when you return the method, you ADD the
-flags to the value passed as the "flags" value in the return hash, like so:
-
-    final_flags += cmake_flags
-
-    return {
-      'flags' : final_tags,
-      'do_cache' : True
-    }
-
-With that, any include directories defined by that specific target are
-included to that file.
+NOTE: This only applies for projects within the range of that
+`.ycm_extra_conf.py` file. If you want extra oomf for all of your
+CMake-powered projects, place this logic in your global YCM configuration and
+enjoy the goodness.
 
 This can be disabled by setting `b:cmake_integrations.ycm` to 0.
-
 
 vim:tw=78:ts=8:ft=help:norl:
