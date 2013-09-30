@@ -78,3 +78,7 @@ fruitful.
 ## Author
 I'm [Jacky Alcine](http://jalcine.me) and I like code. A lot. 
 I also chat a lot like a firehose so follow with caution!
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jalcine/cmake.vim/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
