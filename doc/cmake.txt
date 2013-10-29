@@ -101,7 +101,7 @@ Defines the installation prefix at which the project will be installed at.
 Determines whether or not libraries will be built as shared libraries by
 default.
 
-3.7. BUILD SHARED LIBRARIES ~
+3.7. SET MAKEPRG ~
                                                     *cmake-options-set-makeprg*
 >
   let g:cmake_set_makeprg = 1
