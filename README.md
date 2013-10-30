@@ -30,7 +30,7 @@ After you installed the plugin, just `cd` into the directory where the
 top-level CMakeLists.txt can be found and run:
 
 ```viml
-:CMakeCreateProject <build-dir-name>
+:CMakeCreateBuild <build-dir-name>
 :CMakeBuild
 ```
 
