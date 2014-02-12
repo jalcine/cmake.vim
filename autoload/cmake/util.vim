@@ -90,15 +90,6 @@ func! cmake#util#run_make(command)
   endif
 endfunc!
 
-func! cmake#util#shell_exec(command)
-  if g:cmake_use_vimux == 1 && g:loaded_vimux == 1
-    call VimuxRunCommand(a:command)
-    return 0
-  else
-    return system(a:command)
-  endif
-endfunc!
-
 func! cmake#util#run_cmake(command, binary_dir, source_dir)
   let l:binary_dir = a:binary_dir
   let l:source_dir = a:source_dir
@@ -145,30 +136,12 @@ func! cmake#util#targets()
     let dir = substitute(dir, ".dir", "", "g")
     let dirs[get(dirs, oldir)] = dir
   endfor
-  echo dirs
 endfunc
 
-func! cmake#util#run_cmake(command, binary_dir, source_dir)
-  let l:binary_dir = a:binary_dir
-  let l:source_dir = a:source_dir
-
-  if empty(l:binary_dir) && empty(l:source_dir)
-    let l:binary_dir = cmake#util#binary_dir()
+func! cmake#util#apply_makeprg()
+  " Set the command!
+  let build_dir = cmake#util#binary_dir()
+  if g:cmake_set_makeprg == 1
+    set makeprg="make  -C  " . build_dir
   endif
-
-  if empty(l:source_dir) && !empty(l:binary_dir)
-    let l:source_dir = cmake#util#source_dir()
-  endif
-
-  if !empty(l:source_dir) && empty(l:binary_dir)
-    let l:binary_dir = "/tmp/vim-cmake-" . tempname()
-    call mkdir(l:binary_dir)
-  endif
-
-  let l:command = 'PWD=' . l:binary_dir . ' cmake ' . a:command . ' ' .
-   \ l:binary_dir . ' ' . l:source_dir
-
-  return cmake#util#shell_exec(l:command)
 endfunc!
-
-
