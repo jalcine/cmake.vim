@@ -26,7 +26,9 @@ func! cmake#commands#build_target_for_file(file)
     return 0
   endif
 
+  echomsg "[cmake] Building target '" . l:target . "'..."
   call cmake#targets#build(target)
+  echomsg "[cmake] Built target '" . l:target . "'."
 endfunc
 
 func! cmake#commands#clean()
@@ -35,6 +37,7 @@ func! cmake#commands#clean()
   if l:output != 0
     echomsg l:output
   end
+  echomsg "[cmake] Cleaned build."
 endfunc
 
 func! cmake#commands#test()
@@ -43,6 +46,16 @@ func! cmake#commands#test()
   if l:output != 0
     echomsg l:output
   end
+  echomsg "[cmake] Tested build."
+endfunc
+
+func! cmake#commands#rebuild_cache()
+  echomsg "[cmake] Rebuilding cache for CMake.."
+  let l:output = cmake#util#run_make("rebuild_cache")
+  if l:output != 0
+    echomsg l:output
+  end
+  echomsg "[cmake] Rebuilt cache for CMake."
 endfunc
 
 func! cmake#commands#install()
@@ -51,6 +64,7 @@ func! cmake#commands#install()
   if l:output != 0
     echomsg l:output
   end
+  echomsg "[cmake] Installed project."
 endfunc
 
 " TODO: Check if there was a failure of sorts on configuring.
@@ -95,6 +109,8 @@ function! cmake#commands#install_ex()
   " Set Ex commands.
   command! -buffer -nargs=0 CMakeBuild
         \ :call cmake#commands#build()
+  command! -buffer -nargs=0 CMakeRebuildCache
+        \ :call cmake#commands#rebuild_cache()
   command! -buffer -nargs=0 CMakeClean
         \ :call cmake#commands#clean()
   command! -buffer -nargs=0 CMakeCleanBuild 

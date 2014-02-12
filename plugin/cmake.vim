@@ -45,10 +45,4 @@ func! s:clean_then_build()
   call cmake#commands#build()
 endfunc
 
-" Set the command!
-if exists("g:cmake_set_makeprg") && g:cmake_set_makeprg == 1
-  let build_dir = cmake#util#binary_dir()
-  if !empty(build_dir)
-    set makeprg="make -C " . build_dir
-  endif
-endif
+call cmake#util#apply_makeprg()
