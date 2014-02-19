@@ -45,4 +45,8 @@ func! s:clean_then_build()
   call cmake#commands#build()
 endfunc
 
-call cmake#util#apply_makeprg()
+augroup CMake
+  au!
+  au FileWritePost * call cmake#util#handle_injection()
+  au FileReadPost  * call cmake#util#handle_injection()
+augroup END

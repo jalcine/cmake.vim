@@ -85,8 +85,8 @@ func! cmake#util#run_make(command)
   let l:command = "make -C " . cmake#util#binary_dir() . " " . a:command
   if g:cmake_use_vimux == 1 && g:loaded_vimux == 1
     call VimuxRunCommand(l:command)
-  else
-    return system(l:command)
+  else if g:cmake_set_makeprg == 1
+    call make(a:command) 
   endif
 endfunc!
 
@@ -114,6 +114,7 @@ func! cmake#util#run_cmake(command, binary_dir, source_dir)
 endfunc!
 
 func! cmake#util#handle_injection()
+  call cmake#util#apply_makeprg()
   call cmake#commands#install_ex()
   call cmake#flags#inject()
 endfunc!
@@ -139,9 +140,8 @@ func! cmake#util#targets()
 endfunc
 
 func! cmake#util#apply_makeprg()
-  " Set the command!
   let build_dir = cmake#util#binary_dir()
-  if g:cmake_set_makeprg == 1
-    set makeprg="make  -C  " . build_dir
+  if exists('g:cmake_set_makeprg') && g:cmake_set_makeprg == 1
+    let &makeprg="make -C " . l:build_dir
   endif
 endfunc!
