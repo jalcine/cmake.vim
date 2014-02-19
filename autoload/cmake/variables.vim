@@ -1,6 +1,10 @@
-" Variables in CMake are stored in the ${CMAKE_BINARY_DIR}/CMakeCache.txt 
-" file. The variables themselves are stored in a format like the following:
-" NAME:TEXT=VALUE.
+" File:             autoload/cmake/variables.vim
+" Description:      The "API" of interacting with variables in cmake.vim
+" Author:           Jacky Alciné <me@jalcine.me>
+" License:          MIT
+" Website:          https://jalcine.github.io/cmake.vim
+" Version:          0.2.2
+" Last Modified:    2013-09-28 15:22:11 EDT
 
 func! cmake#variables#exists(variable)
   let l:val = cmake#util#read_from_cache(variable)

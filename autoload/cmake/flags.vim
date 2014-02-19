@@ -1,55 +1,92 @@
-func! cmake#flags#target(target)
-  let l:flags_file = glob(cmake#util#binary_dir() . '**/' . a:target . '.dir/**/*flags.make', 1)
-  if len(l:flags_file) == 0
+" File:             autoload/cmake/flags.vim
+" Description:      Handles the act of injecting flags into Vim.
+" Author:           Jacky Alciné <me@jalcine.me>
+" License:          MIT
+" Website:          https://jalcine.github.io/cmake.vim
+" Version:          0.2.2
+" Last Modified:    2013-09-28 15:21:21 EDT
+
+func! cmake#flags#parse(flagstr)
+  let l:flags = split(a:flagstr)
+
+  if g:cmake_filter_flags == 1
+    for flag in flags
+      let l:index = index(flags, flag)
+      let l:isAInclude = stridx(flag, '-I')
+      let l:isAIncludeFlagger = stridx(flag, '-i')
+      let l:isAWarning = stridx(flag, '-W')
+      let l:isValidFlag = !(isAInclude == -1 && 
+        \ isAWarning == -1 &&
+        \ isAIncludeFlagger == -1
+        \ )
+
+      if !isValidFlag
+        unlet flags[index]
+        continue
+      else
+        if isdirectory(flag) && 
+          \ (stridx(flags[index - 1], '-i') || stridx(flags[index - 1], '-I'))
+          continue
+        endif
+      endif
+    endfor
+  endif
+
+  return flags
+endfunc!
+
+func! cmake#flags#inject()
+  if empty(g:cmake_inject_flags)
     return 0
   endif
 
-  return { 
-        \ "c"   : split(system("grep 'C_FLAGS = ' " . l:flags_file . " | cut -b 11-")),
-        \ "cpp" : split(system("grep 'CXX_FLAGS = ' " . l:flags_file . " | cut -b 13-"))
-        \  }
-endfunc!
+  let target = cmake#targets#corresponding_file(fnamemodify(bufname('%'), ':p'))
 
-func! cmake#flags#inject(target)
-  call cmake#flags#inject_to_syntastic(a:target)
-  call cmake#flags#inject_to_ycm(a:target)
+  if !empty(target)
+    call cmake#flags#inject_to_ycm(target)
+    call cmake#flags#inject_to_syntastic(target)
+  endif
 endfunc
 
 func! cmake#flags#inject_to_syntastic(target)
-  let l:flags = cmake#flags#target(a:target)
+  if g:cmake_inject_flags.syntastic != 1
+    return
+  endif
+
+  let l:flags = cmake#targets#flags(a:target)
+  if empty(l:flags)
+    return
+  endif
+
   for l:language in keys(l:flags)
-    let l:checkers = eval("g:syntastic_" . l:language . "_checkers")
+    let l:checker_val = "g:syntastic_" . l:language . "_checkers"
+    if !exists(l:checker_val)
+      continue
+    endif
+
+    let l:checkers = eval(l:checker_val)
     for l:checker in l:checkers
       let l:args = l:flags[l:language]
-      exec("let g:syntastic_" . l:language . "_" . l:checker . "_args ='" . join(l:args, " ") . "'")
+      let l:sy_flag = "g:syntastic_" . l:language . "_" . l:checker . "_args"
+      exec("let " . l:sy_flag . "='" . join(l:args, " ") . "'")
     endfor
   endfor
 endfunc!
 
 func! cmake#flags#inject_to_ycm(target)
-  " The only way I've seen flags been 'injected' to YCM is via Python.
-  " However, it only happened when YCM picked it up the Python source as
-  " an external file to be used with the platform. This means that the
-  " end user has to *want* to have us in that file. For now, we drop the
-  " tags here, according to type and have the clever Python extension
-  " we've added pick that up in the user's .ycm_extra_conf.py file a lá
-  " `vim.cmake`.
-  if exists("b:cmake_flags")
-    unlet b:cmake_flags
+  if g:cmake_inject_flags.ycm != 1
+    return
   endif
 
-  exec("let b:cmake_flags=". string(cmake#flags#target(a:target)))
-endfunc!
+  " First, let's pass in the flags that one could add in directly for
+  " individual targets for the .ycm_extra_conf.py.
+  let b:cmake_flags = string(cmake#targets#flags(a:target)[&filetype])
+  if empty(g:ycm_extra_conf_vim_data)
+    let g:ycm_extra_conf_vim_data = ['b:cmake_flags']
+  elseif get(g:ycm_extra_conf_vim_data,'b:cmake_flags','NONE') == 'NONE'
+    add(ycm_extra_conf_vim_data,'b:cmake_flags')
+  endif
 
-func! s:check_to_inject()
-  " TODO: When we can do file-based target detection, we use that file to
-  " determine the target. If &ft is in the keys for b:cmake_flags then we use
-  " only those flags in cmake#flags#inject_to_*.
-  
-  " Better yet, just use ftdetect/{cpp,c}/cmake.vim to do the magic.
+  " Secondly, provide the full path where the JSON compilation file could be
+  " found.
 endfunc!
-
-augroup cmake_inject
-  au!
-  au BufReadPost * :call s:check_to_inject()
-augroup END
