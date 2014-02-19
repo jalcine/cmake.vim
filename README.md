@@ -1,15 +1,14 @@
 # [CMake Project Support in Vim][site]
 
-> With the power of gray skull, CMake support in Vim is born. This allows for
+> With the power of gray skull, [CMake][] support in Vim is born. This allows for
 > CMake commands for building, installing, cleaning and invoking custom
-> targets within Vim. It makes uses of `vimux` if found and can provide
+> targets within Vim. It makes uses of `[vimux][]` if found and can provide
 > integrations for [Syntastic][] and [YouCompleteMe][].
 
 ---
 
-[`cmake.vim`][release](https://github.com/jalcine/cmake.vim/tree/v0.2.2) `v0.2.2` is a Vim 
-plugin that allows you to build your projects that are based on the CMake 
-meta-build system. **This is alpha-grade software and may turn your CMake
+[`cmake.vim 0.2.2`][release] is a Vim plugin that allows you to use [CMake][cmake]
+within Vim for your projects. **This is alpha-grade software and may turn your CMake
 project into a cat-overrun Telnet session**.
 
 If lost, run `:help cmake` for a bit of guidance.
@@ -19,8 +18,8 @@ At the time of writing, `cmake.vim` has been tested with Vim 7.3+ in nocp mode
 and CMake 2.8.
 
 ## Installing
-I recommending using [Vundle][vundle]( to install 
-plugins. The line necessary to add this plugin is as follows:
+I recommending using [Vundle][vundle] to install plugins. The line necessary 
+to add this plugin is as follows:
 
 ```viml
 Bundle 'jalcine/cmake.vim`
@@ -88,10 +87,14 @@ This code is released and available under the MIT license. Multiply and be
 fruitful.
 
 ## Author
-I'm [Jacky Alcine](http://jalcine.me) and I like code. A lot. 
-I also chat a lot like a firehose so follow with caution!
+I'm [Jacky Alcine][jalcine] and I like code. A lot. I also chat a lot like a 
+firehose so follow with caution!
 
 [vundle]: https://github.com/gmarik/Vundle.vim
+[cmake]: http://cmake.org
+[syntastic]: https://github.com/scrooloose/syntastic
+[ycm]: https://github.com/Valloric/YouCompleteMe/ 
 [jalcine]: http://jalcine.me
+[vimux]: https://github.com/benmills/vimux
 [site]: http://jalcine.github.io/cmake.vim
 [release]: https://github.com/jalcine/cmake.vim/tree/v0.2.2
