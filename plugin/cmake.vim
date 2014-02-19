@@ -21,32 +21,27 @@ endfunc
 
 " Set configuration options.
 let s:options = {
-  \  "g:cmake_cxx_compiler":        "clang++",
-  \  "g:cmake_c_compiler":          "clang",
-  \  "g:cmake_build_directories":   [ "build"],
-  \  "g:cmake_build_type":          "Debug",
-  \  "g:cmake_install_prefix":      "/usr/local", 
-  \  "g:cmake_build_shared_libs":   0,
-  \  "g:cmake_set_makeprg":         1,
-  \  "g:cmake_use_vimux":           exists("g:loaded_vimux"),
-  \  "g:cmake_filter_flags":        1,
-  \  "g:cmake_inject_flags":        {
-      \ "syntastic":                exists("g:loaded_syntastic_plugin"),
-      \ "ycm":                      exists("g:ycm_check_if_ycm_core_present")
-      \ }
+  \  'g:cmake_cxx_compiler':      'clang++',
+  \  'g:cmake_c_compiler':        'clang',
+  \  'g:cmake_build_directories': [ 'build' ],
+  \  'g:cmake_build_type':        'Debug',
+  \  'g:cmake_install_prefix':    '/usr/local', 
+  \  'g:cmake_build_shared_libs': 1,
+  \  'g:cmake_set_makeprg':       1,
+  \  'g:cmake_use_vimux':         exists('g:loaded_vimux'),
+  \  'g:cmake_filter_flags':      1,
+  \  'g:cmake_inject_flags':      {
+  \   'syntastic':                exists('g:loaded_syntastic_plugin'),
+  \   'ycm':                      exists('g:ycm_check_if_ycm_core_present')
+  \   }
   \ }
 
 for aOption in keys(s:options)
   call s:setauto(aOption, s:options[aOption])
 endfor
 
-func! s:clean_then_build()
-  call cmake#commands#clean()
-  call cmake#commands#build()
-endfunc
-
-augroup CMake
+augroup cmake
   au!
   au FileWritePost * call cmake#util#handle_injection()
-  au FileReadPost  * call cmake#util#handle_injection()
+  au BufEnter      * call cmake#util#handle_injection()
 augroup END
