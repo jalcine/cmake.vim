@@ -16,16 +16,16 @@ func! cmake#flags#parse(flagstr)
       let l:isAIncludeFlagger = stridx(flag, '-i')
       let l:isAWarning = stridx(flag, '-W')
       let l:isValidFlag = !(isAInclude == -1 && 
-            \ isAWarning == -1 &&
-            \ isAIncludeFlagger == -1
-            \ )
+        \ isAWarning == -1 &&
+        \ isAIncludeFlagger == -1
+        \ )
 
       if !isValidFlag
         unlet flags[index]
         continue
       else
         if isdirectory(flag) && 
-              \ (stridx(flags[index - 1], '-i') || stridx(flags[index - 1], '-I'))
+          \ (stridx(flags[index - 1], '-i') || stridx(flags[index - 1], '-I'))
           continue
         endif
       endif
@@ -43,45 +43,46 @@ func! cmake#flags#inject()
   let target = cmake#targets#corresponding_file(fnamemodify(bufname('%'), ':p'))
 
   if !empty(target)
-    call cmake#flags#inject_to_syntastic(target)
     call cmake#flags#inject_to_ycm(target)
+    call cmake#flags#inject_to_syntastic(target)
   endif
 endfunc
 
 func! cmake#flags#inject_to_syntastic(target)
-  if exists("g:loaded_syntastic_checker") && !empty(g:cmake_inject_flags.syntastic)
-    let l:flags = cmake#targets#flags(a:target)
-    if !empty(l:flags)
-      for l:language in keys(l:flags)
-        let l:checker_val = "g:syntastic_" . l:language . "_checkers"
-        if !exists(l:checker_val)
-          continue
-        endif
-
-        let l:checkers = eval(l:checker_val)
-        for l:checker in l:checkers
-          let l:args = l:flags[l:language]
-          let l:sy_flag = "g:syntastic_" . l:language . "_" . l:checker . "_args"
-          exec("let " . l:sy_flag . "='" . join(l:args, " ") . "'")
-        endfor
-      endfor
-    endif
+  if g:cmake_inject_flags.syntastic != 1
+    return
   endif
+
+  let l:flags = cmake#targets#flags(a:target)
+  if empty(l:flags)
+    return
+  endif
+
+  for l:language in keys(l:flags)
+    let l:checker_val = "g:syntastic_" . l:language . "_checkers"
+    if !exists(l:checker_val)
+      continue
+    endif
+
+    let l:checkers = eval(l:checker_val)
+    for l:checker in l:checkers
+      let l:args = l:flags[l:language]
+      let l:sy_flag = "g:syntastic_" . l:language . "_" . l:checker . "_args"
+      exec("let " . l:sy_flag . "='" . join(l:args, " ") . "'")
+    endfor
+  endfor
 endfunc!
 
 func! cmake#flags#inject_to_ycm(target)
-  if exists("g:ycm_check_if_ycm_core_present") && !empty(g:cmake_inject_flags.ycm)
-    " The only way I've seen flags been 'injected' to YCM is via Python.
-    " However, it only happened when YCM picked it up the Python source as
-    " an external file to be used with the platform. This means that the
-    " end user has to *want* to have us in that file. For now, we drop the
-    " tags here, according to type and have the clever Python extension
-    " we've added pick that up in the user's .ycm_extra_conf.py file a lá
-    " `vim.cmake`.
-    if exists("b:cmake_flags")
-      unlet b:cmake_flags
-    endif
+  if g:cmake_inject_flags.ycm != 1
+    return
+  endif
 
-    exec("let b:cmake_flags=". string(cmake#targets#flags(a:target)))
+  let b:cmake_flags = string(cmake#targets#flags(a:target)[&filetype])
+
+  if empty(g:ycm_extra_conf_vim_data)
+    let g:ycm_extra_conf_vim_data = ['b:cmake_flags']
+  elseif get(g:ycm_extra_conf_vim_data,'b:cmake_flags','NONE') == 'NONE'
+    add(ycm_extra_conf_vim_data,'b:cmake_flags')
   endif
 endfunc!

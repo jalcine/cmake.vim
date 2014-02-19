@@ -139,11 +139,12 @@ endfunc
 
 func! s:get_build_opts()
   let l:command =  [ '-G "Unix Makefiles" ']
+  let l:command += [ "-DCMAKE_EXPORT_COMPILE_COMMANDS=1"]
   let l:command += [ "-DCMAKE_INSTALL_PREFIX:FILEPATH="  . g:cmake_install_prefix ]
   let l:command += [ "-DCMAKE_BUILD_TYPE:STRING="        . g:cmake_build_type ]
   let l:command += [ "-DCMAKE_CXX_COMPILER:FILEPATH="    . g:cmake_cxx_compiler ]
   let l:command += [ "-DCMAKE_C_COMPILER:FILEPATH="      . g:cmake_c_compiler ] 
-  "let l:command += [ "-DBUILD_SHARED_LIBS:BOOL="         . g:cmake_build_shared_libs ]
+  let l:command += [ "-DBUILD_SHARED_LIBS:BOOL="         . g:cmake_build_shared_libs ]
   let l:commandstr = join(l:command, " ")
 
   return l:commandstr

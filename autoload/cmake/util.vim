@@ -114,8 +114,8 @@ func! cmake#util#run_cmake(command, binary_dir, source_dir)
 endfunc!
 
 func! cmake#util#handle_injection()
-  call cmake#util#apply_makeprg()
   call cmake#commands#install_ex()
+  call cmake#util#apply_makeprg()
   call cmake#flags#inject()
 endfunc!
 
