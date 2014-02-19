@@ -128,6 +128,7 @@ function! cmake#commands#install_ex()
         \ :call cmake#targets#build("<args>")
   command! -buffer -nargs=1 CMakeCreateBuild
         \ :call cmake#commands#create_build("<args>")
+        \ -complete=dir
   command! -buffer -nargs=1 CMakeGetVar
         \ :echo cmake#commands#get_var("<args>")
 endfunc!
