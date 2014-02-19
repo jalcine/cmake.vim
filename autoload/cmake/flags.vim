@@ -78,11 +78,15 @@ func! cmake#flags#inject_to_ycm(target)
     return
   endif
 
+  " First, let's pass in the flags that one could add in directly for
+  " individual targets for the .ycm_extra_conf.py.
   let b:cmake_flags = string(cmake#targets#flags(a:target)[&filetype])
-
   if empty(g:ycm_extra_conf_vim_data)
     let g:ycm_extra_conf_vim_data = ['b:cmake_flags']
   elseif get(g:ycm_extra_conf_vim_data,'b:cmake_flags','NONE') == 'NONE'
     add(ycm_extra_conf_vim_data,'b:cmake_flags')
   endif
+
+  " Secondly, provide the full path where the JSON compilation file could be
+  " found.
 endfunc!
