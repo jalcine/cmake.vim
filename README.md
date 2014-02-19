@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/jalcine/cmake.vim.png?label=ready)](https://waffle.io/jalcine/cmake.vim)
 # [CMake Project Support in Vim][site]
 
 > With the power of gray skull, [CMake][] support in Vim is born. This allows for
