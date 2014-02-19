@@ -109,12 +109,8 @@ default.
 Determines whether or not the 'makeprg' value in Vim will be set to a tweaked
 'make' where it builds using the files in your specified build directory.
 
-4. METHODS ~
-                                                               *cmake-methods*
 
-This is a known bug.
-
-3.9. INTEGRATIONS ~
+3.8. INTEGRATIONS ~
                                                  *cmake-options-inject-flags*
 
 Determines which known integrations are to be enabled like Syntastic or
@@ -129,7 +125,6 @@ within CMake files for easy use.
 
 4.1 CREATING A BUILD ~
                                                            *:CMakeCreateBuild*
-
 
 `:CMakeCreateBuild` takes only one argument, the name of the directory that
 the build directory will be. It'll fail if the name isn't one of the values
@@ -197,35 +192,14 @@ cpplint).
 5.2. YOU COMPLETE ME ~
                                                       *cmake-integrations-ycm*
 
-In order for this to work (currently), you need to have a custom-written
-`.ycm_extra_conf` file that has the following lines at the start of your
-`FlagsForFile(filename)` method:
+YouCompleteMe provides a means of extending its configuration for the use of
+autocompletion. To do so, you'd need to get the "b:cmake_flags" variables
+from your "client_data" dictionary. From there, you'd add it to the list of
+flags that are to be passed into YCM.
 
-    vim.command("call cmake#util#handle_injection()")
-    cmake_flags = vim.eval('b:cmake_flags[&ft]')
-
-This calls `cmake.vim` to get the options for this target (should be just
-"c" or "cpp" for now) and then get a list of the flags. `cmake.vim` will
-determine the target that the corresponding file is relating to and work with
-that.
-
-Just make sure that when you return the method, you ADD the
-flags to the value passed as the "flags" value in the return hash, like so:
-
+    cmake_flags = kwargs['client_data']
     final_flags += cmake_flags
 
-    return {
-      'flags' : final_tags,
-      'do_cache' : True
-    }
-
-With that, any options in CMake would be passed into YCM for auto-completion.
-
-NOTE: This only applies for projects within the range of that
-`.ycm_extra_conf.py` file. If you want extra oomf for all of your
-CMake-powered projects, place this logic in your global YCM configuration and
-enjoy the goodness.
-
-This can be disabled by setting `b:cmake_integrations.ycm` to 0.
+This can be disabled by setting `g:cmake_injects_flags.ycm` to 0.
 
 vim:tw=78:ts=8:ft=help:norl:
