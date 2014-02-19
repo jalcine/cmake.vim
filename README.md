@@ -61,7 +61,7 @@ file.
 
 ## Known Issues
 
-  * With the more recent changes to `[YouCompleteMe][ycm]`; it's become a bit
+  * With the more recent changes to [YouCompleteMe][ycm]; it's become a bit
     difficult to dynamically add per-file flags. Right now, the best
     suggestion is to use the JSON compilation file in your `.ycm_extra_conf.py`
     to pass in *all of the flags* for your project.
