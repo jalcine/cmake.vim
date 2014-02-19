@@ -2,8 +2,8 @@
 
 > With the power of gray skull, [CMake][] support in Vim is born. This allows for
 > CMake commands for building, installing, cleaning and invoking custom
-> targets within Vim. It makes uses of `[vimux][]` if found and can provide
-> integrations for [Syntastic][] and [YouCompleteMe][].
+> targets within Vim. It makes uses of [`vimux`][] if found and can provide
+> integrations for [Syntastic][] and [YouCompleteMe][ycm].
 
 ---
 
@@ -53,8 +53,8 @@ out `:help cmake-options` for more information.
 
 ## Integrations
 
-See `[:help cmake-integrations][doc/cmake.txt]` for tips on integrations `cmake.vim` with
-other plug-ins like `syntastic` or `YouCompleteMe`. Long story short, it's
+See [`:help cmake-integrations`][doc/cmake.txt] for tips on integrations `cmake.vim` with
+other plug-ins like [`syntastic`][syntastic] or [`YouCompleteMe`][ycm]. Long story short, it's
 freaking awesome but could use some work. With this version, the integrations are now
 *target-specific*, allowing for fine-grained integration for every single
 file.
