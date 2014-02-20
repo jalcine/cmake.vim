@@ -88,5 +88,8 @@ func! cmake#flags#inject_to_ycm(target)
   endif
 
   " Secondly, provide the full path where the JSON compilation file could be
-  " found.
+  " found. This will eventually be the final solution moving forward for
+  " building individual files.
+  let b:cmake_json_compilation_database_file = b:cmake_binary_dir 
+    \ . "/compile_commands.json"
 endfunc!
