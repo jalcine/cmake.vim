@@ -7,25 +7,19 @@
 " Last Modified:    2013-09-28 15:21:31 EDT
 
 func! cmake#util#binary_dir()
-  " If we found it already, don't waste effort.
   if exists("b:cmake_binary_dir")
     return b:cmake_binary_dir
   endif
 
   let l:proposed_dir = 0
-
-  " Check in the currenty directory as well.
   let l:directories = g:cmake_build_directories + [ getcwd() ]
 
   for l:directory in l:directories
     let l:directory = fnamemodify(l:directory, ':p')
-    " TODO: Make paths absolute.
-    let l:proposed_cmake_file = findfile(directory . "/CMakeCache.txt", ".;")
+    let l:file = findfile(directory . "/CMakeCache.txt", ".;")
 
-    if filereadable(l:proposed_cmake_file)
-      " If we found it, drop off that CMakeCache.txt reference and cache the
-      " value to this buffer.
-      let l:proposed_dir = substitute(l:proposed_cmake_file, "/CMakeCache.txt", "", "")
+    if filereadable(l:file)
+      let l:proposed_dir = substitute(l:file, "/CMakeCache.txt", "", "")
       let b:cmake_binary_dir = l:proposed_dir
     endif
   endfor
@@ -33,7 +27,7 @@ func! cmake#util#binary_dir()
   return l:proposed_dir
 endfunc!
 
-" TODO; Resolve path to absolute-ness.
+" TODO: Resolve path to absolute-ness.
 func! cmake#util#source_dir()
   if cmake#util#binary_dir() == 0
     return ""
@@ -55,8 +49,6 @@ func! cmake#util#read_from_cache(property)
   let l:cmake_cache_file = cmake#util#cache_file_path()
   let l:property_width = strlen(a:property) + 2
 
-  " If we can't find the cache file, then there's no point in trying to read
-  " it.
   if !filereadable(cmake#util#cache_file_path())
     return ""
   endif
@@ -83,10 +75,10 @@ endfunc!
 
 func! cmake#util#run_make(command)
   let l:command = "make -C " . cmake#util#binary_dir() . " " . a:command
-  if g:cmake_use_vimux == 1 && g:loaded_vimux == 1
-    call VimuxRunCommand(l:command)
-  else if g:cmake_set_makeprg == 1
+  if g:cmake_set_makeprg == 1
     call make(a:command) 
+  else
+    call cmake#util#shell_exec(l:command)
   endif
 endfunc!
 

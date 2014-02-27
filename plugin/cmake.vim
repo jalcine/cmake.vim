@@ -42,6 +42,5 @@ endfor
 
 augroup cmake
   au!
-  au FileWritePost * call cmake#util#handle_injection()
-  au BufEnter      * call cmake#util#handle_injection()
+  au VimEnter,BufEnter,FileReadPre * call cmake#util#handle_injection()
 augroup END
