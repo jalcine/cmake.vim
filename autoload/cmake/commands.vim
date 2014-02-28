@@ -21,7 +21,7 @@ func! cmake#commands#invoke_target(target)
 endfunc
 
 func! cmake#commands#build_target_for_file(file)
-  let target = cmake#targets#corresponding_file(a:file)
+  let target = cmake#targets#for_file(a:file)
   if empty(target)
     return 0
   endif
@@ -124,11 +124,10 @@ function! cmake#commands#install_ex()
   command! -buffer -nargs=0 CMakeBuildCurrent
         \ :call cmake#commands#build_target_for_file(fnamemodify(bufname('%'), ':p'))
 
-  command! -buffer -nargs=1 CMakeTarget
-        \ :call cmake#targets#build("<args>")
-  command! -buffer -nargs=1 CMakeCreateBuild
+  command! -buffer -nargs=1 -complete=customlist,s:get_targets
+        \ CMakeTarget :call cmake#targets#build("<args>")
+  command! -buffer -nargs=1 -complete=dir CMakeCreateBuild
         \ :call cmake#commands#create_build("<args>")
-        \ -complete=dir
   command! -buffer -nargs=1 CMakeGetVar
         \ :echo cmake#commands#get_var("<args>")
 endfunc!
@@ -138,15 +137,19 @@ func! s:clean_then_build()
   call cmake#commands#build()
 endfunc
 
+func! s:get_targets(A,L,P)
+  return cmake#targets#list()
+endfunc
+
 func! s:get_build_opts()
   let l:command =  [ '-G "Unix Makefiles" ']
-  let l:command += [ "-DCMAKE_EXPORT_COMPILE_COMMANDS=1"]
-  let l:command += [ "-DCMAKE_INSTALL_PREFIX:FILEPATH="  . g:cmake_install_prefix ]
-  let l:command += [ "-DCMAKE_BUILD_TYPE:STRING="        . g:cmake_build_type ]
-  let l:command += [ "-DCMAKE_CXX_COMPILER:FILEPATH="    . g:cmake_cxx_compiler ]
-  let l:command += [ "-DCMAKE_C_COMPILER:FILEPATH="      . g:cmake_c_compiler ] 
-  let l:command += [ "-DBUILD_SHARED_LIBS:BOOL="         . g:cmake_build_shared_libs ]
-  let l:commandstr = join(l:command, " ")
+  let l:command += [ '-DCMAKE_EXPORT_COMPILE_COMMANDS=1']
+  let l:command += [ '-DCMAKE_INSTALL_PREFIX:FILEPATH='  . g:cmake_install_prefix ]
+  let l:command += [ '-DCMAKE_BUILD_TYPE:STRING='        . g:cmake_build_type ]
+  let l:command += [ '-DCMAKE_CXX_COMPILER:FILEPATH='    . g:cmake_cxx_compiler ]
+  let l:command += [ '-DCMAKE_C_COMPILER:FILEPATH='      . g:cmake_c_compiler ] 
+  let l:command += [ '-DBUILD_SHARED_LIBS:BOOL='         . g:cmake_build_shared_libs ]
+  let l:commandstr = join(l:command, ' ')
 
   return l:commandstr
 endfunc!
