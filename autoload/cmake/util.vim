@@ -25,7 +25,7 @@ func! cmake#util#binary_dir()
   endfor
 
   return l:proposed_dir
-endfunc!
+endfunc
 
 " TODO: Resolve path to absolute-ness.
 func! cmake#util#source_dir()
@@ -34,7 +34,7 @@ func! cmake#util#source_dir()
   endif
 
   return cmake#util#read_from_cache("Project_SOURCE_DIR")
-endfunc!
+endfunc
 
 func! cmake#util#cache_file_path()
   let l:bindir = cmake#util#binary_dir()
@@ -43,7 +43,7 @@ func! cmake#util#cache_file_path()
   endif
 
   return 0
-endfunc!
+endfunc
 
 func! cmake#util#read_from_cache(property)
   let l:cmake_cache_file = cmake#util#cache_file_path()
@@ -67,20 +67,21 @@ func! cmake#util#read_from_cache(property)
   let l:property_fields[1] = substitute(l:property_fields[1], "\n", "", "g")
 
   return l:property_fields
-endfunc!
+endfunc
 
 func! cmake#util#write_to_cache(property,value)
   call cmake#util#run_cmake('-D' . a:property . '=' . shellescape(a:value))
-endfunc!
+endfunc
 
 func! cmake#util#run_make(command)
   let l:command = "make -C " . cmake#util#binary_dir() . " " . a:command
+
   if g:cmake_set_makeprg == 1
     call make(a:command) 
   else
     call cmake#util#shell_exec(l:command)
   endif
-endfunc!
+endfunc
 
 func! cmake#util#run_cmake(command, binary_dir, source_dir)
   let l:binary_dir = a:binary_dir
@@ -103,22 +104,24 @@ func! cmake#util#run_cmake(command, binary_dir, source_dir)
         \ l:binary_dir . ' ' . l:source_dir
 
   return cmake#util#shell_exec(l:command)
-endfunc!
+endfunc
 
 func! cmake#util#handle_injection()
   call cmake#commands#install_ex()
   call cmake#util#apply_makeprg()
   call cmake#flags#inject()
-endfunc!
+endfunc
 
 func! cmake#util#shell_exec(command)
-  if g:cmake_use_vimux == 1 && g:loaded_vimux == 1
+  if g:cmake_use_dispatch == 1 && g:loaded_dispatch == 1
+    return dispatch#compile_command("", a:command)
+  else if g:cmake_use_vimux == 1 && g:loaded_vimux == 1
     call VimuxRunCommand(a:command)
     return 0
   else
     return system(a:command)
   endif
-endfunc!
+endfunc
 
 func! cmake#util#targets()
   let dirs = glob(cmake#util#binary_dir() ."**/*.dir", 0, 1)
@@ -136,4 +139,4 @@ func! cmake#util#apply_makeprg()
   if exists('g:cmake_set_makeprg') && g:cmake_set_makeprg == 1
     let &makeprg="make -C " . l:build_dir
   endif
-endfunc!
+endfunc
