@@ -96,30 +96,31 @@ func! cmake#commands#set_var(variable,value)
 endfunc!
 
 function! cmake#commands#install_ex()
-  " Set Ex commands.
-  command! -buffer -nargs=0 CMakeBuild
-        \ :call cmake#commands#build()
-  command! -buffer -nargs=0 CMakeRebuildCache
-        \ :call cmake#commands#rebuild_cache()
-  command! -buffer -nargs=0 CMakeClean
-        \ :call cmake#commands#clean()
-  command! -buffer -nargs=0 CMakeCleanBuild 
-        \ :call s:clean_then_build()
-  command! -buffer -nargs=0 CMakeTest
-        \ :call cmake#commands#test()
-  command! -buffer -nargs=0 CMakeInstall
-        \ :call cmake#commands#install()
-  command! -buffer -nargs=0 CMakeClearBufferOpts
-        \ :unlet b:cmake_binary_dir
-  command! -buffer -nargs=0 CMakeBuildCurrent
-        \ :call cmake#commands#build_current()
+  if cmake#util#has_project() == 1
+    command! -buffer -nargs=0 CMakeBuild
+          \ :call cmake#commands#build()
+    command! -buffer -nargs=0 CMakeRebuildCache
+          \ :call cmake#commands#rebuild_cache()
+    command! -buffer -nargs=0 CMakeClean
+          \ :call cmake#commands#clean()
+    command! -buffer -nargs=0 CMakeCleanBuild 
+          \ :call s:clean_then_build()
+    command! -buffer -nargs=0 CMakeTest
+          \ :call cmake#commands#test()
+    command! -buffer -nargs=0 CMakeInstall
+          \ :call cmake#commands#install()
+    command! -buffer -nargs=0 CMakeClearBufferOpts
+          \ :unlet b:cmake_binary_dir
+    command! -buffer -nargs=0 CMakeBuildCurrent
+          \ :call cmake#commands#build_current()
+    command! -buffer -nargs=1 -complete=customlist,s:get_targets
+          \ CMakeTarget :call cmake#targets#build("<args>")
+    command! -buffer -nargs=1 CMakeGetVar
+          \ :echo cmake#commands#get_var("<args>")
+  endif
 
-  command! -buffer -nargs=1 -complete=customlist,s:get_targets
-        \ CMakeTarget :call cmake#targets#build("<args>")
-  command! -buffer -nargs=1 -complete=dir CMakeCreateBuild
+  command -nargs=1 -complete=dir CMakeCreateBuild
         \ :call cmake#commands#create_build("<args>")
-  command! -buffer -nargs=1 CMakeGetVar
-        \ :echo cmake#commands#get_var("<args>")
 endfunc!
 
 func! s:clean_then_build()
