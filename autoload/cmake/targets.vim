@@ -58,6 +58,8 @@ func! cmake#targets#for_file(filepath)
     return b:cmake_corresponding_target
   endif
 
+  let b:cmake_corresponding_target = 0
+
   for target in cmake#targets#list()
     if exists("l:files")
       unlet l:files
@@ -72,11 +74,7 @@ func! cmake#targets#for_file(filepath)
     endif
   endfor
 
-  if exists("b:cmake_corresponding_target")
-    return b:cmake_corresponding_target
-  endif
-
-  return 0
+  return b:cmake_corresponding_target
 endfunc!
 
 func! cmake#targets#files(target)
