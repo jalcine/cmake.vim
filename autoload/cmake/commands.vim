@@ -8,16 +8,18 @@
 
 func! cmake#commands#build()
   echomsg "[cmake] Building all targets..."
-  let l:output = cmake#util#run_cmake("--build", "","")
-  if l:output != 0
-    echomsg l:output
-    echomsg "[cmake] Built all targets."
-  end
+  call cmake#util#run_cmake("--build", "","")
+  echomsg "[cmake] Built all targets."
 endfunc
 
 func! cmake#commands#invoke_target(target)
   echomsg "[cmake] Invoking target '" . a:target . "'..."
-  call cmake#util#run_cmake("--build ". cmake#util#binary_dir() . " --target " . a:target. " --", "", "")
+  call cmake#util#run_cmake("--build ". cmake#util#binary_dir() . 
+    \ " --target " . a:target. " --", "", "")
+endfunc
+
+func! cmake#commands#build_current()
+  call cmake#commands#build_target_for_file(fnamemodify(bufname('%'), ':p'))
 endfunc
 
 func! cmake#commands#build_target_for_file(file)
@@ -33,37 +35,25 @@ endfunc
 
 func! cmake#commands#clean()
   echomsg "[cmake] Cleaning build..."
-  let l:output = cmake#util#run_make("clean")
-  if l:output != 0
-    echomsg l:output
-  end
+  call cmake#util#run_make("clean")
   echomsg "[cmake] Cleaned build."
 endfunc
 
 func! cmake#commands#test()
   echomsg "[cmake] Testing build..."
-  let l:output = cmake#util#run_make("test")
-  if l:output != 0
-    echomsg l:output
-  end
+  call cmake#util#run_make("test")
   echomsg "[cmake] Tested build."
 endfunc
 
 func! cmake#commands#rebuild_cache()
   echomsg "[cmake] Rebuilding cache for CMake.."
-  let l:output = cmake#util#run_make("rebuild_cache")
-  if l:output != 0
-    echomsg l:output
-  end
+  call cmake#util#run_make("rebuild_cache")
   echomsg "[cmake] Rebuilt cache for CMake."
 endfunc
 
 func! cmake#commands#install()
   echomsg "[cmake] Installing project..."
-  let l:output = cmake#util#run_make("install")
-  if l:output != 0
-    echomsg l:output
-  end
+  call cmake#util#run_make("install")
   echomsg "[cmake] Installed project."
 endfunc
 
@@ -122,7 +112,7 @@ function! cmake#commands#install_ex()
   command! -buffer -nargs=0 CMakeClearBufferOpts
         \ :unlet b:cmake_binary_dir
   command! -buffer -nargs=0 CMakeBuildCurrent
-        \ :call cmake#commands#build_target_for_file(fnamemodify(bufname('%'), ':p'))
+        \ :call cmake#commands#build_current()
 
   command! -buffer -nargs=1 -complete=customlist,s:get_targets
         \ CMakeTarget :call cmake#targets#build("<args>")
