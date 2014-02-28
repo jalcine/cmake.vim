@@ -27,6 +27,10 @@ func! cmake#util#binary_dir()
   return l:proposed_dir
 endfunc
 
+func! cmake#util#has_project()
+  return cmake#util#binary_dir() == 0
+endfunc
+
 " TODO: Resolve path to absolute-ness.
 func! cmake#util#source_dir()
   if cmake#util#binary_dir() == 0
@@ -75,12 +79,7 @@ endfunc
 
 func! cmake#util#run_make(command)
   let l:command = "make -C " . cmake#util#binary_dir() . " " . a:command
-
-  if g:cmake_set_makeprg == 1
-    call make(a:command) 
-  else
-    call cmake#util#shell_exec(l:command)
-  endif
+  call cmake#util#shell_exec(l:command)
 endfunc
 
 func! cmake#util#run_cmake(command, binary_dir, source_dir)
@@ -135,8 +134,7 @@ func! cmake#util#targets()
 endfunc
 
 func! cmake#util#apply_makeprg()
-  let build_dir = cmake#util#binary_dir()
-  if exists('g:cmake_set_makeprg') && g:cmake_set_makeprg == 1
-    let &makeprg="make -C " . l:build_dir
+  if g:cmake_set_makeprg == 1 && cmake#util#has_project() == 1
+    let &makeprg="make -C " . cmake#util#binary_dir()
   endif
 endfunc
