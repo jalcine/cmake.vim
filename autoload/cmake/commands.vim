@@ -96,7 +96,8 @@ func! cmake#commands#set_var(variable,value)
 endfunc!
 
 function! cmake#commands#install_ex()
-  if cmake#util#has_project() == 1
+  if cmake#util#has_project() == 1 &&
+        \ cmake#targets#for_file(fnamemodify(bufname('%'), ':p')) != 0
     command! -buffer -nargs=0 CMakeBuild
           \ :call cmake#commands#build()
     command! -buffer -nargs=0 CMakeRebuildCache
