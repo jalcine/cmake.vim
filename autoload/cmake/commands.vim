@@ -1,5 +1,5 @@
 " File:             autoload/cmake/commands.vim
-" Description:      The "API" of cmake.vim.
+" Description:      The API of 'cmake.vim'.
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
@@ -96,31 +96,28 @@ func! cmake#commands#set_var(variable,value)
 endfunc!
 
 function! cmake#commands#install_ex()
-  if cmake#util#has_project() == 1 &&
-        \ cmake#targets#for_file(fnamemodify(bufname('%'), ':p')) != 0
-    command! -buffer -nargs=0 CMakeBuild
-          \ :call cmake#commands#build()
-    command! -buffer -nargs=0 CMakeRebuildCache
-          \ :call cmake#commands#rebuild_cache()
-    command! -buffer -nargs=0 CMakeClean
-          \ :call cmake#commands#clean()
-    command! -buffer -nargs=0 CMakeCleanBuild 
-          \ :call s:clean_then_build()
-    command! -buffer -nargs=0 CMakeTest
-          \ :call cmake#commands#test()
-    command! -buffer -nargs=0 CMakeInstall
-          \ :call cmake#commands#install()
-    command! -buffer -nargs=0 CMakeClearBufferOpts
-          \ :unlet b:cmake_binary_dir
-    command! -buffer -nargs=0 CMakeBuildCurrent
-          \ :call cmake#commands#build_current()
-    command! -buffer -nargs=1 -complete=customlist,s:get_targets
-          \ CMakeTarget :call cmake#targets#build("<args>")
-    command! -buffer -nargs=1 CMakeGetVar
-          \ :echo cmake#commands#get_var("<args>")
-  endif
+  command! -buffer -nargs=0 CMakeBuild
+        \ :call cmake#commands#build()
+  command! -buffer -nargs=0 CMakeRebuildCache
+        \ :call cmake#commands#rebuild_cache()
+  command! -buffer -nargs=0 CMakeClean
+        \ :call cmake#commands#clean()
+  command! -buffer -nargs=0 CMakeCleanBuild 
+        \ :call s:clean_then_build()
+  command! -buffer -nargs=0 CMakeTest
+        \ :call cmake#commands#test()
+  command! -buffer -nargs=0 CMakeInstall
+        \ :call cmake#commands#install()
+  command! -buffer -nargs=0 CMakeClearBufferOpts
+        \ :unlet b:cmake_binary_dir
+  command! -buffer -nargs=0 CMakeBuildCurrent
+        \ :call cmake#commands#build_current()
+  command! -buffer -nargs=1 -complete=customlist,s:get_targets
+        \ CMakeTarget :call cmake#targets#build("<args>")
+  command! -buffer -nargs=1 CMakeGetVar
+        \ :echo cmake#commands#get_var("<args>")
 
-  command -nargs=1 -complete=dir CMakeCreateBuild
+  command! -nargs=1 -complete=dir CMakeCreateBuild
         \ :call cmake#commands#create_build("<args>")
 endfunc!
 

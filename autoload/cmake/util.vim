@@ -134,6 +134,7 @@ func! cmake#util#targets()
 endfunc
 
 func! cmake#util#apply_makeprg()
+  " TODO Take a copy of the old 'makeprg' and place it in 'g:oldmakeprg'
   if g:cmake_set_makeprg == 1 && cmake#util#has_project() == 1
     let &makeprg="make -C " . cmake#util#binary_dir()
   endif
