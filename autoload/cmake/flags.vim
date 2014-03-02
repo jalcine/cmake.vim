@@ -3,8 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.2.2
-" Last Modified:    2013-09-28 15:21:21 EDT
+" Version:          0.3.0
 
 " TODO: Filter the flags so that we only have warnings and includes passed
 " into the mix.

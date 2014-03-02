@@ -36,8 +36,8 @@ plugin goes a step further and automatically sets 'makeprg' for you to help
 other tools related to Java, C++, C, Objective C or Fortan-based programming
 easily invoke CMake's version of the build system.
 
-'cmake' version 0.1.6 provides this integration with minimal effort to the
-developer using Vim.
+'cmake' provides this integration with minimal effort to the developer using 
+Vim.
 
 2. QUICK START ~
                                                     *cmake-quickstart*
