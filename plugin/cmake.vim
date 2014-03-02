@@ -29,6 +29,7 @@ let s:options = {
   \  'g:cmake_build_shared_libs': 1,
   \  'g:cmake_set_makeprg':       1,
   \  'g:cmake_use_vimux':         exists('g:loaded_vimux'),
+  \  'g:cmake_use_dispatch':      exists('g:loaded_dispatch'),
   \  'g:cmake_filter_flags':      1,
   \  'g:cmake_inject_flags':      {
   \   'syntastic':                exists('g:loaded_syntastic_plugin'),
@@ -42,6 +43,5 @@ endfor
 
 augroup cmake
   au!
-  au FileWritePost * call cmake#util#handle_injection()
-  au BufEnter      * call cmake#util#handle_injection()
+  au VimEnter,BufEnter,FileReadPre * call cmake#util#handle_injection()
 augroup END

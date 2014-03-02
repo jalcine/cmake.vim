@@ -51,12 +51,14 @@ func! cmake#targets#exists(target)
   return index(cmake#targets#list(), a:target) != -1
 endfunc
 
-func! cmake#targets#corresponding_file(filepath)
+func! cmake#targets#for_file(filepath)
   " A bit intensive of a method, searches each target if the provided file is
   " within. This value is cached.
   if exists("b:cmake_corresponding_target")
     return b:cmake_corresponding_target
   endif
+
+  let b:cmake_corresponding_target = 0
 
   for target in cmake#targets#list()
     if exists("l:files")
@@ -72,11 +74,7 @@ func! cmake#targets#corresponding_file(filepath)
     endif
   endfor
 
-  if exists("b:cmake_corresponding_target")
-    return b:cmake_corresponding_target
-  endif
-
-  return 0
+  return b:cmake_corresponding_target
 endfunc!
 
 func! cmake#targets#files(target)
@@ -109,14 +107,15 @@ func! cmake#targets#flags(target)
     return 0
   endif
 
-  let l:flags_file = cmake#targets#binary_dir(a:target) . "/flags.make"
+  let l:flags_file = cmake#targets#binary_dir(a:target) . '/flags.make'
 
   if !filereadable(l:flags_file)
     return 0
   endif
 
+  " Scan flags.make for the flags and defines to be passed into the mix.
   return { 
-  \ "c"   : cmake#flags#parse(system("grep 'C_FLAGS = ' " . l:flags_file . " | cut -b 11-")),
-  \ "cpp" : cmake#flags#parse(system("grep 'CXX_FLAGS = ' " . l:flags_file . " | cut -b 13-"))
-  \  }
+    \ 'c'   : cmake#flags#collect(l:flags_file, 'C'),
+    \ 'cpp' : cmake#flags#collect(l:flags_file, 'CXX')
+    \ }
 endfunc!

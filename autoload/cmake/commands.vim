@@ -1,5 +1,5 @@
 " File:             autoload/cmake/commands.vim
-" Description:      The "API" of cmake.vim.
+" Description:      The API of 'cmake.vim'.
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
@@ -8,20 +8,22 @@
 
 func! cmake#commands#build()
   echomsg "[cmake] Building all targets..."
-  let l:output = cmake#util#run_cmake("--build", "","")
-  if l:output != 0
-    echomsg l:output
-    echomsg "[cmake] Built all targets."
-  end
+  call cmake#util#run_cmake("--build", "","")
+  echomsg "[cmake] Built all targets."
 endfunc
 
 func! cmake#commands#invoke_target(target)
   echomsg "[cmake] Invoking target '" . a:target . "'..."
-  call cmake#util#run_cmake("--build ". cmake#util#binary_dir() . " --target " . a:target. " --", "", "")
+  call cmake#util#run_cmake("--build ". cmake#util#binary_dir() . 
+    \ " --target " . a:target. " --", "", "")
+endfunc
+
+func! cmake#commands#build_current()
+  call cmake#commands#build_target_for_file(fnamemodify(bufname('%'), ':p'))
 endfunc
 
 func! cmake#commands#build_target_for_file(file)
-  let target = cmake#targets#corresponding_file(a:file)
+  let target = cmake#targets#for_file(a:file)
   if empty(target)
     return 0
   endif
@@ -33,37 +35,25 @@ endfunc
 
 func! cmake#commands#clean()
   echomsg "[cmake] Cleaning build..."
-  let l:output = cmake#util#run_make("clean")
-  if l:output != 0
-    echomsg l:output
-  end
+  call cmake#util#run_make("clean")
   echomsg "[cmake] Cleaned build."
 endfunc
 
 func! cmake#commands#test()
   echomsg "[cmake] Testing build..."
-  let l:output = cmake#util#run_make("test")
-  if l:output != 0
-    echomsg l:output
-  end
+  call cmake#util#run_make("test")
   echomsg "[cmake] Tested build."
 endfunc
 
 func! cmake#commands#rebuild_cache()
   echomsg "[cmake] Rebuilding cache for CMake.."
-  let l:output = cmake#util#run_make("rebuild_cache")
-  if l:output != 0
-    echomsg l:output
-  end
+  call cmake#util#run_make("rebuild_cache")
   echomsg "[cmake] Rebuilt cache for CMake."
 endfunc
 
 func! cmake#commands#install()
   echomsg "[cmake] Installing project..."
-  let l:output = cmake#util#run_make("install")
-  if l:output != 0
-    echomsg l:output
-  end
+  call cmake#util#run_make("install")
   echomsg "[cmake] Installed project."
 endfunc
 
@@ -106,7 +96,6 @@ func! cmake#commands#set_var(variable,value)
 endfunc!
 
 function! cmake#commands#install_ex()
-  " Set Ex commands.
   command! -buffer -nargs=0 CMakeBuild
         \ :call cmake#commands#build()
   command! -buffer -nargs=0 CMakeRebuildCache
@@ -122,15 +111,14 @@ function! cmake#commands#install_ex()
   command! -buffer -nargs=0 CMakeClearBufferOpts
         \ :unlet b:cmake_binary_dir
   command! -buffer -nargs=0 CMakeBuildCurrent
-        \ :call cmake#commands#build_target_for_file(fnamemodify(bufname('%'), ':p'))
-
-  command! -buffer -nargs=1 CMakeTarget
-        \ :call cmake#targets#build("<args>")
-  command! -buffer -nargs=1 CMakeCreateBuild
-        \ :call cmake#commands#create_build("<args>")
-        \ -complete=dir
+        \ :call cmake#commands#build_current()
+  command! -buffer -nargs=1 -complete=customlist,s:get_targets
+        \ CMakeTarget :call cmake#targets#build("<args>")
   command! -buffer -nargs=1 CMakeGetVar
         \ :echo cmake#commands#get_var("<args>")
+
+  command! -nargs=1 -complete=dir CMakeCreateBuild
+        \ :call cmake#commands#create_build("<args>")
 endfunc!
 
 func! s:clean_then_build()
@@ -138,15 +126,19 @@ func! s:clean_then_build()
   call cmake#commands#build()
 endfunc
 
+func! s:get_targets(A,L,P)
+  return cmake#targets#list()
+endfunc
+
 func! s:get_build_opts()
   let l:command =  [ '-G "Unix Makefiles" ']
-  let l:command += [ "-DCMAKE_EXPORT_COMPILE_COMMANDS=1"]
-  let l:command += [ "-DCMAKE_INSTALL_PREFIX:FILEPATH="  . g:cmake_install_prefix ]
-  let l:command += [ "-DCMAKE_BUILD_TYPE:STRING="        . g:cmake_build_type ]
-  let l:command += [ "-DCMAKE_CXX_COMPILER:FILEPATH="    . g:cmake_cxx_compiler ]
-  let l:command += [ "-DCMAKE_C_COMPILER:FILEPATH="      . g:cmake_c_compiler ] 
-  let l:command += [ "-DBUILD_SHARED_LIBS:BOOL="         . g:cmake_build_shared_libs ]
-  let l:commandstr = join(l:command, " ")
+  let l:command += [ '-DCMAKE_EXPORT_COMPILE_COMMANDS=1']
+  let l:command += [ '-DCMAKE_INSTALL_PREFIX:FILEPATH='  . g:cmake_install_prefix ]
+  let l:command += [ '-DCMAKE_BUILD_TYPE:STRING='        . g:cmake_build_type ]
+  let l:command += [ '-DCMAKE_CXX_COMPILER:FILEPATH='    . g:cmake_cxx_compiler ]
+  let l:command += [ '-DCMAKE_C_COMPILER:FILEPATH='      . g:cmake_c_compiler ] 
+  let l:command += [ '-DBUILD_SHARED_LIBS:BOOL='         . g:cmake_build_shared_libs ]
+  let l:commandstr = join(l:command, ' ')
 
   return l:commandstr
 endfunc!
