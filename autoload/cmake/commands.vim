@@ -7,7 +7,8 @@
 
 func! cmake#commands#build()
   echomsg "[cmake] Building all targets..."
-  call cmake#util#run_cmake("--build", "","")
+  call cmake#util#run_cmake("--build" . cmake#util#binary_dir() .
+    \ " -- target all --", "","")
   echomsg "[cmake] Built all targets."
 endfunc
 
