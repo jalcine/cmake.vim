@@ -121,6 +121,17 @@ func! cmake#util#shell_exec(command)
   endif
 endfunc
 
+func! cmake#util#shell_bgexec(command)
+  " Vimux isn't checked here because it focuses heavily on the use of
+  " pane-based actions; whereas dispatch can use both the pane and window (if
+  " necessary).
+  if g:cmake_use_dispatch == 1 && g:loaded_dispatch == 1
+    call dispatch#start(a:command, {background: 1})
+  else
+    call cmake#util#shell_exec(a:command)
+  endif
+endfunc
+
 func! cmake#util#targets()
   let dirs = glob(cmake#util#binary_dir() ."**/*.dir", 0, 1)
   for dir in dirs
