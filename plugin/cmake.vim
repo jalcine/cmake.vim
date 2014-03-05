@@ -26,11 +26,10 @@ let s:options = {
   \  'g:cmake_build_type':        'Debug',
   \  'g:cmake_install_prefix':    '/usr/local', 
   \  'g:cmake_build_shared_libs': 1,
-  \  'g:cmake_generate_tags':     {
+  \  'g:cmake_ctags':             {
   \     'project_files':          1,
   \     'include_files':          0,
-  \     'cache_directory':        '$HOME/.vim/tags',
-  \     'executable':             executable('ctags')
+  \     'executable':             'ctags'
   \   },
   \  'g:cmake_set_makeprg':       1,
   \  'g:cmake_use_vimux':         exists('g:loaded_vimux'),
