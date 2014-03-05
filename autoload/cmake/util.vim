@@ -126,7 +126,7 @@ func! cmake#util#shell_bgexec(command)
   " pane-based actions; whereas dispatch can use both the pane and window (if
   " necessary).
   if g:cmake_use_dispatch == 1 && g:loaded_dispatch == 1
-    call dispatch#start(a:command, {background: 1})
+    call dispatch#start(a:command, {'background': 1})
   else
     call cmake#util#shell_exec(a:command)
   endif
