@@ -94,6 +94,8 @@ func! cmake#targets#files(target)
     let object = substitute(object, '.o$', '', 'g')
     let object = substitute(object, 'CMakeFiles/', '', 'g')
     let object = substitute(object, a:target . '.dir/', '', 'g')
+    let object = substitute(object, '__', '', 'g')
+    let object = substitute(object, '\/\/', '', 'g')
     let object = fnamemodify(object, ':p')
     let objects[di] = object
   endfor
