@@ -104,9 +104,13 @@ func! cmake#util#run_cmake(command, binary_dir, source_dir)
   return cmake#util#shell_exec(l:command)
 endfunc
 
+func! cmake#util#update_path()
+endfunc
+
 func! cmake#util#handle_injection()
   call cmake#commands#install_ex()
   call cmake#util#apply_makeprg()
+  call cmake#util#update_path()
   call cmake#flags#inject()
 endfunc
 
