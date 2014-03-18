@@ -113,7 +113,7 @@ endfunc
 func! cmake#util#shell_exec(command)
   if g:cmake_use_dispatch == 1 && g:loaded_dispatch == 1
     return dispatch#compile_command("", a:command)
-  else if g:cmake_use_vimux == 1 && g:loaded_vimux == 1
+  elseif g:cmake_use_vimux == 1 && g:loaded_vimux == 1
     call VimuxRunCommand(a:command)
     return 0
   else
