@@ -98,7 +98,7 @@ func! cmake#util#run_cmake(command, binary_dir, source_dir)
     call mkdir(l:binary_dir)
   endif
 
-  let l:command = 'PWD=' . l:binary_dir . ' cmake ' . a:command . ' ' .
+  let l:command = 'cd ' . l:binary_dir . '&& cmake ' . a:command . ' ' .
         \ l:binary_dir . ' ' . l:source_dir
 
   return cmake#util#shell_exec(l:command)
