@@ -112,7 +112,6 @@ endfunc
 func! cmake#util#update_path()
   if cmake#util#has_project() == 1
     let l:paths = []
-    " Set the root paths.
     let l:root_source_dir = cmake#util#source_dir()
     let l:root_binary_dir = cmake#util#binary_dir()
 
@@ -124,9 +123,7 @@ func! cmake#util#update_path()
       let l:paths += [ fnamemodify(l:root_source_dir,':p:.') ]
     endif
 
-    " Add the include directories for the targets.
-    let l:targets = cmake#targets#list()
-    for target in l:targets
+    for target in cmake#targets#list()
       let l:target_source_dir = fnamemodify(cmake#targets#source_dir(l:target),':p:.')
       let l:target_binary_dir = fnamemodify(cmake#targets#binary_dir(l:target),':p:.')
       let l:target_include_dirs = cmake#targets#include_dirs(l:target)
@@ -142,10 +139,22 @@ func! cmake#util#update_path()
       let l:paths += l:target_include_dirs
     endfor
 
-    let l:paths = sort(l:paths)
-    let &path .= ',' . join(l:paths, ',')
+    let l:all_paths = split(&path, ",", 0) + l:paths
+    let l:paths_str = join(s:make_unique(l:all_paths), ",")
+    let &path = l:paths_str
   endif
 endfunc
+
+function s:make_unique(list)
+  let new_list = []
+  for entry in a:list
+    if count(new_list, entry, 1) == 1
+      continue
+    endif
+    let l:new_list += [ entry ]
+  endfor
+  return l:new_list
+endfunction
 
 func! cmake#util#handle_injection()
   call cmake#commands#install_ex()
