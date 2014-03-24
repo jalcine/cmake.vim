@@ -7,8 +7,7 @@
 
 func! cmake#commands#build()
   echomsg "[cmake] Building all targets..."
-  call cmake#util#run_cmake("--build" . cmake#util#binary_dir() .
-    \ " -- target all --", "","")
+  call cmake#commands#invoke_target('all')
   echomsg "[cmake] Built all targets."
 endfunc
 
@@ -20,6 +19,28 @@ endfunc
 
 func! cmake#commands#build_current()
   call cmake#commands#build_target_for_file(fnamemodify(bufname('%'), ':p'))
+endfunc
+
+func! cmake#commands#clear_ctags()
+  let l:targets = cmake#targets#list()
+  for target in l:targets
+    call cmake#ctags#wipe(l:target)
+  endfor
+endfunc
+
+func! cmake#commands#generate_ctags()
+  let l:targets = cmake#targets#list()
+  for target in l:targets
+    call cmake#ctags#generate_for_target(l:target)
+  endfor
+  echomsg "[jalcine] Generated tags for all targets."
+endfunc
+
+func! cmake#commands#generate_local_ctags()
+  if exists('b:cmake_corresponding_target')
+    call cmake#ctags#generate_for_target(b:cmake_corresponding_target)
+    echomsg "[jalcine] Generated tags for " . b:cmake_corresponding_target . "."
+  endif
 endfunc
 
 func! cmake#commands#build_target_for_file(file)
@@ -35,25 +56,25 @@ endfunc
 
 func! cmake#commands#clean()
   echomsg "[cmake] Cleaning build..."
-  call cmake#util#run_make("clean")
+  call cmake#commands#invoke_target('clean')
   echomsg "[cmake] Cleaned build."
 endfunc
 
 func! cmake#commands#test()
   echomsg "[cmake] Testing build..."
-  call cmake#util#run_make("test")
+  call cmake#commands#invoke_target('test')
   echomsg "[cmake] Tested build."
 endfunc
 
 func! cmake#commands#rebuild_cache()
   echomsg "[cmake] Rebuilding cache for CMake.."
-  call cmake#util#run_make("rebuild_cache")
+  call cmake#commands#invoke_target('rebuild_cache')
   echomsg "[cmake] Rebuilt cache for CMake."
 endfunc
 
 func! cmake#commands#install()
   echomsg "[cmake] Installing project..."
-  call cmake#util#run_make("install")
+  call cmake#commands#invoke_target('install')
   echomsg "[cmake] Installed project."
 endfunc
 
@@ -112,6 +133,10 @@ function! cmake#commands#install_ex()
         \ :unlet b:cmake_binary_dir
   command! -buffer -nargs=0 CMakeBuildCurrent
         \ :call cmake#commands#build_current()
+  command! -buffer -nargs=0 CMakeCtagsBuildAll
+        \ :call cmake#commands#generate_ctags()
+  command! -buffer -nargs=0 CMakeCtagsBuildCurrent
+        \ :call cmake#commands#generate_local_ctags()
   command! -buffer -nargs=1 -complete=customlist,s:get_targets
         \ CMakeTarget :call cmake#targets#build("<args>")
   command! -buffer -nargs=1 CMakeGetVar

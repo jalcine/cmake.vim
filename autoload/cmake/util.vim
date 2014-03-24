@@ -33,11 +33,11 @@ endfunc
 
 func! cmake#util#source_dir()
   if !cmake#util#has_project()
-    return 0
+    return ""
   endif
 
-  let l:dir = cmake#util#read_from_cache("Project_SOURCE_DIR")
-  let l:dir = fnamemodify(l:dir, ':p:.')
+  let dir = cmake#util#read_from_cache("Project_SOURCE_DIR")
+  let dir = fnamemodify(dir, ':p:.')
   return l:dir
 endfunc
 
@@ -54,7 +54,7 @@ func! cmake#util#read_from_cache(property)
   let l:property_width = strlen(a:property) + 2
 
   if !filereadable(cmake#util#cache_file_path())
-    return 0
+    return ""
   endif
 
   " First, grep out this property.
@@ -163,6 +163,28 @@ func! cmake#util#shell_exec(command)
   else
     return system(a:command)
   endif
+endfunc
+
+func! cmake#util#shell_bgexec(command)
+  " Vimux isn't checked here because it focuses heavily on the use of
+  " pane-based actions; whereas dispatch can use both the pane and window (if
+  " necessary).
+  if g:cmake_use_dispatch == 1 && g:loaded_dispatch == 1
+    call dispatch#start(a:command, {'background': 1})
+  else
+    call cmake#util#shell_exec(a:command)
+  endif
+endfunc
+
+func! cmake#util#targets()
+  let dirs = glob(cmake#util#binary_dir() ."**/*.dir", 0, 1)
+  for dir in dirs
+    let oldir = dir
+    let dir = substitute(dir, cmake#util#binary_dir(), "", "g")
+    let dir = substitute(dir, "**CMakeFiles/", "", "g")
+    let dir = substitute(dir, ".dir", "", "g")
+    let dirs[get(dirs, oldir)] = dir
+  endfor
 endfunc
 
 func! cmake#util#apply_makeprg()
