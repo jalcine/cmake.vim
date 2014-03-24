@@ -6,7 +6,7 @@
 " Version:          0.3.0
 
 func! cmake#util#binary_dir()
-  if exists("b:cmake_binary_dir")
+  if exists("b:cmake_binary_dir") && isdirectory(b:cmake_binary_dir)
     return b:cmake_binary_dir
   endif
 
@@ -14,12 +14,13 @@ func! cmake#util#binary_dir()
   let l:directories = g:cmake_build_directories + [ getcwd() ]
 
   for l:directory in l:directories
-    let l:directory = fnamemodify(l:directory, ':p')
+    let l:directory = fnamemodify(l:directory, ':p:.')
     let l:file = findfile(directory . "/CMakeCache.txt", ".;")
 
     if filereadable(l:file)
       let l:proposed_dir = substitute(l:file, "/CMakeCache.txt", "", "")
       let b:cmake_binary_dir = l:proposed_dir
+      break
     endif
   endfor
 
@@ -30,19 +31,19 @@ func! cmake#util#has_project()
   return cmake#util#binary_dir() == 0
 endfunc
 
-" TODO: Resolve path to absolute-ness.
 func! cmake#util#source_dir()
-  if cmake#util#binary_dir() == 0
-    return ""
+  if !cmake#util#has_project()
+    return 0
   endif
 
-  return cmake#util#read_from_cache("Project_SOURCE_DIR")
+  let l:dir = cmake#util#read_from_cache("Project_SOURCE_DIR")
+  let l:dir = fnamemodify(l:dir, ':p:.')
+  return l:dir
 endfunc
 
 func! cmake#util#cache_file_path()
-  let l:bindir = cmake#util#binary_dir()
-  if isdirectory(l:dir) && filereadable(l:bindir . "/CMakeCache.txt")
-    return l:bindir . "/CMakeCache.txt"
+  if cmake#util#has_project()
+    return cmake#util#binary_dir() . "/CMakeCache.txt"
   endif
 
   return 0
@@ -53,25 +54,28 @@ func! cmake#util#read_from_cache(property)
   let l:property_width = strlen(a:property) + 2
 
   if !filereadable(cmake#util#cache_file_path())
-    return ""
+    return 0
   endif
 
   " First, grep out this property.
-  let l:property_line = system("grep -E \"^" . a:property . ":\" " . l:cmake_cache_file)
+  let l:property_line = system("grep -E \"^" . a:property . ":\" " 
+    \ . l:cmake_cache_file)
   if empty(l:property_line)
     return 0
   endif
 
   " Chop down the response to size.
-  let l:property_meta_value = system("echo '" . l:property_line . "' | cut -b " . l:property_width . "-")
+  " TODO: Do this using Vim's string methods to make it more portable.
+  let l:property_meta_value = system("echo '" . l:property_line . "' | cut -b "
+    \ . l:property_width . "-")
 
   " Split it in half to get the resulting value and its type.
   let l:property_fields = split(l:property_meta_value, "=", 1)
   let l:property_fields[1] = substitute(l:property_fields[1], "\n", "", "g")
-
-  return l:property_fields
+  return l:property_fields[1]
 endfunc
 
+" TODO Consider using 'sed'.
 func! cmake#util#write_to_cache(property,value)
   call cmake#util#run_cmake('-D' . a:property . '=' . shellescape(a:value))
 endfunc
@@ -104,9 +108,49 @@ func! cmake#util#run_cmake(command, binary_dir, source_dir)
   return cmake#util#shell_exec(l:command)
 endfunc
 
+" TODO Remove duplicates.
+func! cmake#util#update_path()
+  if cmake#util#has_project() == 1
+    let l:paths = []
+    " Set the root paths.
+    let l:root_source_dir = cmake#util#source_dir()
+    let l:root_binary_dir = cmake#util#binary_dir()
+
+    if l:root_binary_dir != 0 && !empty(l:root_binary_dir)
+      let l:paths += [ fnamemodify(l:root_binary_dir,':p:.') ]
+    endif
+
+    if l:root_source_dir != 0 && !empty(l:root_source_dir)
+      let l:paths += [ fnamemodify(l:root_source_dir,':p:.') ]
+    endif
+
+    " Add the include directories for the targets.
+    let l:targets = cmake#targets#list()
+    for target in l:targets
+      let l:target_source_dir = fnamemodify(cmake#targets#source_dir(l:target),':p:.')
+      let l:target_binary_dir = fnamemodify(cmake#targets#binary_dir(l:target),':p:.')
+      let l:target_include_dirs = cmake#targets#include_dirs(l:target)
+
+      if count(l:paths, escape(l:target_source_dir, '\/'), 1) == 0
+        let l:paths += [ l:target_source_dir ]
+      endif
+
+      if count(l:paths, escape(l:target_binary_dir, '\/'), 1) == 0
+        let l:paths += [ l:target_binary_dir ]
+      endif
+
+      let l:paths += l:target_include_dirs
+    endfor
+
+    let l:paths = sort(l:paths)
+    let &path .= ',' . join(l:paths, ',')
+  endif
+endfunc
+
 func! cmake#util#handle_injection()
   call cmake#commands#install_ex()
   call cmake#util#apply_makeprg()
+  call cmake#util#update_path()
   call cmake#flags#inject()
 endfunc
 
@@ -121,19 +165,7 @@ func! cmake#util#shell_exec(command)
   endif
 endfunc
 
-func! cmake#util#targets()
-  let dirs = glob(cmake#util#binary_dir() ."**/*.dir", 0, 1)
-  for dir in dirs
-    let oldir = dir
-    let dir = substitute(dir, cmake#util#binary_dir(), "", "g")
-    let dir = substitute(dir, "**CMakeFiles/", "", "g")
-    let dir = substitute(dir, ".dir", "", "g")
-    let dirs[get(dirs, oldir)] = dir
-  endfor
-endfunc
-
 func! cmake#util#apply_makeprg()
-  " TODO Take a copy of the old 'makeprg' and place it in 'g:oldmakeprg'
   if g:cmake_set_makeprg == 1 && cmake#util#has_project() == 1
     let &makeprg="make -C " . cmake#util#binary_dir()
   endif
