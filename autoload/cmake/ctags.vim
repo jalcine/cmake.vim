@@ -11,7 +11,7 @@ func! cmake#ctags#invoke(args)
 endfunc
 
 func! cmake#ctags#cache_directory()
-  let l:dir = cmake#util#binary_dir() . "tags"
+  let l:dir = fnamemodify(cmake#util#binary_dir() . "tags", "%:p")
   if !isdirectory(l:dir)
     call mkdir(l:dir)
   endif
@@ -21,7 +21,7 @@ endfunc
 func! cmake#ctags#generate_for_target(target)
   let l:tag_file = cmake#ctags#cache_directory() . "/" .  a:target . ".tags"
   let l:files    = cmake#targets#files(a:target)
-  let l:args     = "-a -f " . l:tag_file
+  let l:args     = "--append --excmd=mixed --extra=+fq --totals=no --file " . l:tag_file
 
   if type(l:files) != type([])
     return

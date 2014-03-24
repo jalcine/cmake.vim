@@ -33,6 +33,14 @@ func! cmake#commands#generate_ctags()
   for target in l:targets
     call cmake#ctags#generate_for_target(l:target)
   endfor
+  echomsg "[jalcine] Generated tags for all targets."
+endfunc
+
+func! cmake#commands#generate_local_ctags()
+  if exists('b:cmake_corresponding_target')
+    call cmake#ctags#generate_for_target(b:cmake_corresponding_target)
+    echomsg "[jalcine] Generated tags for " . b:cmake_corresponding_target . "."
+  endif
 endfunc
 
 func! cmake#commands#build_target_for_file(file)
@@ -125,8 +133,10 @@ function! cmake#commands#install_ex()
         \ :unlet b:cmake_binary_dir
   command! -buffer -nargs=0 CMakeBuildCurrent
         \ :call cmake#commands#build_current()
-  command! -buffer -nargs=0 CMakeCtagsBuild 
+  command! -buffer -nargs=0 CMakeCtagsBuildAll
         \ :call cmake#commands#generate_ctags()
+  command! -buffer -nargs=0 CMakeCtagsBuildCurrent
+        \ :call cmake#commands#generate_local_ctags()
   command! -buffer -nargs=1 -complete=customlist,s:get_targets
         \ CMakeTarget :call cmake#targets#build("<args>")
   command! -buffer -nargs=1 CMakeGetVar
