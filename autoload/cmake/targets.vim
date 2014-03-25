@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.3.0
+" Version:          0.3.1
 
 func! cmake#targets#build(target)
   echomsg "[cmake] Building target '" . a:target . "'..."
@@ -11,9 +11,9 @@ func! cmake#targets#build(target)
         \ " --target " . a:target . " -- ", "", "")
 endfunc!
 
-"func! cmake#targets#clean(target)
-  " TODO: This requires a bit of magic.
-"endfunc!
+func! cmake#targets#exists(target)
+  return index(cmake#targets#list(), a:target) != -1
+endfunc
 
 func! cmake#targets#binary_dir(target)
   let l:bindir = glob(cmake#util#binary_dir() . '**/' . a:target . '.dir', 1)
@@ -46,14 +46,22 @@ func! cmake#targets#list()
   return dirs
 endfunc!
 
-func! cmake#targets#exists(target)
-  return index(cmake#targets#list(), a:target) != -1
-endfunc
+function! cmake#targets#include_dirs(target)
+  let flags = cmake#targets#flags(a:target)
+  let dirs = []
+  if !empty(flags)
+    for key in keys(flags)
+      let includes = filter(flags[key], 'stridx(v:val, "-I") == 0')
+      call map(includes, 'substitute(v:val, "-I", "", "")')
+    endfor
+  endif
+
+  return dirs
+endfunction
 
 func! cmake#targets#for_file(filepath)
-  " A bit intensive of a method, searches each target if the provided file is
-  " within. This value is cached.
-  if exists("b:cmake_corresponding_target")
+  if exists("b:cmake_corresponding_target") &&
+      \ cmake#targets#exists(b:cmake_corresponding_target)
     return b:cmake_corresponding_target
   endif
 
@@ -94,6 +102,8 @@ func! cmake#targets#files(target)
     let object = substitute(object, '.o$', '', 'g')
     let object = substitute(object, 'CMakeFiles/', '', 'g')
     let object = substitute(object, a:target . '.dir/', '', 'g')
+    let object = substitute(object, '__', '', 'g')
+    let object = substitute(object, '\/\/', '', 'g')
     let object = fnamemodify(object, ':p')
     let objects[di] = object
   endfor

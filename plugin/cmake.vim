@@ -26,13 +26,18 @@ let s:options = {
   \  'g:cmake_build_type':        'Debug',
   \  'g:cmake_install_prefix':    '/usr/local', 
   \  'g:cmake_build_shared_libs': 1,
+  \  'g:cmake_ctags':             {
+  \     'project_files':          1,
+  \     'include_files':          0,
+  \     'executable':             'ctags'
+  \   },
   \  'g:cmake_set_makeprg':       1,
   \  'g:cmake_use_vimux':         exists('g:loaded_vimux'),
   \  'g:cmake_use_dispatch':      exists('g:loaded_dispatch'),
   \  'g:cmake_filter_flags':      1,
   \  'g:cmake_inject_flags':      {
-  \   'syntastic':                exists('g:loaded_syntastic_plugin'),
-  \   'ycm':                      exists('g:ycm_check_if_ycm_core_present')
+  \     'syntastic':              exists('g:loaded_syntastic_plugin'),
+  \     'ycm':                    exists('g:ycm_check_if_ycm_core_present')
   \   }
   \ }
 
