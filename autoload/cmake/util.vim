@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.3.0
+" Version:          0.3.1
 
 func! cmake#util#binary_dir()
   if exists("b:cmake_binary_dir") && isdirectory(b:cmake_binary_dir)

@@ -27,17 +27,16 @@ CONTENTS ~
 ABOUT                                              *cmake-about*
 
 CMake is a "Cross-Platform Makefile generator". However, CMake can generate
-more than Makefiles; including Eclipse and KDevelop build systems, making it
-quite diverse in its output.
+more than Makefiles; including files for Eclipse and KDevelop build systems
+as well as Ninja build files (from the Chromium project), making it quite 
+diverse in its output.
 
 The act of integrating CMake with Vim allows for developers to use the
 facilities of CMake without having to constantly switch back and forth. This
 plugin goes a step further and automatically sets 'makeprg' for you to help
 other tools related to Java, C++, C, Objective C or Fortan-based programming
-easily invoke CMake's version of the build system.
-
-'cmake' provides this integration with minimal effort to the developer using 
-Vim.
+easily invoke CMake's version of the build system. It can also incorporate
+support with other plugins like 'dispatch', YouCompleteMe, and 'syntastic'.
 
 2. QUICK START ~
                                                     *cmake-quickstart*
@@ -50,6 +49,9 @@ command: >
 You should get output similar to the following: >
 
   cmake version 2.8.10.1
+
+At the time of writing, CMake version 2.6+ or greater would work with
+'cmake', but feel free to send a report if older versions don't work.
 
 3. OPTIONS 
                                                     |cmake-options|
