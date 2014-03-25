@@ -102,7 +102,7 @@ func! cmake#util#run_cmake(command, binary_dir, source_dir)
     call mkdir(l:binary_dir)
   endif
 
-  let l:command = 'PWD=' . l:binary_dir . ' cmake ' . a:command . ' ' .
+  let l:command = 'cd ' . l:binary_dir . '&& cmake ' . a:command . ' ' .
         \ l:binary_dir . ' ' . l:source_dir
 
   return cmake#util#shell_exec(l:command)
@@ -157,7 +157,7 @@ endfunc
 func! cmake#util#shell_exec(command)
   if g:cmake_use_dispatch == 1 && g:loaded_dispatch == 1
     return dispatch#compile_command("", a:command)
-  else if g:cmake_use_vimux == 1 && g:loaded_vimux == 1
+  elseif g:cmake_use_vimux == 1 && g:loaded_vimux == 1
     call VimuxRunCommand(a:command)
     return 0
   else
