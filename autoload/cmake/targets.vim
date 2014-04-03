@@ -7,8 +7,7 @@
 
 func! cmake#targets#build(target)
   echomsg "[cmake] Building target '" . a:target . "'..."
-  return cmake#util#run_cmake("--build " . cmake#util#binary_dir() . 
-        \ " --target " . a:target . " -- ", "", "")
+  return cmake#util#run_cmake("--build . --target " . a:target . " -- ", "", "")
 endfunc!
 
 func! cmake#targets#exists(target)
@@ -16,7 +15,9 @@ func! cmake#targets#exists(target)
 endfunc
 
 func! cmake#targets#binary_dir(target)
-  let l:bindir = glob(cmake#util#binary_dir() . '**/' . a:target . '.dir', 1)
+  let l:bindir = glob(cmake#util#binary_dir() . '/**/' . a:target . '.dir', 1)
+  let l:bindir = expand(l:bindir, ':p:.')
+  "echo 'Target binary dir: ' . l:bindir
   if isdirectory(l:bindir)
     return l:bindir
   endif
@@ -26,11 +27,14 @@ endfunc!
 
 func! cmake#targets#source_dir(target)
   let l:build_dir  = cmake#targets#binary_dir(a:target)
-  let l:source_dir = substitute(l:build_dir,  
+  let l:source_dir = substitute(l:build_dir,
         \ cmake#util#binary_dir(), cmake#util#source_dir(), "g")
   let l:source_dir = substitute(l:source_dir,
-        \ "/CMakeFiles/" . a:target . ".dir/", "", "g")
-  let l:source_dir = fnamemodify(l:source_dir, ':p')
+        \ "\/CMakeFiles\/" . a:target . ".dir/", "", "g")
+  let l:source_dir = fnamemodify(l:source_dir, ':p:.')
+  if !isdirectory(l:source_dir)
+    let l:source_dir = 0
+  endif
   return l:source_dir
 endfunc!
 
@@ -53,6 +57,7 @@ function! cmake#targets#include_dirs(target)
     for key in keys(flags)
       let includes = filter(flags[key], 'stridx(v:val, "-I") == 0')
       call map(includes, 'substitute(v:val, "-I", "", "")')
+      let dirs += includes
     endfor
   endif
 
