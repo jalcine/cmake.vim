@@ -20,6 +20,7 @@ endfunc
 
 func! cmake#ctags#generate_for_target(target)
   let l:tag_file = cmake#ctags#cache_directory() . "/" .  a:target . ".tags"
+  let l:tag_file = fnamemodify(l:tag_file, ':p:.')
   let l:files    = cmake#targets#files(a:target)
   let l:args     = "--append --excmd=mixed --extra=+fq --totals=no --file " . l:tag_file
 
