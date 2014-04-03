@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.3.0
+" Version:          0.3.1
 
 " If we're here, don't reload man.
 if exists("g:loaded_cmake") 
@@ -12,13 +12,10 @@ else
   let g:loaded_cmake = 1
 end
 
-func! s:setauto(name, value)
-  if !exists(a:name)
-    let {a:name} = a:value
-  endif
-endfunc
+" Capture the user's predefined 'path' option.
+let g:cmake_old_path = &path
 
-" Set configuration options.
+func! s:set_options()
 let s:options = {
   \  'g:cmake_cxx_compiler':      'clang++',
   \  'g:cmake_c_compiler':        'clang',
@@ -40,12 +37,23 @@ let s:options = {
   \     'ycm':                    exists('g:ycm_check_if_ycm_core_present')
   \   }
   \ }
+  for aOption in keys(s:options)
+    call s:setauto(aOption, s:options[aOption])
+  endfor
+endfunc
 
-for aOption in keys(s:options)
-  call s:setauto(aOption, s:options[aOption])
-endfor
+func! s:setauto(name, value)
+  if !exists(a:name)
+    let {a:name} = a:value
+  endif
+endfunc
 
-augroup cmake
+call s:set_options()
+
+augroup CMake
   au!
-  au VimEnter,BufEnter,FileReadPre * call cmake#util#handle_injection()
+  au VimEnter     * call cmake#augroup#on_vim_enter()
+  au BufEnter     * call cmake#augroup#on_buf_enter()
+  au FileReadPost * call cmake#augroup#on_file_read_post()
 augroup END
+
