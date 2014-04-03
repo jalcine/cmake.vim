@@ -13,8 +13,7 @@ endfunc
 
 func! cmake#commands#invoke_target(target)
   echomsg "[cmake] Invoking target '" . a:target . "'..."
-  call cmake#util#run_cmake("--build ". cmake#util#binary_dir() . 
-    \ " --target " . a:target. " --", "", "")
+  call cmake#util#run_cmake(" --target " . a:target. " --", "", "")
 endfunc
 
 func! cmake#commands#build_current()
@@ -116,7 +115,7 @@ func! cmake#commands#set_var(variable,value)
   call cmake#util#write_to_cache(a:variable,a:value)
 endfunc!
 
-function! cmake#commands#install_ex()
+function! cmake#commands#apply_buffer_commands()
   command! -buffer -nargs=0 CMakeBuild
         \ :call cmake#commands#build()
   command! -buffer -nargs=0 CMakeRebuildCache
@@ -141,7 +140,9 @@ function! cmake#commands#install_ex()
         \ CMakeTarget :call cmake#targets#build("<args>")
   command! -buffer -nargs=1 CMakeGetVar
         \ :echo cmake#commands#get_var("<args>")
+endfunc!
 
+func! cmake#commands#apply_global_commands()
   command! -nargs=1 -complete=dir CMakeCreateBuild
         \ :call cmake#commands#create_build("<args>")
 endfunc!
