@@ -5,34 +5,50 @@
 " Website:          https://jalcine.github.io/cmake.vim
 " Version:          0.3.1
 
-" TODO: Filter the flags so that we only have warnings and includes passed
-" into the mix.
-func! cmake#flags#filter(flags)
-  let l:flags = a:flags
-  if g:cmake_filter_flags == 1 && !empty(l:flags)
-    for flag in flags
-      let l:index         = index(flags, flag)
-      let l:isAInclude    = stridx(flag, '-I') || stridx(flag, '-i')
-      let l:isAWarning    = stridx(flag, '-W')
-    endfor
+function! cmake#flags#filter(flags)
+  if g:cmake_filter_flags == 0
+    return a:flags
+  endif
+
+  let l:flags = copy(a:flags)
+  if empty(l:flags)
+    call filter(flags, "s:sort_out_flags(v:val)")
   endif
 
   return l:flags
-endfunc!
+endfunction!
 
-func! cmake#flags#inject()
+function! s:sort_out_flags(val)
+  echo "Flag: " . a:val
+  if stridx(a:val, '-i') == 0
+    return 1
+  else if stridx(a:val, '-I') == 0
+    return 1
+  else if stridx(a:val, '-W') == 0
+    return 1
+  else if stridx(a:val, '-f') == 0
+    return 1
+  endif
+
+  return 0
+endfunction
+
+function! cmake#flags#inject()
   let target = cmake#targets#for_file(fnamemodify(bufname('%'), ':p'))
 
   if empty(target)
     return
   endif
 
+  " Set the flags for this current file.
+  let b:cmake_flags = cmake#targets#flags(target)[&ft]
+
+  " Do what is right.
   call cmake#flags#inject_to_ycm(target)
   call cmake#flags#inject_to_syntastic(target)
 endfunc
 
-" TODO Fix this; it doesn't use the right Syntastic option.
-func! cmake#flags#inject_to_syntastic(target)
+function! cmake#flags#inject_to_syntastic(target)
   if g:cmake_inject_flags.syntastic != 1
     return
   endif
@@ -43,21 +59,20 @@ func! cmake#flags#inject_to_syntastic(target)
   endif
 
   for l:language in keys(l:flags)
-    "let l:checker_val = "g:syntastic_" . l:language . "_checkers"
-    "if !exists(l:checker_val)
-      "continue
-    "endif
-
-    "let l:checkers = eval(l:checker_val)
-    "for l:checker in l:checkers
-      "let l:args = l:flags[l:language]
-      "let l:sy_flag = "g:syntastic_" . l:language . "_" . l:checker . "_args"
-      "exec("let " . l:sy_flag . "='" . join(l:args, " ") . "'")
-    "endfor
+    " TODO You got this.
   endfor
-endfunc!
+endfunction!
 
-func! cmake#flags#collect(flags_file, prefix)
+function! cmake#flags#inject_to_ycm(target)
+  if g:cmake_inject_flags.ycm == 0
+    return 0
+  endif
+
+  call cmake#flags#prep_ycm()
+
+endfunc
+
+function! cmake#flags#collect(flags_file, prefix)
   let l:flags = split(system("grep '" . a:prefix . "_FLAGS = ' " . a:flags_file . 
     \ ' | cut -b ' . (strlen(a:prefix) + strlen('_FLAGS = ')) . '-'))
   let l:flags = cmake#flags#filter(l:flags)
@@ -67,15 +82,23 @@ func! cmake#flags#collect(flags_file, prefix)
 
   let l:params = l:flags + l:defines
   return l:params
-endfunc!
+endfunction!
 
-" TODO: Don't clobber the values for vim data in YCM.
-func! cmake#flags#inject_to_ycm(target)
-  if g:cmake_inject_flags.ycm != 1
-    return
+function! cmake#flags#prep_ycm()
+  if g:cmake_inject_flags.ycm == 0
+    return 0
   endif
 
-  let g:cmake_binary_dir        = cmake#util#binary_dir()
-  let g:cmake_current_flags     = cmake#targets#flags(a:target)
-  let g:ycm_extra_conf_vim_data = ['g:cmake_binary_dir', 'g:cmake_current_flags']
-endfunc!
+  if index(g:ycm_extra_conf_vim_data, 'b:cmake_binary_dir') == -1 && 
+      \ exists('b:cmake_binary_dir')
+    let g:ycm_extra_conf_vim_data += ['b:cmake_binary_dir']
+  endif
+  if index(g:ycm_extra_conf_vim_data, 'b:cmake_root_binary_dir') == -1 && 
+      \ exists('b:cmake_root_binary_dir')
+    let g:ycm_extra_conf_vim_data += ['b:cmake_root_binary_dir']
+  endif
+  if index(g:ycm_extra_conf_vim_data, 'b:cmake_flags') == -1 &&
+      \ exists('b:cmake_flags')
+    let g:ycm_extra_conf_vim_data += ['b:cmake_flags']
+  endif
+endfunction!
