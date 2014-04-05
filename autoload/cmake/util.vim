@@ -5,52 +5,51 @@
 " Website:          https://jalcine.github.io/cmake.vim
 " Version:          0.3.1
 
-func! cmake#util#binary_dir()
-  if exists("b:cmake_binary_dir") && isdirectory(b:cmake_binary_dir)
-    return b:cmake_binary_dir
+function! cmake#util#binary_dir()
+  if exists("b:cmake_root_binary_dir") && isdirectory(b:cmake_root_binary_dir)
+    return b:cmake_root_binary_dir
   else
-    let b:cmake_binary_dir = 0
+    let b:cmake_root_binary_dir = ""
   endif
 
   let l:directories = g:cmake_build_directories + [ getcwd() ]
 
   for l:directory in l:directories
-    let l:directory = fnamemodify(l:directory, ':p:.')
+    let l:directory = fnamemodify(l:directory, ':p')
     let l:file = findfile(directory . "/CMakeCache.txt", ".;")
 
     if filereadable(l:file)
-      let b:cmake_binary_dir = substitute(l:file, "/CMakeCache.txt", "", "")
+      let b:cmake_root_binary_dir = substitute(l:file, "/CMakeCache.txt", "", "")
       break
     endif
   endfor
 
-  let b:cmake_binary_dir = fnamemodify(b:cmake_binary_dir,'%:p')
-  return b:cmake_binary_dir
+  let b:cmake_root_binary_dir = fnamemodify(b:cmake_root_binary_dir,':p')
+  return b:cmake_root_binary_dir
 endfunc
 
-func! cmake#util#has_project()
-  return cmake#util#binary_dir() == 0
-endfunc
-
-func! cmake#util#source_dir()
+function! cmake#util#source_dir()
   if !cmake#util#has_project()
-    return 0
+    return ""
   endif
 
-  let dir = cmake#util#read_from_cache("Project_SOURCE_DIR")
-  "echo 'Project source dir: ' . dir
+  let dir = fnamemodify(cmake#util#read_from_cache("Project_SOURCE_DIR"), ':p')
   return l:dir
 endfunc
 
-func! cmake#util#cache_file_path()
+function! cmake#util#cache_file_path()
   if cmake#util#has_project()
     return cmake#util#binary_dir() . "/CMakeCache.txt"
   endif
 
-  return 0
+  return ""
 endfunc
 
-func! cmake#util#read_from_cache(property)
+function! cmake#util#has_project()
+  return empty(cmake#util#binary_dir())
+endfunc
+
+function! cmake#util#read_from_cache(property)
   if cmake#util#has_project() == 0
     return 0
   endif
@@ -77,17 +76,17 @@ func! cmake#util#read_from_cache(property)
   return l:property_fields[1]
 endfunc
 
-func! cmake#util#write_to_cache(property,value)
+function! cmake#util#write_to_cache(property,value)
   call cmake#util#run_cmake('-D' . a:property . ':STRING=' .
     \ shellescape(a:value))
 endfunc
 
-func! cmake#util#run_make(command)
+function! cmake#util#run_make(command)
   let l:command = "make -C " . cmake#util#binary_dir() . " " . a:command
   call cmake#util#shell_exec(l:command)
 endfunc
 
-func! cmake#util#run_cmake(command, binary_dir, source_dir)
+function! cmake#util#run_cmake(command, binary_dir, source_dir)
   let l:binary_dir = a:binary_dir
   let l:source_dir = a:source_dir
 
@@ -110,7 +109,7 @@ func! cmake#util#run_cmake(command, binary_dir, source_dir)
   return cmake#util#shell_exec(l:command)
 endfunc
 
-func! cmake#util#shell_exec(command)
+function! cmake#util#shell_exec(command)
   if g:cmake_use_dispatch == 1 && g:loaded_dispatch == 1
     return dispatch#compile_command("", a:command)
   elseif g:cmake_use_vimux == 1 && g:loaded_vimux == 1
@@ -121,7 +120,7 @@ func! cmake#util#shell_exec(command)
   endif
 endfunc
 
-func! cmake#util#shell_bgexec(command)
+function! cmake#util#shell_bgexec(command)
   " Vimux isn't checked here because it focuses heavily on the use of
   " pane-based actions; whereas dispatch can use both the pane and window (if
   " necessary).
@@ -132,7 +131,7 @@ func! cmake#util#shell_bgexec(command)
   endif
 endfunc
 
-func! cmake#util#targets()
+function! cmake#util#targets()
   let dirs = glob(cmake#util#binary_dir() ."**/*.dir", 0, 1)
   for dir in dirs
     let oldir = dir
@@ -143,8 +142,17 @@ func! cmake#util#targets()
   endfor
 endfunc
 
-func! cmake#util#apply_makeprg()
+function! cmake#util#set_buffer_options()
+  let l:current_file       = fnamemodify(expand('%'), ':p')
+  let b:cmake_target       = cmake#targets#for_file(l:current_file)
+  let b:cmake_binary_dir   = cmake#targets#binary_dir(b:cmake_target)
+  let b:cmake_source_dir   = cmake#targets#source_dir(b:cmake_target)
+  let b:cmake_include_dirs = cmake#targets#include_dirs(b:cmake_target)
+  let b:cmake_libraries    = cmake#targets#libraries(b:cmake_target)
+endfunction
+
+function! cmake#util#apply_makeprg()
   if g:cmake_set_makeprg == 1 && cmake#util#has_project() == 1
-    let &makeprg="make -C " . cmake#util#binary_dir()
+    let &makeprg="make -C " . b:cmake_root_binary_dir . " " . b:cmake_target
   endif
 endfunc
