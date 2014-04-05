@@ -8,7 +8,7 @@
 
 ---
 
-[`cmake.vim 0.3.1`][release] is a Vim plugin that allows you to use [CMake][cmake]
+[`cmake.vim 0.3.2`][release] is a Vim plugin that allows you to use [CMake][cmake]
 within Vim for your projects. **This is alpha-grade software and may turn your CMake
 project into a cat-overrun Telnet session**.
 
@@ -100,4 +100,4 @@ firehose so follow with caution!
 [jalcine]: http://jalcine.me
 [vimux]: https://github.com/benmills/vimux
 [site]: http://jalcine.github.io/cmake.vim
-[release]: https://github.com/jalcine/cmake.vim/tree/v0.3.1
+[release]: https://github.com/jalcine/cmake.vim/tree/v0.3.2
