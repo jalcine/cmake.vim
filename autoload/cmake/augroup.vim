@@ -5,18 +5,18 @@
 " Website:          https://jalcine.github.io/cmake.vim
 " Version:          0.3.1
 
-func! cmake#augroup#on_vim_enter()
+function! cmake#augroup#on_vim_enter()
   call cmake#commands#apply_global_commands()
+  call cmake#flags#prep_ycm()
 endfunc
 
-func! cmake#augroup#on_buf_enter()
-  call cmake#flags#inject()
-  call cmake#util#apply_makeprg()
+function! cmake#augroup#on_buf_enter()
   call cmake#commands#apply_buffer_commands()
+  call cmake#util#set_buffer_options()
+  call cmake#util#apply_makeprg()
+  call cmake#flags#inject()
 endfunc
 
-func! cmake#augroup#on_file_read_post()
+function! cmake#augroup#on_file_read_post()
   call cmake#path#refresh()
 endfunc
-
-
