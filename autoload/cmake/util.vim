@@ -46,7 +46,7 @@ function! cmake#util#cache_file_path()
 endfunc
 
 function! cmake#util#has_project()
-  return empty(cmake#util#binary_dir())
+  return filereadable(simplify(cmake#util#binary_dir() . "/CMakeCache.txt"))
 endfunc
 
 function! cmake#util#read_from_cache(property)

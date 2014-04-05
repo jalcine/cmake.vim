@@ -10,8 +10,12 @@ function! cmake#augroup#on_vim_enter()
   call cmake#flags#prep_ycm()
 endfunc
 
-function! cmake#augroup#on_buf_enter()
+function! cmake#augroup#on_buf_read_post()
   call cmake#commands#apply_buffer_commands()
+  call cmake#util#set_buffer_options()
+endfunction
+
+function! cmake#augroup#on_buf_enter()
   call cmake#util#set_buffer_options()
   call cmake#util#apply_makeprg()
   call cmake#flags#inject()
@@ -20,3 +24,13 @@ endfunc
 function! cmake#augroup#on_file_read_post()
   call cmake#path#refresh()
 endfunc
+
+function cmake#augroup#setup()
+  augroup CMake
+    au!
+    au VimEnter     * call cmake#augroup#on_vim_enter()
+    au BufReadPost  * call cmake#augroup#on_buf_read_post()
+    au BufEnter     * call cmake#augroup#on_buf_enter()
+    au FileReadPost * call cmake#augroup#on_file_read_post()
+  augroup END
+endfunction

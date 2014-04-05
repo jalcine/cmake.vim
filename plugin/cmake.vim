@@ -49,11 +49,4 @@ func! s:setauto(name, value)
 endfunc
 
 call s:set_options()
-
-augroup CMake
-  au!
-  au VimEnter     * call cmake#augroup#on_vim_enter()
-  au BufEnter     * call cmake#augroup#on_buf_enter()
-  au FileReadPost * call cmake#augroup#on_file_read_post()
-augroup END
-
+call cmake#augroup#setup()
