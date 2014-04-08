@@ -8,8 +8,6 @@
 function! cmake#util#binary_dir()
   if exists("b:cmake_root_binary_dir") && isdirectory(b:cmake_root_binary_dir)
     return b:cmake_root_binary_dir
-  else
-    let b:cmake_root_binary_dir = ""
   endif
 
   let l:directories = g:cmake_build_directories + [ getcwd() ]
@@ -142,17 +140,39 @@ function! cmake#util#targets()
   endfor
 endfunc
 
+function! cmake#util#in_project_buffer()
+  let l:current_file = fnamemodify(expand('%'), ':p')
+
+  if !filereadable(l:current_file)
+    return 0
+  endif
+
+  if &ft != "cpp" && &ft != "c"
+    return 0
+  endif
+
+  if !cmake#util#has_project()
+    return 0
+  endif
+
+  return 1
+endfunction
+
 function! cmake#util#set_buffer_options()
-  let l:current_file       = fnamemodify(expand('%'), ':p')
-  let b:cmake_target       = cmake#targets#for_file(l:current_file)
-  let b:cmake_binary_dir   = cmake#targets#binary_dir(b:cmake_target)
-  let b:cmake_source_dir   = cmake#targets#source_dir(b:cmake_target)
-  let b:cmake_include_dirs = cmake#targets#include_dirs(b:cmake_target)
-  let b:cmake_libraries    = cmake#targets#libraries(b:cmake_target)
+  let l:current_file       = fnamemodify(expand('%'), ':p:.')
+  if !exists("b:cmake_target") || type(b:cmake_target) == type(0)
+    redraw | echo "[cmake.vim] Applying buffer options for '" . l:current_file . "'..."
+    let b:cmake_target       = cmake#targets#for_file(l:current_file)
+    let b:cmake_binary_dir   = cmake#targets#binary_dir(b:cmake_target)
+    let b:cmake_source_dir   = cmake#targets#source_dir(b:cmake_target)
+    let b:cmake_include_dirs = cmake#targets#include_dirs(b:cmake_target)
+    let b:cmake_libraries    = cmake#targets#libraries(b:cmake_target)
+    redraw | echo "[cmake.vim] Applied buffer options for '" . l:current_file . "'."
+  endif
 endfunction
 
 function! cmake#util#apply_makeprg()
-  if g:cmake_set_makeprg == 1 && cmake#util#has_project() == 1
+  if g:cmake_set_makeprg == 1
     let &makeprg="make -C " . b:cmake_root_binary_dir . " " . b:cmake_target
   endif
 endfunc

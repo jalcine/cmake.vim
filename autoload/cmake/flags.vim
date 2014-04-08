@@ -5,39 +5,42 @@
 " Website:          https://jalcine.github.io/cmake.vim
 " Version:          0.3.2
 
-function! cmake#flags#filter(flags)
-  if g:cmake_filter_flags == 0
-    return a:flags
-  endif
-
-  let l:flags = copy(a:flags)
-  if empty(l:flags)
-    call filter(flags, "s:sort_out_flags(v:val)")
-  endif
-
-  return l:flags
-endfunction!
-
 function! s:sort_out_flags(val)
-  echo "Flag: " . a:val
-  if stridx(a:val, '-i') == 0
+  if stridx(a:val, '-i', 0) == 0
     return 1
-  else if stridx(a:val, '-I') == 0
+  elseif stridx(a:val, '-I', 0) == 0
     return 1
-  else if stridx(a:val, '-W') == 0
+  elseif stridx(a:val, '-W', 0) == 0
     return 1
-  else if stridx(a:val, '-f') == 0
+  elseif stridx(a:val, '-f', 0) == 0
     return 1
   endif
 
   return 0
 endfunction
 
-function! cmake#flags#inject()
-  let target = cmake#targets#for_file(fnamemodify(bufname('%'), ':p'))
+function! cmake#flags#filter(flags)
+  let l:flags = []
+  if g:cmake_filter_flags == 1
+    let l:flags = copy(a:flags)
+    if !empty(l:flags)
+      call filter(flags, "s:sort_out_flags(v:val)")
+    endif
+  endif
 
-  if empty(target)
-    return
+  return l:flags
+endfunction!
+
+function! cmake#flags#inject()
+  let target = b:cmake_target
+
+  if target == 0
+    let b:cmake_target = cmake#targets#for_file(expand('%'))
+    if b:cmake_target == 0
+      return 
+    else
+      let target = b:cmake_target
+    endif
   endif
 
   " Set the flags for this current file.

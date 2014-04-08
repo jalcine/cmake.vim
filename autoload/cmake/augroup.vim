@@ -11,14 +11,18 @@ function! cmake#augroup#on_vim_enter()
 endfunc
 
 function! cmake#augroup#on_buf_read_post()
-  call cmake#commands#apply_buffer_commands()
-  call cmake#util#set_buffer_options()
+  if cmake#util#in_project_buffer()
+    call cmake#commands#apply_buffer_commands()
+    call cmake#util#set_buffer_options()
+  endif
 endfunction
 
 function! cmake#augroup#on_buf_enter()
-  call cmake#util#set_buffer_options()
-  call cmake#util#apply_makeprg()
-  call cmake#flags#inject()
+  if cmake#util#in_project_buffer()
+    call cmake#util#set_buffer_options()
+    call cmake#util#apply_makeprg()
+    call cmake#flags#inject()
+  endif
 endfunc
 
 function! cmake#augroup#on_file_read_post()
@@ -29,8 +33,8 @@ function cmake#augroup#setup()
   augroup CMake
     au!
     au VimEnter     * call cmake#augroup#on_vim_enter()
-    au BufReadPost  * call cmake#augroup#on_buf_read_post()
     au BufEnter     * call cmake#augroup#on_buf_enter()
-    au FileReadPost * call cmake#augroup#on_file_read_post()
+    au BufReadPre   * call cmake#augroup#on_buf_read_post()
+    au FileReadPre  * call cmake#augroup#on_file_read_post()
   augroup END
 endfunction

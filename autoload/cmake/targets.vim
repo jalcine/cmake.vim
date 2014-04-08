@@ -22,7 +22,11 @@ function! cmake#targets#binary_dir(target)
 endfunction!
 
 function! cmake#targets#source_dir(target)
-  let l:build_dir       = fnamemodify(cmake#targets#binary_dir(a:target), ':p')
+  let l:build_dir  = fnamemodify(cmake#targets#binary_dir(a:target), ':p')
+  let l:source_dir = ""
+  if !isdirectory(l:build_dir)
+    return l:source_dir
+  endif
   let l:root_binary_dir = fnamemodify(cmake#util#binary_dir(), ':p')
   let l:root_source_dir = fnamemodify(cmake#util#source_dir(), ':p')
 
@@ -36,6 +40,10 @@ endfunction!
 
 function! cmake#targets#list()
   let l:bin_dir = cmake#util#binary_dir()
+  if !isdirectory(l:bin_dir)
+    return []
+  endif
+
   let dirs = glob(l:bin_dir . '**/*.dir', 0, 1)
   for dir in dirs
     let oldir = dir
@@ -113,19 +121,18 @@ function! cmake#targets#files(target)
 endfunction!
 
 function! cmake#targets#flags(target)
-  if !cmake#targets#exists(a:target)
-    return { 'c' : [], 'cpp' : [] }
+  let flags = { 'c' : [], 'cpp' : [] }
+
+  if cmake#targets#exists(a:target)
+    let l:flags_file = cmake#targets#binary_dir(a:target) . '/flags.make'
+
+    if filereadable(l:flags_file)
+      let flags = { 
+        \ 'c'   : cmake#flags#collect(l:flags_file, 'C'),
+        \ 'cpp' : cmake#flags#collect(l:flags_file, 'CXX')
+        \ }
+    endif
   endif
 
-  let l:flags_file = cmake#targets#binary_dir(a:target) . '/flags.make'
-
-  if !filereadable(l:flags_file)
-    return { 'c' : [], 'cpp' : [] }
-  endif
-
-  " Scan flags.make for the flags and defines to be passed into the mix.
-  return { 
-    \ 'c'   : cmake#flags#collect(l:flags_file, 'C'),
-    \ 'cpp' : cmake#flags#collect(l:flags_file, 'CXX')
-    \ }
+  return flags
 endfunction!
