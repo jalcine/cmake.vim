@@ -31,52 +31,17 @@ function! cmake#util#source_dir()
     return ""
   endif
 
-  let dir = fnamemodify(cmake#util#read_from_cache("Project_SOURCE_DIR"), ':p')
+  let dir = fnamemodify(cmake#cache#read("Project_SOURCE_DIR"), ':p')
   return l:dir
 endfunc
 
-function! cmake#util#cache_file_path()
-  if cmake#util#has_project()
-    return cmake#util#binary_dir() . "/CMakeCache.txt"
-  endif
-
-  return ""
-endfunc
-
 function! cmake#util#has_project()
-  return filereadable(simplify(cmake#util#binary_dir() . "/CMakeCache.txt"))
-endfunc
-
-function! cmake#util#read_from_cache(property)
-  if cmake#util#has_project() == 0
-    return 0
+  let l:bindir = cmake#util#binary_dir()
+  if isdirectory(l:bindir)
+    return filereadable(simplify(l:bindir . "/CMakeCache.txt"))
+  else
+    return ""
   endif
-
-  let l:cmake_cache_file = cmake#util#cache_file_path()
-  let l:property_width = strlen(a:property) + 2
-
-  " First, grep out this property.
-  " TODO: Do this using Vim's string methods to make it more portable.
-  let l:property_line = system("grep -E \"^" . a:property . ":\" " 
-    \ . l:cmake_cache_file)
-  if empty(l:property_line)
-    return 0
-  endif
-
-  " Chop down the response to size.
-  " TODO: Do this using Vim's string methods to make it more portable.
-  let l:property_meta_value = system("echo '" . l:property_line . "' | cut -b "
-    \ . l:property_width . "-")
-
-  " Split it in half to get the resulting value and its type.
-  let l:property_fields = split(l:property_meta_value, "=", 1)
-  let l:property_fields[1] = substitute(l:property_fields[1], "\n", "", "g")
-  return l:property_fields[1]
-endfunc
-
-function! cmake#util#write_to_cache(property,value)
-  call cmake#util#run_cmake('-D' . a:property . ':STRING=' .
-    \ shellescape(a:value))
 endfunc
 
 function! cmake#util#run_make(command)
@@ -88,8 +53,10 @@ function! cmake#util#run_cmake(command, binary_dir, source_dir)
   let l:binary_dir = a:binary_dir
   let l:source_dir = a:source_dir
 
+  " Auto-default to the root binary directory.
   if empty(l:binary_dir) && empty(l:source_dir)
     let l:binary_dir = cmake#util#binary_dir()
+    let l:source_dir = cmake#util#source_dir()
   endif
 
   if empty(l:source_dir) && !empty(l:binary_dir)
@@ -108,21 +75,15 @@ function! cmake#util#run_cmake(command, binary_dir, source_dir)
 endfunc
 
 function! cmake#util#shell_exec(command)
-  if g:cmake_use_dispatch == 1 && g:loaded_dispatch == 1
-    return dispatch#compile_command("", a:command)
-  elseif g:cmake_use_vimux == 1 && g:loaded_vimux == 1
-    call VimuxRunCommand(a:command)
-    return 0
+  if g:loaded_dispatch == 1
+    return dispatch#compile_command(0, a:command, 0)
   else
     return system(a:command)
   endif
 endfunc
 
 function! cmake#util#shell_bgexec(command)
-  " Vimux isn't checked here because it focuses heavily on the use of
-  " pane-based actions; whereas dispatch can use both the pane and window (if
-  " necessary).
-  if g:cmake_use_dispatch == 1 && g:loaded_dispatch == 1
+  if g:loaded_dispatch == 1
     call dispatch#start(a:command, {'background': 1})
   else
     call cmake#util#shell_exec(a:command)
@@ -138,41 +99,4 @@ function! cmake#util#targets()
     let dir = substitute(dir, ".dir", "", "g")
     let dirs[get(dirs, oldir)] = dir
   endfor
-endfunc
-
-function! cmake#util#in_project_buffer()
-  let l:current_file = fnamemodify(expand('%'), ':p')
-
-  if !filereadable(l:current_file)
-    return 0
-  endif
-
-  if &ft != "cpp" && &ft != "c"
-    return 0
-  endif
-
-  if !cmake#util#has_project()
-    return 0
-  endif
-
-  return 1
-endfunction
-
-function! cmake#util#set_buffer_options()
-  let l:current_file       = fnamemodify(expand('%'), ':p:.')
-  if !exists("b:cmake_target") || type(b:cmake_target) == type(0)
-    redraw | echo "[cmake.vim] Applying buffer options for '" . l:current_file . "'..."
-    let b:cmake_target       = cmake#targets#for_file(l:current_file)
-    let b:cmake_binary_dir   = cmake#targets#binary_dir(b:cmake_target)
-    let b:cmake_source_dir   = cmake#targets#source_dir(b:cmake_target)
-    let b:cmake_include_dirs = cmake#targets#include_dirs(b:cmake_target)
-    let b:cmake_libraries    = cmake#targets#libraries(b:cmake_target)
-    redraw | echo "[cmake.vim] Applied buffer options for '" . l:current_file . "'."
-  endif
-endfunction
-
-function! cmake#util#apply_makeprg()
-  if g:cmake_set_makeprg == 1
-    let &makeprg="make -C " . b:cmake_root_binary_dir . " " . b:cmake_target
-  endif
 endfunc

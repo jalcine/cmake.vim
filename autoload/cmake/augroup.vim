@@ -7,34 +7,20 @@
 
 function! cmake#augroup#on_vim_enter()
   call cmake#commands#apply_global_commands()
-  call cmake#flags#prep_ycm()
 endfunc
 
 function! cmake#augroup#on_buf_read_post()
-  if cmake#util#in_project_buffer()
+  if cmake#buffer#has_project()
+    call cmake#buffer#set_options()
     call cmake#commands#apply_buffer_commands()
-    call cmake#util#set_buffer_options()
   endif
 endfunction
 
 function! cmake#augroup#on_buf_enter()
-  if cmake#util#in_project_buffer()
-    call cmake#util#set_buffer_options()
-    call cmake#util#apply_makeprg()
+  if cmake#buffer#has_project()
+    call cmake#buffer#set_options()
+    call cmake#buffer#set_makeprg()
     call cmake#flags#inject()
+    call cmake#path#refresh()
   endif
 endfunc
-
-function! cmake#augroup#on_file_read_post()
-  call cmake#path#refresh()
-endfunc
-
-function cmake#augroup#setup()
-  augroup CMake
-    au!
-    au VimEnter     * call cmake#augroup#on_vim_enter()
-    au BufEnter     * call cmake#augroup#on_buf_enter()
-    au BufReadPre   * call cmake#augroup#on_buf_read_post()
-    au FileReadPre  * call cmake#augroup#on_file_read_post()
-  augroup END
-endfunction

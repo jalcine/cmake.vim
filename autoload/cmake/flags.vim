@@ -32,55 +32,48 @@ function! cmake#flags#filter(flags)
 endfunction!
 
 function! cmake#flags#inject()
-  let target = b:cmake_target
-
-  if target == 0
+  if !exists('b:cmake_target')
     let b:cmake_target = cmake#targets#for_file(expand('%'))
     if b:cmake_target == 0
-      return 
+      return
     else
       let target = b:cmake_target
     endif
   endif
 
-  " Set the flags for this current file.
-  let b:cmake_flags = cmake#targets#flags(target)[&ft]
-
-  " Do what is right.
-  call cmake#flags#inject_to_ycm(target)
-  call cmake#flags#inject_to_syntastic(target)
+  if !exists('b:cmake_flags')
+    let b:cmake_flags = cmake#targets#flags(b:cmake_target)[&ft]
+    " Do what is right.
+    call cmake#flags#inject_to_ycm(b:cmake_target)
+    call cmake#flags#inject_to_syntastic(b:cmake_target)
+  endif
 endfunc
 
 function! cmake#flags#inject_to_syntastic(target)
   if g:cmake_inject_flags.syntastic != 1
-    return
-  endif
+    let l:flags = cmake#targets#flags(a:target)
+    if empty(l:flags)
+      return
+    endif
 
-  let l:flags = cmake#targets#flags(a:target)
-  if empty(l:flags)
-    return
+    for l:language in keys(l:flags)
+      " TODO You got this.
+    endfor
   endif
-
-  for l:language in keys(l:flags)
-    " TODO You got this.
-  endfor
 endfunction!
 
 function! cmake#flags#inject_to_ycm(target)
-  if g:cmake_inject_flags.ycm == 0
-    return 0
+  if g:cmake_inject_flags.ycm != 0
+    call cmake#flags#prep_ycm()
   endif
-
-  call cmake#flags#prep_ycm()
-
 endfunc
 
 function! cmake#flags#collect(flags_file, prefix)
-  let l:flags = split(system("grep '" . a:prefix . "_FLAGS = ' " . a:flags_file . 
+  let l:flags = split(system("grep '" . a:prefix . "_FLAGS = ' " . a:flags_file .
     \ ' | cut -b ' . (strlen(a:prefix) + strlen('_FLAGS = ')) . '-'))
   let l:flags = cmake#flags#filter(l:flags)
 
-  let l:defines = split(system("grep '" . a:prefix . "_DEFINES = ' " . a:flags_file 
+  let l:defines = split(system("grep '" . a:prefix . "_DEFINES = ' " . a:flags_file
     \ . ' | cut -b ' . (strlen(a:prefix) + strlen('_DEFINES = ')) . '-'))
 
   let l:params = l:flags + l:defines
@@ -92,16 +85,12 @@ function! cmake#flags#prep_ycm()
     return 0
   endif
 
-  if index(g:ycm_extra_conf_vim_data, 'b:cmake_binary_dir') == -1 && 
-      \ exists('b:cmake_binary_dir')
-    let g:ycm_extra_conf_vim_data += ['b:cmake_binary_dir']
-  endif
-  if index(g:ycm_extra_conf_vim_data, 'b:cmake_root_binary_dir') == -1 && 
-      \ exists('b:cmake_root_binary_dir')
-    let g:ycm_extra_conf_vim_data += ['b:cmake_root_binary_dir']
-  endif
-  if index(g:ycm_extra_conf_vim_data, 'b:cmake_flags') == -1 &&
-      \ exists('b:cmake_flags')
-    let g:ycm_extra_conf_vim_data += ['b:cmake_flags']
-  endif
+  let l:flags_to_inject = ['b:cmake_binary_dir', 'b:cmake_root_binary_dir',
+        \ 'b:cmake_flags']
+
+  for flags in l:flags_to_inject
+    if index(g:ycm_extra_conf_vim_data, flag) == -1 && exists(flag)
+      let g:ycm_extra_conf_vim_data += [flag]
+    endif
+  endfor
 endfunction!

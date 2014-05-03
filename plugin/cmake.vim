@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.3.2-1
+" Version:          0.3.2
 
 " If we're here, don't reload man.
 if exists("g:loaded_cmake") 
@@ -12,11 +12,11 @@ else
   let g:loaded_cmake = 1
 end
 
-" Capture the user's predefined 'path' option.
+" Capture the user's predefined 'path'.
 let g:cmake_old_path = &path
 
 func! s:set_options()
-let s:options = {
+  let s:options = {
   \  'g:cmake_cxx_compiler':      'clang++',
   \  'g:cmake_c_compiler':        'clang',
   \  'g:cmake_build_directories': [ 'build' ],
@@ -29,7 +29,6 @@ let s:options = {
   \     'executable':             'ctags'
   \   },
   \  'g:cmake_set_makeprg':       1,
-  \  'g:cmake_use_vimux':         exists('g:loaded_vimux'),
   \  'g:cmake_use_dispatch':      exists('g:loaded_dispatch'),
   \  'g:cmake_filter_flags':      1,
   \  'g:cmake_inject_flags':      {
@@ -49,4 +48,10 @@ func! s:setauto(name, value)
 endfunc
 
 call s:set_options()
-call cmake#augroup#setup()
+
+augroup CMake
+  au!
+  au VimEnter     * call cmake#augroup#on_vim_enter()
+  au BufEnter     * call cmake#augroup#on_buf_enter()
+  au BufReadPost  * call cmake#augroup#on_buf_read_post()
+augroup END

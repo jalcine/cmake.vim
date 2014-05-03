@@ -30,9 +30,9 @@ function! cmake#targets#source_dir(target)
   let l:root_binary_dir = fnamemodify(cmake#util#binary_dir(), ':p')
   let l:root_source_dir = fnamemodify(cmake#util#source_dir(), ':p')
 
-  let l:source_dir = fnamemodify(substitute(l:build_dir, l:root_binary_dir, 
+  let l:source_dir = fnamemodify(substitute(l:build_dir, l:root_binary_dir,
         \ l:root_source_dir, ""), ':p')
-  let l:source_dir = fnamemodify(substitute(l:source_dir, "\/CMakeFiles\/" . 
+  let l:source_dir = fnamemodify(substitute(l:source_dir, "\/CMakeFiles\/" .
         \ a:target . ".dir\/", "", ""), ':p')
   let l:source_dir = resolve(l:source_dir)
   return l:source_dir
@@ -77,7 +77,8 @@ endfunction
 function! cmake#targets#for_file(filepath)
   for target in cmake#targets#list()
     let files = cmake#targets#files(target)
-    if !empty(files) && index(files, fnamemodify(a:filepath, ':p:.')) != -1 
+    if empty(files) | continue | endif
+    if index(files, fnamemodify(a:filepath, ':p:r:.')) != -1
       return l:target
     endif
   endfor
@@ -101,18 +102,22 @@ function! cmake#targets#files(target)
 
   let l:objects = readfile(l:dependInternal)
   let l:objects = filter(l:objects, 'v:val =~ "\.o$" ')
+  if empty(l:objects) | return [] | endif
   for object in objects
-    let di = index(objects, object)
-    let object = fnamemodify(object, ':p')
-    let object = substitute(object, fnamemodify(l:bindir, ':p:.'), '', 'g')
-    let object = substitute(object, fnamemodify(l:srcdir, ':p:.'), '', 'g')
-    let object = substitute(object, '.o$', '', 'g')
-    let object = substitute(object, 'CMakeFiles/', '', 'g')
-    let object = substitute(object, a:target . '.dir/', '', 'g')
-    let object = substitute(object, '__', '', 'g')
-    let object = substitute(object, '\/\/', '', 'g')
-    let object = fnamemodify(l:srcdir . '/' . object, ':p')
-    let objects[di] = object
+    let object_index = index(objects, object)
+    let l:object = fnamemodify(object, ':p')
+    let l:strippable_fields = [ fnamemodify(l:bindir, ':p:.'),
+          \ '\.o$', 'CMakeFiles/', a:target . '\.dir/']
+    for stripping_field in l:strippable_fields
+      let l:object = substitute(l:object, stripping_field, '', 'g')
+    endfor
+
+    " Remove extra slashes from prior transformations.
+    let l:object = substitute(l:object, '\/\/', '\/', 'g')
+    let l:object = substitute(l:object, '__', '\.\.', 'g')
+
+    let object = fnamemodify(l:srcdir . '/' . object, ':p:r')
+    let objects[object_index] = object
   endfor
 
   call filter(objects, 'filereadable(v:val) == 1')
@@ -127,7 +132,7 @@ function! cmake#targets#flags(target)
     let l:flags_file = cmake#targets#binary_dir(a:target) . '/flags.make'
 
     if filereadable(l:flags_file)
-      let flags = { 
+      let flags = {
         \ 'c'   : cmake#flags#collect(l:flags_file, 'C'),
         \ 'cpp' : cmake#flags#collect(l:flags_file, 'CXX')
         \ }

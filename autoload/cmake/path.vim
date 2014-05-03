@@ -7,7 +7,7 @@
 
 func! cmake#path#refresh()
   call cmake#path#reset_path()
-  if cmake#util#has_project() == 1
+  if cmake#buffer#has_project() == 1
     call cmake#path#refresh_global_paths()
     call cmake#path#refresh_target_paths()
   endif
@@ -42,9 +42,12 @@ endfunc
 func! cmake#path#refresh_target_paths()
   let l:paths = []
   let l:target = cmake#targets#for_file(expand('%:p'))
+  let l:buffer_dir = expand('%:h:.') . '/'
   let l:target_source_dir = fnamemodify(cmake#targets#source_dir(l:target),':p:.')
   let l:target_binary_dir = fnamemodify(cmake#targets#binary_dir(l:target),':p:.')
   let l:target_include_dirs = cmake#targets#include_dirs(l:target)
+
+  let l:paths += [ l:buffer_dir, './' ]
 
   if count(l:paths, escape(l:target_source_dir, '\/'), 1) == 0
     let l:paths += [ l:target_source_dir ]
