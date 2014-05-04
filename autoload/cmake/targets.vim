@@ -11,7 +11,12 @@ function! cmake#targets#build(target)
 endfunction!
 
 function! cmake#targets#exists(target)
-  return index(cmake#targets#list(), a:target) != -1
+  let l:targets = cmake#targets#list()
+  if type([]) == type(l:targets)
+    return index(cmake#targets#list(), a:target) != -1
+  endif
+
+  return 0
 endfunc
 
 function! cmake#targets#binary_dir(target)
@@ -39,20 +44,21 @@ function! cmake#targets#source_dir(target)
 endfunction!
 
 function! cmake#targets#list()
+  let l:dirs = []
   let l:bin_dir = cmake#util#binary_dir()
-  if !isdirectory(l:bin_dir)
-    return []
+
+  if isdirectory(l:bin_dir)
+    let l:dirs = glob(l:bin_dir . '**/*.dir', 0, 1)
+    for dir in dirs
+      let oldir = dir
+      let dir = substitute(dir, '^' . l:bin_dir, '', 'g')
+      let dir = substitute(dir, '.dir$', '', 'g')
+      let dir = split(dir, '/')[-1]
+      let dirs[index(dirs,oldir)] = dir
+    endfor
   endif
 
-  let dirs = glob(l:bin_dir . '**/*.dir', 0, 1)
-  for dir in dirs
-    let oldir = dir
-    let dir = substitute(dir, '^' . l:bin_dir, '', 'g')
-    let dir = substitute(dir, '.dir$', '', 'g')
-    let dir = split(dir, '/')[-1]
-    let dirs[index(dirs,oldir)] = dir
-  endfor
-  return dirs
+  return l:dirs
 endfunction!
 
 function! cmake#targets#include_dirs(target)
@@ -75,7 +81,10 @@ function! cmake#targets#libraries(target)
 endfunction
 
 function! cmake#targets#for_file(filepath)
-  for target in cmake#targets#list()
+  let l:targets = cmake#targets#list()
+  if empty(l:targets) | return 0 | endif
+
+  for target in l:targets
     let files = cmake#targets#files(target)
     if empty(files) | continue | endif
     if index(files, fnamemodify(a:filepath, ':p:r:.')) != -1
@@ -83,7 +92,7 @@ function! cmake#targets#for_file(filepath)
     endif
   endfor
 
-  return ""
+  return 0
 endfunction!
 
 function! cmake#targets#files(target)

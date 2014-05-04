@@ -13,8 +13,13 @@ func! cmake#path#refresh()
   endif
 endfunc
 
+
 func! cmake#path#reset_path()
-  let &path = g:cmake_old_path
+  if !exists('g:cmake_old_path')
+    let &path = split(g:cmake_old_path, ",", 0)
+  else
+    let &path = '.:/usr/include'
+  endif
 endfunc
 
 func! cmake#path#update(paths)

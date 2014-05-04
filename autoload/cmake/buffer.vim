@@ -7,13 +7,26 @@
 
 function! cmake#buffer#set_options()
   let l:current_file = fnamemodify(expand('%'), ':p:.')
-  if !exists("b:cmake_target") || type(b:cmake_target) == type(0)
+  if !exists("b:cmake_target") || type(b:cmake_target) != type("")
     redraw | echo "[cmake.vim] Applying buffer options for '" . l:current_file . "'..."
-    let b:cmake_target       = cmake#targets#for_file(l:current_file)
-    let b:cmake_binary_dir   = cmake#targets#binary_dir(b:cmake_target)
-    let b:cmake_source_dir   = cmake#targets#source_dir(b:cmake_target)
-    let b:cmake_include_dirs = cmake#targets#include_dirs(b:cmake_target)
-    let b:cmake_libraries    = cmake#targets#libraries(b:cmake_target)
+    let b:cmake_target = cmake#targets#for_file(l:current_file)
+
+    if !exists('b:cmake_binary_dir')
+      let b:cmake_binary_dir = cmake#targets#binary_dir(b:cmake_target)
+    endif
+
+    if !exists('b:cmake_source_dir')
+      let b:cmake_source_dir = cmake#targets#source_dir(b:cmake_target)
+    endif
+
+    if !exists('b:cmake_include_dirs')
+      let b:cmake_include_dirs = cmake#targets#include_dirs(b:cmake_target)
+    endif
+
+    if !exists('b:cmake_libraries')
+      let b:cmake_libraries = cmake#targets#libraries(b:cmake_target)
+    endif
+
     redraw | echo "[cmake.vim] Applied buffer options for '" . l:current_file . "'."
   endif
 endfunction
