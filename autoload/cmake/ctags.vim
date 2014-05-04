@@ -34,5 +34,4 @@ func! cmake#ctags#generate_for_target(target)
   endfor
 
   let &tags .= ',' . l:tag_file
-
 endfunc
