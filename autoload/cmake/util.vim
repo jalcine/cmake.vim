@@ -89,14 +89,3 @@ function! cmake#util#shell_bgexec(command)
     call cmake#util#shell_exec(a:command)
   endif
 endfunc
-
-function! cmake#util#targets()
-  let dirs = glob(cmake#util#binary_dir() ."**/*.dir", 0, 1)
-  for dir in dirs
-    let oldir = dir
-    let dir = substitute(dir, cmake#util#binary_dir(), "", "g")
-    let dir = substitute(dir, "**CMakeFiles/", "", "g")
-    let dir = substitute(dir, ".dir", "", "g")
-    let dirs[get(dirs, oldir)] = dir
-  endfor
-endfunc
