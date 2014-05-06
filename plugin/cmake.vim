@@ -15,6 +15,12 @@ end
 " Capture the user's predefined 'path'.
 let g:cmake_old_path = &path
 
+" Define the cache!
+let g:cmake_cache = {
+  \ 'targets' : {},
+  \ 'files' : {}
+  \ }
+
 func! s:set_options()
   let s:options = {
   \  'g:cmake_cxx_compiler':      'clang++',

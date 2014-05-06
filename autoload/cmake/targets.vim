@@ -1,9 +1,9 @@
-" File:             autoload/cmake/targets.vim
-" Description:      Handles the logic of interacting with targets.
-" Author:           Jacky Alciné <me@jalcine.me>
-" License:          MIT
-" Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.3.2-1
+" File:        autoload/cmake/targets.vim
+" Description: Handles the logic of interacting with targets.
+" Author:      Jacky Alciné <me@jalcine.me>
+" License:     MIT
+" Website:     https://jalcine.github.io/cmake.vim
+" Version:     0.3.2-1
 
 function! cmake#targets#build(target)
   echomsg "[cmake] Building target '" . a:target . "'..."
@@ -11,27 +11,19 @@ function! cmake#targets#build(target)
 endfunction!
 
 function! cmake#targets#exists(target)
-  let l:targets = cmake#targets#list()
-  if type([]) == type(l:targets)
-    return index(cmake#targets#list(), a:target) != -1
-  endif
-
-  return 0
+  return index(cmake#targets#list(), a:target) != -1
 endfunc
 
 function! cmake#targets#binary_dir(target)
   let l:bindir = glob(cmake#util#binary_dir() . '/**/' . a:target . '.dir', 1)
-  let l:bindir = fnamemodify(l:bindir, ':p')
-  let l:bindir = resolve(l:bindir)
+  let l:bindir = resolve(fnamemodify(l:bindir, ':p'))
   return l:bindir
 endfunction!
 
 function! cmake#targets#source_dir(target)
   let l:build_dir  = fnamemodify(cmake#targets#binary_dir(a:target), ':p')
   let l:source_dir = ""
-  if !isdirectory(l:build_dir)
-    return l:source_dir
-  endif
+  if !isdirectory(l:build_dir) | return l:source_dir | endif
   let l:root_binary_dir = fnamemodify(cmake#util#binary_dir(), ':p')
   let l:root_source_dir = fnamemodify(cmake#util#source_dir(), ':p')
 
@@ -41,24 +33,6 @@ function! cmake#targets#source_dir(target)
         \ a:target . ".dir\/", "", ""), ':p')
   let l:source_dir = resolve(l:source_dir)
   return l:source_dir
-endfunction!
-
-function! cmake#targets#list()
-  let l:dirs = []
-  let l:bin_dir = cmake#util#binary_dir()
-
-  if isdirectory(l:bin_dir)
-    let l:dirs = glob(l:bin_dir . '**/*.dir', 0, 1)
-    for dir in dirs
-      let oldir = dir
-      let dir = substitute(dir, '^' . l:bin_dir, '', 'g')
-      let dir = substitute(dir, '.dir$', '', 'g')
-      let dir = split(dir, '/')[-1]
-      let dirs[index(dirs,oldir)] = dir
-    endfor
-  endif
-
-  return l:dirs
 endfunction!
 
 function! cmake#targets#include_dirs(target)
@@ -82,62 +56,37 @@ endfunction
 
 function! cmake#targets#for_file(filepath)
   let l:targets = cmake#targets#list()
+  let l:filepath = fnamemodify(a:filepath,':p:.')
   if empty(l:targets) | return 0 | endif
+
+  if has_key(g:cmake_cache.files,l:filepath)
+    return g:cmake_cache.files[l:filepath]
+  endif
 
   for target in l:targets
     let files = cmake#targets#files(target)
     if empty(files) | continue | endif
-    if index(files, fnamemodify(a:filepath, ':p:r:.')) != -1
+    redraw | echomsg "[cmake.vim] Searching for '" . l:filepath .
+          \ "' in target " . target . "..."
+
+    if index(files, l:filepath) != -1
+      let g:cmake_cache.files[l:filepath] = l:target
       return l:target
-    endif
+    else | continue | endif
   endfor
 
   return 0
-endfunction!
-
-function! cmake#targets#files(target)
-  if !cmake#targets#exists(a:target)
-    echomsg "[cmake.vim] No target named '" . a:target . "'."
-    return []
-  endif
-
-  let l:bindir = cmake#targets#binary_dir(a:target)
-  let l:srcdir = cmake#targets#source_dir(a:target)
-
-  let l:dependInternal = fnamemodify(l:bindir . "/depend.internal", ':p')
-  if !filereadable(l:dependInternal)
-    return []
-  endif
-
-  let l:objects = readfile(l:dependInternal)
-  let l:objects = filter(l:objects, 'v:val =~ "\.o$" ')
-  if empty(l:objects) | return [] | endif
-  for object in objects
-    let object_index = index(objects, object)
-    let l:object = fnamemodify(object, ':p')
-    let l:strippable_fields = [ fnamemodify(l:bindir, ':p:.'),
-          \ '\.o$', 'CMakeFiles/', a:target . '\.dir/']
-    for stripping_field in l:strippable_fields
-      let l:object = substitute(l:object, stripping_field, '', 'g')
-    endfor
-
-    " Remove extra slashes from prior transformations.
-    let l:object = substitute(l:object, '\/\/', '\/', 'g')
-    let l:object = substitute(l:object, '__', '\.\.', 'g')
-
-    let object = fnamemodify(l:srcdir . '/' . object, ':p:r')
-    let objects[object_index] = object
-  endfor
-
-  call filter(objects, 'filereadable(v:val) == 1')
-  call map(objects, 'fnamemodify(v:val, ":p:.")')
-  return objects
 endfunction!
 
 function! cmake#targets#flags(target)
   let flags = { 'c' : [], 'cpp' : [] }
 
   if cmake#targets#exists(a:target)
+    if has_key(g:cmake_cache.targets, a:target) &&
+          \ !empty(g:cmake_cache.targets[a:target].flags)
+      return g:cmake_cache.targets[a:target].flags
+    endif
+
     let l:flags_file = cmake#targets#binary_dir(a:target) . '/flags.make'
 
     if filereadable(l:flags_file)
@@ -145,6 +94,7 @@ function! cmake#targets#flags(target)
         \ 'c'   : cmake#flags#collect(l:flags_file, 'C'),
         \ 'cpp' : cmake#flags#collect(l:flags_file, 'CXX')
         \ }
+      let g:cmake_cache.targets[a:target].flags = flags
     endif
   endif
 
@@ -152,12 +102,84 @@ function! cmake#targets#flags(target)
 endfunction!
 
 function! cmake#targets#list()
-  let dirs = glob(cmake#util#binary_dir() ."**/*.dir", 0, 1)
-  for dir in dirs
-    let oldir = dir
-    let dir = substitute(dir, cmake#util#binary_dir(), "", "g")
-    let dir = substitute(dir, "**CMakeFiles/", "", "g")
-    let dir = substitute(dir, ".dir", "", "g")
-    let dirs[get(dirs, oldir)] = dir
-  endfor
+  if empty(g:cmake_cache.targets)
+    let dirs = glob(cmake#util#binary_dir() ."**/*.dir", 0, 1)
+    let targets = []
+
+    for target_name in dirs
+      let target_name = s:normalize_target_name(target_name)
+      let targets = add(targets, target_name)
+      let g:cmake_cache.targets[target_name] = { 'files' : [], 'flags' : [] }
+    endfor
+  endif
+
+  return keys(g:cmake_cache.targets)
 endfunc
+
+function! cmake#targets#files(target)
+  if !cmake#targets#exists(a:target) | return [] | endif
+
+  if empty(g:cmake_cache.targets[a:target].files)
+    let l:bindir = cmake#targets#binary_dir(a:target)
+    let l:objects = []
+    let l:dependInternal = fnamemodify(l:bindir . '/depend.internal', ':p')
+
+    if filereadable(l:dependInternal)
+      let g:cmake_cache.targets[a:target].files =
+            \ s:parse_target_depends(l:dependInternal, a:target)
+    endif
+  endif
+
+  return g:cmake_cache.targets[a:target].files
+endfunction!
+
+function! s:parse_target_depends(dependInternalFile, target)
+  let l:bindir = cmake#targets#binary_dir(a:target)
+  let l:srcdir = cmake#targets#source_dir(a:target)
+  let l:objects = readfile(a:dependInternalFile)
+
+  let l:objects = sort(filter(l:objects, 'v:val =~ ".o$"'))
+  if empty(l:objects) | return [] | endif
+
+  for object_path in objects
+    let theIndex = index(objects,object_path)
+    let theFixedPath = s:normalize_object_path(object_path, a:target)
+    let l:objects[theIndex] = theFixedPath
+  endfor
+
+  call filter(l:objects, 'filereadable(v:val) == 1')
+  call map(l:objects, 'simplify(fnamemodify(v:val, ":p:."))')
+  return l:objects
+endfunction
+
+function s:normalize_object_path(object_path, target)
+  let l:object_name = a:object_path
+  let l:bindir = cmake#targets#binary_dir(a:target)
+  let l:file_path = fnamemodify(l:object_name, ':p')
+  let l:strippable_fields = [ fnamemodify(l:bindir, ':p:.'),
+        \ '\.o$', 'CMakeFiles/', a:target . '\.dir/']
+
+  for stripping_field in l:strippable_fields
+    let l:object_name = substitute(l:object_name, stripping_field, '', 'g')
+  endfor
+
+  let l:object_name = substitute(l:object_name, '\/\/', '\/', 'g')
+  let l:object_name = substitute(l:object_name, '__', '\.\.', 'g')
+  let l:object_name = fnamemodify(l:object_name, ':p:.')
+
+  if filereadable(simplify(cmake#util#binary_dir() . '/'. l:object_name))
+    let l:object_name = simplify(cmake#util#binary_dir() . '/'. l:object_name)
+  elseif filereadable(simplify(cmake#util#source_dir() . '/'. l:object_name))
+    let l:object_name = simplify(cmake#util#source_dir() . '/'. l:object_name)
+  endif
+
+  return l:object_name
+endfunction
+
+function s:normalize_target_name(object_old_name)
+  let object_name = substitute(a:object_old_name, cmake#util#binary_dir(), "", "g")
+  let object_name = substitute(object_name, "**CMakeFiles/", "", "g")
+  let object_name = substitute(object_name, ".dir", "", "g")
+  let object_name = fnamemodify(object_name, ":t:r")
+  return object_name
+endfunction

@@ -6,10 +6,12 @@
 " Version:          0.3.2
 
 function! cmake#buffer#set_options()
-  let l:current_file = fnamemodify(expand('%'), ':p:.')
+  let l:current_file = expand('%')
   if !exists("b:cmake_target") || type(b:cmake_target) != type("")
     redraw | echo "[cmake.vim] Applying buffer options for '" . l:current_file . "'..."
     let b:cmake_target = cmake#targets#for_file(l:current_file)
+
+    if empty(b:cmake_target) | return | endif
 
     if !exists('b:cmake_binary_dir')
       let b:cmake_binary_dir = cmake#targets#binary_dir(b:cmake_target)
