@@ -8,7 +8,7 @@
 
 ---
 
-[`cmake.vim 0.3.2-1`][release] is a Vim plugin that allows you to use [CMake][cmake]
+[`cmake.vim 0.4.0`][release] is a Vim plugin that allows you to use [CMake][cmake]
 within Vim for your projects. **This is alpha-grade software and may turn your CMake
 project into a cat-overrun Telnet session**.
 
@@ -63,25 +63,24 @@ file.
 ## Known Issues
 
   * With the more recent changes to [YouCompleteMe][ycm]; it's become a bit
-    difficult to dynamically add per-file flags. Right now, the best
-    suggestion is to use the JSON compilation file in your `.ycm_extra_conf.py`
-    to pass in *all of the flags* for your project.
+    difficult to dynamically add per-file flags. See 
+    `:h cmake-integrations-ycm-setup` on how to configure YouCompleteMe with
+    CMake.
 
   * Getting and setting variables is still rough around the edges.
 
 ## To-Dos
 
-  * ~~Provide `:CMakeBuildTarget` that'd build the target provided. If a file is 
+  [+] ~~Provide `:CMakeBuildTarget` that'd build the target provided. If a file is 
     to be provided, find the target for that file and build the target it
     belongs to (restricted to source files).~~
-    **Implemented as :CMakeBuildCurrent**.
     * ~~Also for `:CMakeCleanTarget` since we can determine pre-target cleaning
       information.~~
-  * ~~Improve integration's use flag lookup and discovery on a per-target basis
+  [+] ~~Improve integration's use flag lookup and discovery on a per-target basis
     and a per-file basis (restricted to source files).~~
-  * ~~Pass an argument string to `:CMakeCreateBuild`.~~
-  * Allow setting and getting values using `:CMakeGetVar` and `:CMakeSetVar`.
-  * Expose `cmake.vim`'s buffer commands only in `worthy` buffers.
+  [+] ~~Pass an argument string to `:CMakeCreateBuild`.~~
+  [+] Allow setting and getting values using `:CMakeGetVar` and `:CMakeSetVar`.
+  * ~~Expose `cmake.vim`'s buffer commands only in `worthy` buffers.~~
 
 ## License
 This code is released and available under the MIT license. Multiply and be 
@@ -100,4 +99,4 @@ firehose so follow with caution!
 [jalcine]: http://jalcine.me
 [vimux]: https://github.com/benmills/vimux
 [site]: http://jalcine.github.io/cmake.vim
-[release]: https://github.com/jalcine/cmake.vim/tree/v0.3.2-1
+[release]: https://github.com/jalcine/cmake.vim/tree/v0.4.0

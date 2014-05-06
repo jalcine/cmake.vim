@@ -3,81 +3,69 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.3.2-1
-
-function! cmake#flags#filter(flags)
-  if g:cmake_filter_flags == 0
-    return a:flags
-  endif
-
-  let l:flags = copy(a:flags)
-  if empty(l:flags)
-    call filter(flags, "s:sort_out_flags(v:val)")
-  endif
-
-  return l:flags
-endfunction!
+" Version:          0.4.0
 
 function! s:sort_out_flags(val)
-  echo "Flag: " . a:val
-  if stridx(a:val, '-i') == 0
-    return 1
-  else if stridx(a:val, '-I') == 0
-    return 1
-  else if stridx(a:val, '-W') == 0
-    return 1
-  else if stridx(a:val, '-f') == 0
+  let l:good_flags = ['-i', '-I', '-W', '-f']
+  for a_good_flag in l:good_flags
+  if stridx(a:val, a_good_flag, 0) == 0
     return 1
   endif
 
   return 0
 endfunction
 
-function! cmake#flags#inject()
-  let target = cmake#targets#for_file(fnamemodify(bufname('%'), ':p'))
-
-  if empty(target)
-    return
+function! cmake#flags#filter(flags)
+  let l:flags = []
+  if g:cmake_filter_flags == 1
+    let l:flags = copy(a:flags)
+    if !empty(l:flags)
+      call filter(flags, "s:sort_out_flags(v:val) != 1")
+    endif
   endif
 
-  " Set the flags for this current file.
-  let b:cmake_flags = cmake#targets#flags(target)[&ft]
+  return l:flags
+endfunction!
 
-  " Do what is right.
-  call cmake#flags#inject_to_ycm(target)
-  call cmake#flags#inject_to_syntastic(target)
+function! cmake#flags#inject()
+  if !exists('b:cmake_target')
+    let b:cmake_target = cmake#targets#for_file(expand('%'))
+    if b:cmake_target == 0
+      return
+    else
+      let target = b:cmake_target
+    endif
+  endif
+
+  if !exists('b:cmake_flags')
+    let b:cmake_flags = cmake#targets#flags(b:cmake_target)[&ft]
+    " Do what is right.
+    call cmake#flags#inject_to_ycm(b:cmake_target)
+    call cmake#flags#inject_to_syntastic(b:cmake_target)
+  endif
 endfunc
 
 function! cmake#flags#inject_to_syntastic(target)
-  if g:cmake_inject_flags.syntastic != 1
-    return
-  endif
+  if g:cmake_inject_flags.syntastic != 1 | return | endif
 
   let l:flags = cmake#targets#flags(a:target)
-  if empty(l:flags)
-    return
-  endif
-
   for l:language in keys(l:flags)
-    " TODO You got this.
+    let {'g:syntastic_' .l:language . '_compiler_options'} = join(l:flags[l:language], ' ')
   endfor
 endfunction!
 
 function! cmake#flags#inject_to_ycm(target)
-  if g:cmake_inject_flags.ycm == 0
-    return 0
+  if g:cmake_inject_flags.ycm != 0
+    call cmake#flags#prep_ycm()
   endif
-
-  call cmake#flags#prep_ycm()
-
 endfunc
 
 function! cmake#flags#collect(flags_file, prefix)
-  let l:flags = split(system("grep '" . a:prefix . "_FLAGS = ' " . a:flags_file . 
+  let l:flags = split(system("grep '" . a:prefix . "_FLAGS = ' " . a:flags_file .
     \ ' | cut -b ' . (strlen(a:prefix) + strlen('_FLAGS = ')) . '-'))
   let l:flags = cmake#flags#filter(l:flags)
 
-  let l:defines = split(system("grep '" . a:prefix . "_DEFINES = ' " . a:flags_file 
+  let l:defines = split(system("grep '" . a:prefix . "_DEFINES = ' " . a:flags_file
     \ . ' | cut -b ' . (strlen(a:prefix) + strlen('_DEFINES = ')) . '-'))
 
   let l:params = l:flags + l:defines
@@ -89,16 +77,12 @@ function! cmake#flags#prep_ycm()
     return 0
   endif
 
-  if index(g:ycm_extra_conf_vim_data, 'b:cmake_binary_dir') == -1 && 
-      \ exists('b:cmake_binary_dir')
-    let g:ycm_extra_conf_vim_data += ['b:cmake_binary_dir']
-  endif
-  if index(g:ycm_extra_conf_vim_data, 'b:cmake_root_binary_dir') == -1 && 
-      \ exists('b:cmake_root_binary_dir')
-    let g:ycm_extra_conf_vim_data += ['b:cmake_root_binary_dir']
-  endif
-  if index(g:ycm_extra_conf_vim_data, 'b:cmake_flags') == -1 &&
-      \ exists('b:cmake_flags')
-    let g:ycm_extra_conf_vim_data += ['b:cmake_flags']
-  endif
+  let l:flags_to_inject = ['b:cmake_binary_dir', 'b:cmake_root_binary_dir',
+        \ 'b:cmake_flags']
+
+  for flags in l:flags_to_inject
+    if index(g:ycm_extra_conf_vim_data, flag) == -1 && exists(flag)
+      let g:ycm_extra_conf_vim_data += [flag]
+    endif
+  endfor
 endfunction!

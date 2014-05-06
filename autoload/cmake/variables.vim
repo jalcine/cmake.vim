@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.3.2-1
+" Version:          0.4.0
 
 func! cmake#variables#exists(variable)
   let l:val = cmake#util#read_from_cache(variable)
