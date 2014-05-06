@@ -6,13 +6,9 @@
 " Version:          0.3.2-1
 
 function! s:sort_out_flags(val)
-  if stridx(a:val, '-i', 0) == 0
-    return 1
-  elseif stridx(a:val, '-I', 0) == 0
-    return 1
-  elseif stridx(a:val, '-W', 0) == 0
-    return 1
-  elseif stridx(a:val, '-f', 0) == 0
+  let l:good_flags = ['-i', '-I', '-W', '-f']
+  for a_good_flag in l:good_flags
+  if stridx(a:val, a_good_flag, 0) == 0
     return 1
   endif
 
@@ -24,7 +20,7 @@ function! cmake#flags#filter(flags)
   if g:cmake_filter_flags == 1
     let l:flags = copy(a:flags)
     if !empty(l:flags)
-      call filter(flags, "s:sort_out_flags(v:val)")
+      call filter(flags, "s:sort_out_flags(v:val) != 1")
     endif
   endif
 
@@ -50,16 +46,12 @@ function! cmake#flags#inject()
 endfunc
 
 function! cmake#flags#inject_to_syntastic(target)
-  if g:cmake_inject_flags.syntastic != 1
-    let l:flags = cmake#targets#flags(a:target)
-    if empty(l:flags)
-      return
-    endif
+  if g:cmake_inject_flags.syntastic != 1 | return | endif
 
-    for l:language in keys(l:flags)
-      " TODO You got this.
-    endfor
-  endif
+  let l:flags = cmake#targets#flags(a:target)
+  for l:language in keys(l:flags)
+    let {'g:syntastic_' .l:language . '_compiler_options'} = join(l:flags[l:language], ' ')
+  endfor
 endfunction!
 
 function! cmake#flags#inject_to_ycm(target)
