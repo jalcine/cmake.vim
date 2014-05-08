@@ -8,7 +8,7 @@
 function! cmake#buffer#set_options()
   let l:current_file = expand('%')
   if !exists("b:cmake_target") || type(b:cmake_target) != type("")
-    redraw | echo "[cmake.vim] Applying buffer options for '" . l:current_file . "'..."
+    redraw | echo "[cmake.vim] Searching for target of '" . l:current_file . "'..."
     let b:cmake_target = cmake#targets#for_file(l:current_file)
 
     if empty(b:cmake_target) | return | endif

@@ -37,9 +37,15 @@ function! cmake#flags#inject()
     endif
   endif
 
-  if !exists('b:cmake_flags')
-    let b:cmake_flags = cmake#targets#flags(b:cmake_target)[&ft]
-    " Do what is right.
+  if !exists('b:cmake_flags') && exists('filetype') && !empty(&ft)
+    let flags = cmake#targets#flags(b:cmake_target)
+
+    if !has_key(flags,&ft)
+      let b:cmake_flags=[]
+      return
+    endif
+
+    let b:cmake_flags = flags[&ft]
     call cmake#flags#inject_to_ycm(b:cmake_target)
     call cmake#flags#inject_to_syntastic(b:cmake_target)
   endif
