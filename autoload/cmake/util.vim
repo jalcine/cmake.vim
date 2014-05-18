@@ -75,7 +75,7 @@ function! cmake#util#run_cmake(command, binary_dir, source_dir)
 endfunc
 
 function! cmake#util#shell_exec(command)
-  if g:loaded_dispatch == 1
+  if g:cmake_use_dispatch == 1
     return dispatch#compile_command(0, a:command, 0)
   else
     return system(a:command)
@@ -83,7 +83,7 @@ function! cmake#util#shell_exec(command)
 endfunc
 
 function! cmake#util#shell_bgexec(command)
-  if g:loaded_dispatch == 1
+  if g:cmake_use_dispatch == 1
     call dispatch#start(a:command, {'background': 1})
   else
     call cmake#util#shell_exec(a:command)
