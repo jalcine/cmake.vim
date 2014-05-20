@@ -76,7 +76,7 @@ endfunc
 
 function! cmake#util#shell_exec(command)
   if g:loaded_dispatch == 1
-    return dispatch#compile_command(0, a:command, 0)
+    return dispatch#compile_command(0, a:command)
   else
     return system(a:command)
   endif
