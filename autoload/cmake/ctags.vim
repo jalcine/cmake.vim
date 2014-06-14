@@ -7,7 +7,7 @@
 
 func! cmake#ctags#invoke(args)
   let command = g:cmake_ctags.executable . " " . a:args
-  call cmake#util#shell_bgexec(l:command)
+  call cmake#util#shell_exec(l:command)
 endfunc
 
 func! cmake#ctags#cache_directory()
@@ -23,11 +23,9 @@ endfunc
 func! cmake#ctags#generate_for_target(target)
   let l:tag_file = cmake#ctags#filename(a:target)
   let l:files = cmake#targets#files(a:target)
-  let l:args = '--append --excmd=mixed --extra=+fq --totals=no --file ' . l:tag_file
+  let l:args = '--append --excmd=mixed --extra=+fq --totals=no -f ' . l:tag_file
 
-  if type(l:files) != type([])
-    return
-  endif
+  if type(l:files) != type([]) | return | endif
 
   for file in files
     let l:command = l:args . ' ' . l:file

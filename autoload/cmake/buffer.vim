@@ -34,7 +34,7 @@ function! cmake#buffer#set_options()
 endfunction
 
 function! cmake#buffer#set_makeprg()
-  if g:cmake_set_makeprg == 1
+  if g:cmake_set_makeprg == 1 && exists('b:cmake_target') && exists('b:cmake_root_binary_dir')
     let &makeprg="make -C " . b:cmake_root_binary_dir . " " . b:cmake_target
   endif
 endfunc
