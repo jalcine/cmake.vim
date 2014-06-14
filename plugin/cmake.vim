@@ -3,10 +3,10 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.0
+" Version:          0.4.1
 
 " If we're here, don't reload man.
-if exists("g:loaded_cmake") 
+if exists("g:loaded_cmake")
   finish
 else
   let g:loaded_cmake = 1
@@ -27,7 +27,7 @@ func! s:set_options()
   \  'g:cmake_c_compiler':        'clang',
   \  'g:cmake_build_directories': [ 'build' ],
   \  'g:cmake_build_type':        'Debug',
-  \  'g:cmake_install_prefix':    '/usr/local', 
+  \  'g:cmake_install_prefix':    '/usr/local',
   \  'g:cmake_build_shared_libs': 1,
   \  'g:cmake_ctags':             {
   \     'project_files':          1,
@@ -54,10 +54,5 @@ func! s:setauto(name, value)
 endfunc
 
 call s:set_options()
-
-augroup CMake
-  au!
-  au VimEnter     * call cmake#augroup#on_vim_enter()
-  au BufEnter     * call cmake#augroup#on_buf_enter()
-  au BufReadPost  * call cmake#augroup#on_buf_read_post()
-augroup END
+call cmake#augroup#init()
+call cmake#augroup#on_vim_enter()

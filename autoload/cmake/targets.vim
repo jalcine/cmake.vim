@@ -3,7 +3,7 @@
 " Author:      Jacky Alciné <me@jalcine.me>
 " License:     MIT
 " Website:     https://jalcine.github.io/cmake.vim
-" Version:     0.4.0
+" Version:     0.4.1
 
 function! cmake#targets#build(target)
   echomsg "[cmake] Building target '" . a:target . "'..."
@@ -56,7 +56,7 @@ endfunction
 
 function! cmake#targets#for_file(filepath)
   let l:targets = cmake#targets#list()
-  let l:filepath = fnamemodify(a:filepath,':p:.')
+  let l:filepath = fnamemodify(a:filepath,':p:.:r')
   if empty(l:targets) | return 0 | endif
 
   if has_key(g:cmake_cache.files,l:filepath)
@@ -66,39 +66,43 @@ function! cmake#targets#for_file(filepath)
   for target in l:targets
     let files = cmake#targets#files(target)
     if empty(files) | continue | endif
-    redraw | echomsg "[cmake.vim] Searching for '" . l:filepath .
-          \ "' in target " . target . "..."
+    call filter(files, "stridx(v:val,l:filepath,0) != -1")
 
-    if index(files, l:filepath) != -1
+    if len(files) != 0
       let g:cmake_cache.files[l:filepath] = l:target
-      return l:target
     else | continue | endif
   endfor
 
-  return 0
+  if !has_key(g:cmake_cache.files,l:filepath)
+    return 0
+  endif
+
+  return g:cmake_cache.files[l:filepath]
 endfunction!
 
 function! cmake#targets#flags(target)
   let flags = { 'c' : [], 'cpp' : [] }
-
-  if cmake#targets#exists(a:target)
-    if has_key(g:cmake_cache.targets, a:target) &&
-          \ !empty(g:cmake_cache.targets[a:target].flags)
-      return g:cmake_cache.targets[a:target].flags
-    endif
-
-    let l:flags_file = cmake#targets#binary_dir(a:target) . '/flags.make'
-
-    if filereadable(l:flags_file)
-      let flags = {
-        \ 'c'   : cmake#flags#collect(l:flags_file, 'C'),
-        \ 'cpp' : cmake#flags#collect(l:flags_file, 'CXX')
-        \ }
-      let g:cmake_cache.targets[a:target].flags = flags
-    endif
+  
+  if !cmake#targets#exists(a:target)
+    return []
   endif
 
-  return flags
+  if has_key(g:cmake_cache.targets, a:target) &&
+        \ !empty(g:cmake_cache.targets[a:target].flags)
+    return g:cmake_cache.targets[a:target].flags
+  endif
+
+  let l:flags_file = cmake#targets#binary_dir(a:target) . '/flags.make'
+
+  if filereadable(l:flags_file)
+    let flags = {
+      \ 'c'   : cmake#flags#collect(l:flags_file, 'C'),
+      \ 'cpp' : cmake#flags#collect(l:flags_file, 'CXX')
+      \ }
+    let g:cmake_cache.targets[a:target].flags = flags
+  endif
+
+  return g:cmake_cache.targets[a:target].flags
 endfunction!
 
 function! cmake#targets#list()
