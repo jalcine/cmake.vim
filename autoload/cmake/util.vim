@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.0
+" Version:          0.4.1
 
 function! cmake#util#binary_dir()
   if exists("b:cmake_root_binary_dir") && isdirectory(b:cmake_root_binary_dir)
@@ -75,8 +75,8 @@ function! cmake#util#run_cmake(command, binary_dir, source_dir)
 endfunc
 
 function! cmake#util#shell_exec(command)
-  if g:cmake_use_dispatch == 1
-    return dispatch#compile_command(0, a:command, 0)
+  if g:loaded_dispatch == 1
+    return dispatch#compile_command(0, a:command)
   else
     return system(a:command)
   endif
