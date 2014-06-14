@@ -75,8 +75,8 @@ function! cmake#util#run_cmake(command, binary_dir, source_dir)
 endfunc
 
 function! cmake#util#shell_exec(command)
-  if g:cmake_use_dispatch == 1
-    return dispatch#compile_command(0, a:command, 0)
+  if g:loaded_dispatch == 1
+    return dispatch#compile_command(0, a:command)
   else
     return system(a:command)
   endif
