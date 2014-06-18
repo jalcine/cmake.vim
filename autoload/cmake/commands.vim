@@ -6,14 +6,14 @@
 " Version:          0.4.1
 
 function! cmake#commands#build()
-  echomsg "[cmake] Building all targets..."
+  call cmake#util#echo_msg('Building all targets...')
   call cmake#commands#invoke_target('all')
-  echomsg "[cmake] Built all targets."
+  call cmake#util#echo_msg('Built all targets.')
 endfunc
 
 function! cmake#commands#invoke_target(target)
-  echomsg "[cmake] Invoking target '" . a:target . "'..."
-  call cmake#util#run_cmake(" --target " . a:target. " --", "", "")
+  call cmake#util#echo_msg("Invoking target '" . a:target . "'...")
+  call cmake#util#run_cmake(' --target ' . a:target. ' --', '', '')
 endfunc
 
 function! cmake#commands#build_current()
@@ -32,61 +32,58 @@ function! cmake#commands#generate_ctags()
   for target in l:targets
     call cmake#ctags#generate_for_target(l:target)
   endfor
-  echomsg "[jalcine] Generated tags for all targets."
+  call cmake#util#echo_msg('Generated tags for all targets.')
 endfunc
 
 function! cmake#commands#generate_local_ctags()
-  if exists('b:cmake_corresponding_target')
-    call cmake#ctags#generate_for_target(b:cmake_corresponding_target)
-    echomsg "[jalcine] Generated tags for " . b:cmake_corresponding_target . "."
-  endif
+  if !exists('b:cmake_corresponding_target') | return | endif
+  call cmake#ctags#generate_for_target(b:cmake_corresponding_target)
+  call cmake#util#echo_msg('Generated tags for ' . b:cmake_corresponding_target . '.')
 endfunc
 
 function! cmake#commands#build_target_for_file(file)
   let target = cmake#targets#for_file(a:file)
-  if empty(target)
-    return 0
-  endif
+  if empty(target) | return 0 | endif
 
-  echomsg "[cmake] Building target '" . l:target . "'..."
+  call cmake#util#echo_msg("Building target '" . l:target . "'...")
   call cmake#targets#build(target)
-  echomsg "[cmake] Built target '" . l:target . "'."
+  call cmake#util#echo_msg("Built target '" . l:target . "'.")
 endfunc
 
 function! cmake#commands#clean()
-  echomsg "[cmake] Cleaning build..."
+  call cmake#util#echo_msg('Cleaning build...')
   call cmake#commands#invoke_target('clean')
-  echomsg "[cmake] Cleaned build."
+  call cmake#util#echo_msg('Cleaned build.')
 endfunc
 
 function! cmake#commands#test()
-  echomsg "[cmake] Testing build..."
+  call cmake#util#echo_msg('Testing build...')
   call cmake#commands#invoke_target('test')
-  echomsg "[cmake] Tested build."
+  call cmake#util#echo_msg('Tested build.')
 endfunc
 
 function! cmake#commands#rebuild_cache()
-  echomsg "[cmake] Rebuilding cache for CMake.."
+  call cmake#util#echo_msg('Rebuilding variable cmake for CMake...')
   call cmake#commands#invoke_target('rebuild_cache')
-  echomsg "[cmake] Rebuilt cache for CMake."
+  call cmake#util#echo_msg('Rebuilt variable cmake for CMake...')
 endfunc
 
 function! cmake#commands#install()
-  echomsg "[cmake] Installing project..."
+  call cmake#util#echo_msg('Installing project...')
   call cmake#commands#invoke_target('install')
-  echomsg "[cmake] Installed project."
+  call cmake#util#echo_msg('Installed project.')
 endfunc
 
 " TODO: Check if there was a failure of sorts on configuring.
 function! cmake#commands#create_build(directory)
   if count(g:cmake_build_directories, a:directory) == 0
-    echomsg "[cmake] You should add '" . a:directory . "' to 'g:cmake_build_directories so CMake will be able to find it in the future."
+    call cmake#util#echomsg("You should add '" . a:directory . "' to 'g:cmake_build_directories so CMake will be able to find it in the future.")
     return 0
   endif
 
   " Make the directory.
   if filereadable(a:directory . "/CMakeCache.txt")
-    if confirm("[cmake] Remove existing project configuration?", "&Yes\&No") == 1
+    if confirm("Remove existing project configuration?", "&Yes\&No") == 1
       call delete(a:directory . '/CMakeCache.txt')
     else
       return
@@ -101,9 +98,10 @@ function! cmake#commands#create_build(directory)
   let l:build_options = s:get_build_opts()
 
   " Make the build.
-  echomsg "[cmake] Configuring project for the first time..."
+  call cmake#util#echomsg('Configuring project for the first time...')
   call cmake#util#run_cmake(l:build_options, getcwd() . "/" . a:directory, getcwd())
-  echomsg "[cmake] Project configured."
+  call cmake#augroup#on_vim_enter()
+  call cmake#util#echomsg('Project configured.')
 endfunc
 
 function! cmake#commands#apply_buffer_commands()
