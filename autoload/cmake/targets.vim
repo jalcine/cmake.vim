@@ -6,7 +6,7 @@
 " Version:     0.4.1
 
 function! cmake#targets#build(target)
-  echomsg "[cmake] Building target '" . a:target . "'..."
+  call cmake#util#echomsg("Building target '" . a:target . "'...")
   return cmake#util#run_cmake("--build . --target " . a:target . " -- ", "", "")
 endfunction!
 
