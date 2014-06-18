@@ -8,7 +8,7 @@
 function! cmake#buffer#set_options()
   let l:current_file = expand('%')
   if !exists("b:cmake_target") || type(b:cmake_target) != type("")
-    call cmake#util#echomsg("Searching for target of '" . l:current_file . "'...")
+    call cmake#util#echo_msg("Searching for target of '" . l:current_file . "'...")
     let b:cmake_target = cmake#targets#for_file(l:current_file)
 
     if empty(b:cmake_target) | return | endif
@@ -29,7 +29,7 @@ function! cmake#buffer#set_options()
       let b:cmake_libraries = cmake#targets#libraries(b:cmake_target)
     endif
 
-    call cmake#util#echomsg("Applied buffer options for '" . l:current_file . "'.")
+    call cmake#util#echo_msg("Applied buffer options for '" . l:current_file . "'.")
   endif
 endfunction
 

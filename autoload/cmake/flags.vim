@@ -52,6 +52,7 @@ function! cmake#flags#inject()
 endfunc
 
 function! cmake#flags#inject_to_syntastic(target)
+  " TODO Add options according to each checker's setup.
   if g:cmake_inject_flags.syntastic != 1 | return | endif
 
   let l:flags = cmake#targets#flags(a:target)

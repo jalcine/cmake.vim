@@ -77,7 +77,7 @@ endfunc
 " TODO: Check if there was a failure of sorts on configuring.
 function! cmake#commands#create_build(directory)
   if count(g:cmake_build_directories, a:directory) == 0
-    call cmake#util#echomsg("You should add '" . a:directory . "' to 'g:cmake_build_directories so CMake will be able to find it in the future.")
+    call cmake#util#echo_msg("You should add '" . a:directory . "' to 'g:cmake_build_directories so CMake will be able to find it in the future.")
     return 0
   endif
 
@@ -98,10 +98,10 @@ function! cmake#commands#create_build(directory)
   let l:build_options = s:get_build_opts()
 
   " Make the build.
-  call cmake#util#echomsg('Configuring project for the first time...')
+  call cmake#util#echo_msg('Configuring project for the first time...')
   call cmake#util#run_cmake(l:build_options, getcwd() . "/" . a:directory, getcwd())
   call cmake#augroup#on_vim_enter()
-  call cmake#util#echomsg('Project configured.')
+  call cmake#util#echo_msg('Project configured.')
 endfunc
 
 function! cmake#commands#apply_buffer_commands()
