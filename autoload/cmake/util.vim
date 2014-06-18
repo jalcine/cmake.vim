@@ -1,9 +1,14 @@
 " File:             autoload/cmake/util.vim
-" Description:      Power methods for cmake.vim.
+" Description:      Power methods for the CMake plugin.
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
 " Version:          0.4.1
+
+function! cmake#util#echo_msg(msg)
+  if empty(a:msg) | return | endif
+  redraw | echomsg "[cmake] " . a:msg
+endfunction
 
 function! cmake#util#binary_dir()
   if exists("b:cmake_root_binary_dir") && isdirectory(b:cmake_root_binary_dir)
@@ -76,7 +81,7 @@ endfunc
 
 function! cmake#util#shell_exec(command)
   if g:loaded_dispatch == 1
-    return dispatch#compile_command(0, a:command)
+    execute 'Dispatch ' . a:command . '<CR>'
   else
     return system(a:command)
   endif
@@ -84,7 +89,7 @@ endfunc
 
 function! cmake#util#shell_bgexec(command)
   if g:cmake_use_dispatch == 1
-    call dispatch#start(a:command, {'background': 1})
+    execute 'Start! ' . a:command . '<CR>'
   else
     call cmake#util#shell_exec(a:command)
   endif
