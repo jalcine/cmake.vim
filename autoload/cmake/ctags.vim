@@ -36,14 +36,14 @@ func! cmake#ctags#generate_for_target(target)
 endfunc
 
 func! cmake#ctags#refresh()
-  " TODO: Add the ctags for this target.
   let l:cache_dir = cmake#ctags#cache_directory()
   let l:tag_file = cmake#ctags#filename(b:cmake_target)
-  let l:paths = split(&tags, ',')
+  let l:paths = split(&l:tags, ',')
   call filter(l:paths, 'strridx(v:val, l:cache_dir,0) == -1')
-  if !filereadable(l:tag_file)
+  call filter(l:paths, 'filereadable(v:val)')
+  if !filereadable(l:tag_file) && b:cmake_target != '0'
     call cmake#ctags#generate_for_target(b:cmake_target)
   endif
   let l:paths += [ l:tag_file ]
-  let tags = join(l:paths, ',')
+  let &l:tags = join(l:paths, ',')
 endfunc
