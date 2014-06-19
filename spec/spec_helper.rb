@@ -6,8 +6,10 @@ Vimrunner::RSpec.configure do | config |
   plugin_path = File.expand_path('..')
 
   config.start_vim do
-    vim = Vimrunner.start_gvim
+    vim = Vimrunner.start
     vim.add_plugin(plugin_path, 'plugin/cmake.vim')
     vim
   end
 end
+
+# TODO Test against GUI vim as well.
