@@ -1,0 +1,5 @@
+--color
+--backtrace
+--fail-fast
+--order rand
+--format documentation
