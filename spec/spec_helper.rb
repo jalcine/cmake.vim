@@ -1,23 +1,23 @@
 require 'vimrunner'
-require 'vimrunner/rspec'
+require 'vimrunner/testing'
 require_relative 'lib/cmakevim'
+require_relative 'lib/cmakevim/environment'
 
-# We'll need to know where we're working from.
-plugin_path = File.expand_path('../..', __FILE__)
+RSpec.configure do | config |
+  # Include some helpers from Vimrunner
+  config.include Vimrunner::Testing
+  config.include CMakeVim::Environment
 
-Vimrunner::RSpec.configure do | config |
-  config.reuse_server = true
+  config.around(:each) do | example |
+    Dir.mktmpdir do | dir |
+      Dir.chdir(dir) do
+        vim.command('cd ' + dir)
+      end
+    end
+  end
 
-  config.start_vim do
-    # Start Vim headless.
-    vim = Vimrunner.start
-
-    # Run the primary plugin file.
-    vim.add_plugin(plugin_path, 'cmake.vim')
-
-    # Give 'em Vim.
-    vim
+  config.after(:each) do | example |
+    kill_vim_session
+    cleanup_cmake
   end
 end
-
-# TODO Test against GUI vim as well.

@@ -1,27 +1,41 @@
 class CMakeVim
+  attr_reader :basep_path, :vim, :dir
+
   def initialize(args)
     @vim = args[:vim]
+    @base_path = args[:base_path]
+    @base_path = File.dirname(File.expand_path('../..', __FILE__))
   end
 
+  # TODO Allow adding of lines to CMake file.
   def create_new_project(args = {})
     args = args.merge({
-      extra_lines: ''
+      extra_lines: '',
     })
 
-    @dir = Dir.mktmpdir
-    Dir.chdir dir
-
-    # TODO Make the root CMakeLists.txt file.
+    Dir.glob(@base_path + '/spec/data/**').each do | file |
+      new_place = file.gsub(@base_path + '/spec/data/', '')
+      FileUtils.copy(file, new_place)
+    end
   end
 
-  def configure_project(build_dir = 'build')
-    # TODO Run CMake command for specified directory
-    Dir.mkdir "#{@dir}/build"
-    Dir.chdir "#{@dir}/build"
+  def configure_project(args = {})
+    args = args.merge({
+      build_dir: 'build',
+      definitions: {},
+    })
 
-    PTY.spawn('cmake', %W[])
+    definitions = []
 
-    `mkdir -p #{build_dir} && cd #{build_dir} && cmake ..`
+    args.definitions.each do | key, value | 
+      aDef = "-D#{key}=\"#{value}\""
+      definitions.push aDef
+    end
+
+    definitions.join ' '
+
+    Dir.mkdir "./build"
+    `cd ./build && cmake .. #{definitions}`
   end
 
   def cd_into_project
