@@ -35,15 +35,22 @@ func! cmake#ctags#generate_for_target(target)
   let g:cmake_cache.targets[a:target].tags_file = l:tag_file
 endfunc
 
-func! cmake#ctags#refresh()
+func! cmake#ctags#paths_for_target(target)
   let l:cache_dir = cmake#ctags#cache_directory()
-  let l:tag_file = cmake#ctags#filename(b:cmake_target)
+  let l:tag_file = cmake#ctags#filename(a:target)
   let l:paths = split(&l:tags, ',')
   call filter(l:paths, 'strridx(v:val, l:cache_dir,0) == -1')
   call filter(l:paths, 'filereadable(v:val)')
-  if !filereadable(l:tag_file) && b:cmake_target != '0'
-    call cmake#ctags#generate_for_target(b:cmake_target)
+  if !filereadable(l:tag_file)
+    call cmake#ctags#generate_for_target(a:target)
   endif
   let l:paths += [ l:tag_file ]
+
+  return l:paths
+endfunc
+
+func! cmake#ctags#refresh()
+  if !exists('b:cmake_target') || b:cmake_target == '0' | return | endif
+  let l:paths = cmake#ctags#paths_for_target(b:cmake_target)
   let &l:tags = join(l:paths, ',')
 endfunc
