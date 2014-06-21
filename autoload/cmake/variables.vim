@@ -18,10 +18,10 @@ func! cmake#variables#get(variable)
   return cmake#util#read_from_cache(a:variable)[1]
 endfunc
 
-func! cmake#variables#set(variableName,newVariableValue)
-  if !cmake#variables#exists(a:variable)
+func! cmake#variables#set(variableName,variableValue)
+   if !cmake#variables#exists(a:variable)
     return 0
   endif
 
-  cmake#util#write_to_cache(a:variable, a:newVariableValue)
+ cmake#util#write_to_cache(a:variable, a:variableValue)
 endfunc!
