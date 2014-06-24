@@ -19,15 +19,15 @@ function! cmake#util#binary_dir()
 
   for l:directory in l:directories
     let l:directory = fnamemodify(l:directory, ':p')
-    let l:file = findfile(directory . "/CMakeCache.txt", ".;")
+    let l:file = findfile(directory . '/CMakeCache.txt', ".;")
 
     if filereadable(l:file)
-      let b:cmake_root_binary_dir = substitute(l:file, "/CMakeCache.txt", "", "")
+      let b:cmake_root_binary_dir = substitute(l:file, '/CMakeCache.txt', '', '')
       break
     endif
   endfor
 
-  let b:cmake_root_binary_dir = fnamemodify(b:cmake_root_binary_dir,':p')
+  let b:cmake_root_binary_dir = fnamemodify(b:cmake_root_binary_dir, ':p')
   return b:cmake_root_binary_dir
 endfunc
 
@@ -36,21 +36,21 @@ function! cmake#util#source_dir()
     return ""
   endif
 
-  let dir = fnamemodify(cmake#cache#read("Project_SOURCE_DIR"), ':p')
+  let dir = fnamemodify(cmake#cache#read('Project_SOURCE_DIR'), ':p')
   return l:dir
 endfunc
 
 function! cmake#util#has_project()
   let l:bindir = cmake#util#binary_dir()
   if isdirectory(l:bindir)
-    return filereadable(simplify(l:bindir . "/CMakeCache.txt"))
+    return filereadable(simplify(l:bindir . '/CMakeCache.txt'))
   else
     return ""
   endif
 endfunc
 
 function! cmake#util#run_make(command)
-  let l:command = "make -C " . cmake#util#binary_dir() . " " . a:command
+  let l:command = 'make -C ' . cmake#util#binary_dir() . ' ' . a:command
   call cmake#util#shell_exec(l:command)
 endfunc
 

@@ -7,7 +7,7 @@
 
 function! cmake#cache#read(property)
   if cmake#buffer#has_project() == 0
-    return 0
+    return ""
   endif
 
   let l:cmake_cache_file = cmake#cache#file_path()
@@ -34,12 +34,12 @@ endfunc
 
 function! cmake#cache#write(property,value)
   call cmake#util#run_cmake('-D' . a:property . ':STRING=' .
-    \ shellescape(a:value))
+    \ shellescape(a:value), '', '')
 endfunc
 
 function! cmake#cache#file_path()
   if cmake#buffer#has_project()
-    return cmake#util#binary_dir() . "/CMakeCache.txt"
+    return cmake#util#binary_dir() . 'CMakeCache.txt', ':h:r'
   endif
 
   return ""

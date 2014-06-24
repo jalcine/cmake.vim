@@ -4,9 +4,10 @@ require 'json'
 
 describe 'cmake.vim#buffer' do
   describe '#set_options' do
-    before(:all) do
+    before(:each) do
       vim.edit 'plugin.cpp'
       vim.command 'call cmake#buffer#set_options()'
+      vim.command 'echomsg expand(".")'
     end
 
     it 'adds binary directory for current file\'s target' do
@@ -44,7 +45,7 @@ describe 'cmake.vim#buffer' do
     end
 
     it 'sets the makeprg for this current buffer' do
-      makeprg = vim.command('let &l:makeprg')
+      makeprg = vim.command('setl makeprg').gsub 'makeprg=', ''
       current_target = vim.command('let b:cmake_target')
       current_binary_dir = vim.command('let b:cmake_binary_dir')
       expect(makeprg).to match(/^make/)

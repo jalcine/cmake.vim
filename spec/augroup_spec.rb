@@ -3,6 +3,13 @@ require 'spec_helper'
 require 'json'
 
 describe 'cmake.vim#augroup' do
+  around(:each) do | example |
+    cmake.create_new_project
+    cmake.configure_project
+    example.run
+    cmake.destroy_project
+  end
+
   describe '#on_vim_enter' do
     before(:each) { vim.command('call cmake#augroup#on_vim_enter()') }
 
@@ -26,7 +33,7 @@ describe 'cmake.vim#augroup' do
       }
 
       files.keys.each do | target |
-        file_json = vim.command('call cmake#targets#files(\"' + target + '\")')
+        file_json = vim.command('call cmake#targets#files("' + target + '")')
         file_list = JSON.parse(file_json)
         expect(file_list).to_not be_empty
         expect(file_list).to eql(files[target])
@@ -54,7 +61,7 @@ describe 'cmake.vim#augroup' do
           'libraries',
         ].each do | option |
           it 'sets the option "b:cmake_' + option + '"' do
-            expect(vim.command('let b:cmake_' . option)).to_not be_empty
+            expect(vim.command('let b:cmake_' + option)).to_not be_empty
           end
         end
 
@@ -71,7 +78,7 @@ describe 'cmake.vim#augroup' do
           'CMakeInfoForCurrentFile',
         ].each do | buffer_command |
           it 'sets the command ":' + buffer_command + '"' do
-            expect(known_commands).to match('b ' . buffer_command)
+            expect(known_commands).to match('b ' + buffer_command)
           end
         end
       end
@@ -79,8 +86,8 @@ describe 'cmake.vim#augroup' do
   end
 
   describe '#on_buf_enter' do
-    before(:all) do
-      vim.edit 'binary_main.cpp'
+    before(:each) do
+      vim.edit "#{Dir.pwd}/binary_main.cpp"
     end
 
     it 'sets the makeprg variable for this buffer' do
@@ -127,19 +134,19 @@ describe 'cmake.vim#augroup' do
   end
 
   describe '#init' do
-    let(:aucmds) { vim.command('autocommand *') }
+    let(:aucmds) { vim.command('autocommand') }
     let(:augroups) { vim.command('augroup').split(/(\s)/) }
 
     it 'loads #on_buf_read() on files that matches the regex *.*pp' do
-      expect(aucmds).to contain('cmake.vim BufReadPre')
+      expect(aucmds).to match('cmake.vim BufReadPre')
     end
 
     it 'loads #on_buf_enter() on files that matches the regex *.*pp' do
-      expect(aucmds).to contain('cmake.vim BufEnter')
+      expect(aucmds).to match('cmake.vim BufEnter')
     end
 
     it 'uses a augroup' do
-      expect(augroups).to contain('cmake.vim')
+      expect(augroups).to match('cmake.vim')
     end
   end
 end
