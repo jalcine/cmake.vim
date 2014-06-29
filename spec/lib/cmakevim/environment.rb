@@ -8,12 +8,12 @@ module CMakeVim::Environment
   private
   def fresh_vim
     plugin_path = File.dirname(File.expand_path('../../../', __FILE__))
-    @vim_instance = Vimrunner.connect('candy')
+    @vim_instance = Vimrunner.start
     @vim_instance.add_plugin(plugin_path, 'plugin/cmake.vim')
   end
 
   def fresh_cmake
-    @cmake_instance = CMakeVim.new(vim: @vim_instance)
+    @cmake_instance = CMakeVim::Driver.new(vim: @vim_instance)
   end
 
   def vim
@@ -26,12 +26,14 @@ module CMakeVim::Environment
     @cmake_instance
   end
 
-  def kill_vim_session
+  def kill_vim
+    vim.kill unless @vim_instance.nil?
+    @vim_instance = nil
   end
 
   def cleanup_cmake
-    cmake.destroy_project unless cmake.nil?
-    cmake = nil
+    cmake.destroy_project unless @cmake_instance.nil?
+    @cmake_instance = nil
   end
 
 end
