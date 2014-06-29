@@ -10,27 +10,43 @@ function! cmake#util#echo_msg(msg)
   redraw | echomsg "[cmake] " . a:msg
 endfunction
 
+" Function: cmake#util#binary_dir
+" Returns: On success, A file path with a trailing slash that points to the 
+" CMake binary project. On failure, an empty string.
 function! cmake#util#binary_dir()
-  if exists("b:cmake_root_binary_dir") && isdirectory(b:cmake_root_binary_dir)
-    return b:cmake_root_binary_dir
+  if exists('g:cmake_root_binary_dir') && isdirectory(g:cmake_root_binary_dir)
+    return g:cmake_root_binary_dir
   endif
 
+  " Collect directories that we'd search for the existance of that magic
+  " CMakeCache.txt file.
   let l:directories = g:cmake_build_directories + [ getcwd() ]
 
+  " Walk over each directory upwards and check if the file exists in it.
   for l:directory in l:directories
     let l:directory = fnamemodify(l:directory, ':p')
     let l:file = findfile(directory . '/CMakeCache.txt', ".;")
 
+    " Break out when we find something noteworthy.
     if filereadable(l:file)
-      let b:cmake_root_binary_dir = substitute(l:file, '/CMakeCache.txt', '', '')
+      let g:cmake_root_binary_dir = fnamemodify(substitute(l:file, '/CMakeCache.txt', '', ''), ':p')
       break
     endif
   endfor
 
-  let b:cmake_root_binary_dir = fnamemodify(b:cmake_root_binary_dir, ':p')
-  return b:cmake_root_binary_dir
+  " Save our hard work so we can use it later.
+  if exists('g:cmake_root_binary_dir')
+    return g:cmake_root_binary_dir
+  else
+    return ""
+  endif
+
+  return 0
 endfunc
 
+" Function: cmake#util#source_dir
+" Returns: On success, the path to the sources of the CMake project. On
+" failure, zero.
 function! cmake#util#source_dir()
   if !cmake#util#has_project()
     return ""
@@ -40,12 +56,15 @@ function! cmake#util#source_dir()
   return l:dir
 endfunc
 
+" Function: cmake#util#has_project
+" Returns: On success, whether or not this project has been configured at least
+" once.
 function! cmake#util#has_project()
   let l:bindir = cmake#util#binary_dir()
   if isdirectory(l:bindir)
     return filereadable(simplify(l:bindir . '/CMakeCache.txt'))
   else
-    return ""
+    return 0
   endif
 endfunc
 
