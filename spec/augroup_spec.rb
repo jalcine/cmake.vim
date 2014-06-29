@@ -51,9 +51,7 @@ describe 'cmake.vim#augroup' do
       context "for a #{label}'s buffer" do
         let(:known_commands) { vim.command('command') }
 
-        before(:all) do
-          vim.edit file
-        end
+        before(:all) { vim.edit "data/#{file}" }
 
         [
           'target', 'binary_dir',
@@ -110,7 +108,12 @@ describe 'cmake.vim#augroup' do
     it 'sets the ctags file for this file\'s target' do
       ctags_list = vim.command('let &l:tags')
       known_ctags_files_json = vim.command('call cmake#ctags#paths_for_target(b:cmake_target)')
-      known_ctags_files = JSON.parse(known_ctags_files_json)
+      expect(known_ctags_files_json).to_not be_empty
+      begin
+        known_ctags_files = JSON.parse(known_ctags_files_json)
+      rescue JSON::ParseError => e
+        fail "No target found."
+      end
 
       ctags = ctags_list.split ','
 
@@ -146,7 +149,7 @@ describe 'cmake.vim#augroup' do
     end
 
     it 'uses a augroup' do
-      expect(augroups).to match('cmake.vim')
+      expect(augroups).to have('cmake.vim')
     end
   end
 end

@@ -56,14 +56,40 @@ describe 'cmake.vim#buffer' do
   end
 
   describe '#has_project' do
-    it 'confirms the existence of a project within a buffer where PWD ~= CMake' do
-      vim.edit 'plugin.cpp'
-      expect(vim.command('call cmake#buffer#has_project()')).to eql('1')
+    context 'confirming the existence of a project within a buffer where the file' do
+      it 'lies in a CMake source tree' do
+        vim.edit 'plugin.cpp'
+        result = validate_response 'echo cmake#buffer#has_project()'
+        expect(result).to eql '1'
+      end
+
+      it 'lies out in a CMake source file' do
+        vim.edit Dir.home + '/.vimrc'
+        result = validate_response 'echo cmake#buffer#has_project()'
+        expect(result).to eql '0'
+      end
     end
 
-    it 'denies the idea of a CMake project within a buffer where PWD != CMake' do
-      vim.edit(Dir.home + "/.vimrc")
-      expect(vim.command('call cmake#buffer#has_project()')).to eql('0')
+    context 'ensures that the filetype of the file' do
+      before(:each) { vim.edit 'plugin.cpp' }
+
+      it 'matches for those of the "cpp" filetype' do
+        vim.command 'set ft=cpp'
+        result = validate_response 'echo cmake#buffer#has_project()'
+        expect(result).to eql('1')
+      end
+
+      it 'matches for those of the "c" filetype' do
+        vim.command 'set ft=c'
+        result = validate_response 'echo cmake#buffer#has_project()'
+        expect(result).to eql('1')
+      end
+
+      it 'does not matches for those of the "cmake" filetype' do
+        vim.command 'set ft=cmake'
+        result = validate_response 'echo cmake#buffer#has_project()'
+        expect(result).to eql('0')
+      end
     end
   end
 end
