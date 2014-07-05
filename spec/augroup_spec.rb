@@ -111,8 +111,8 @@ describe 'cmake.vim#augroup' do
       expect(known_ctags_files_json).to_not be_empty
       begin
         known_ctags_files = JSON.parse(known_ctags_files_json)
-      rescue JSON::ParseError => e
-        fail "No target found."
+      rescue Exception => e
+        fail 'No target found.'
       end
 
       ctags = ctags_list.split ','
