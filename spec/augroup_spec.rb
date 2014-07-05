@@ -33,7 +33,7 @@ describe 'cmake.vim#augroup' do
       }
 
       files.keys.each do | target |
-        file_json = vim.command('call cmake#targets#files("' + target + '")')
+        file_json = vim.command("call cmake#targets#files('#{target}')").gsub '\'', '"'
         file_list = JSON.parse(file_json)
         expect(file_list).to_not be_empty
         expect(file_list).to eql(files[target])
