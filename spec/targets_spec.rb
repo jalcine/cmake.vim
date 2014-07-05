@@ -16,6 +16,7 @@ describe 'cmake#targets' do
     it 'finds them for existing targets' do
       path = validate_response 'echo cmake#targets#binary_dir("sample-binary")'
       expect(Dir.exists? path).to eql(true)
+      expect(path).to include 'build'
     end
 
     it 'doesnt find them for non-existing targets' do
@@ -140,17 +141,52 @@ describe 'cmake#targets' do
     it 'obtains the include directories for a target' do
       includedirs = validate_response('echo cmake#targets#include_dirs("sample-library")')
       expect(includedirs).to_not be_empty
-      expect(includedirs).to include '/usr/include'
+      expect(includedirs).to include vim.command('echo cmake#util#source_dir()').gsub(/\/$/,'')
     end
   end
 
   describe '#libraries' do
-    xit 'exists as a function'
+    it 'exists as a function' do
+      expect(function_exists? 'cmake#targets#libraries').to eql(true)
+      expect(function_exists? 'cmake#targets#libraries(target)').to eql(true)
+    end
+
+    it 'obtains the libraries for a target' do
+      libs = validate_response('echo cmake#targets#libraries("sample-binary")')
+      libs.gsub '\'', '"'
+      skip 'Figure out how to grab all of the libraries for a specific target'
+    end
   end
+
   describe '#list' do
-    xit 'exists as a function'
+    it 'exists as a function' do
+      expect(function_exists? 'cmake#targets#list').to eql(true)
+      expect(function_exists? 'cmake#targets#list()').to eql(true)
+    end
+
+    it 'obtains a list of all known targets' do
+      targets = validate_response('echo cmake#targets#list()').gsub '\'', '"'
+      targets = JSON.parse(targets)
+      expect(targets).to_not be_empty
+      expect(targets.sort).to eql(['sample-binary', 'sample-library'])
+    end
   end
+
   describe '#source_dir' do
-    xit 'exists as a function'
+    it 'exists as a function' do
+      expect(function_exists? 'cmake#targets#source_dir').to eql(true)
+      expect(function_exists? 'cmake#targets#source_dir(target)').to eql(true)
+    end
+
+    it 'finds them for existing targets' do
+      path = validate_response 'echo cmake#targets#source_dir("sample-binary")'
+      expect(Dir.exists? path).to eql(true)
+    end
+
+    it 'doesnt find them for non-existing targets' do
+      path = vim.command 'echo cmake#targets#source_dir("dirty_pig")'
+      expect(Dir.exists? path).to eql(false)
+    end
+
   end
 end

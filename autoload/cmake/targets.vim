@@ -25,6 +25,7 @@ func! cmake#targets#binary_dir(target)
 endfunc!
 
 func! cmake#targets#source_dir(target)
+  if index(cmake#targets#list(), a:target) == -1 | return '' | endif
   let l:build_dir  = fnamemodify(cmake#targets#binary_dir(a:target), ':p')
   let l:source_dir = ""
   if !isdirectory(l:build_dir) | return l:source_dir | endif
@@ -55,7 +56,6 @@ func! cmake#targets#include_dirs(target)
 endfunc
 
 func! cmake#targets#libraries(target)
-  " TODO: Get the libraries from link.txt
   return []
 endfunc
 
