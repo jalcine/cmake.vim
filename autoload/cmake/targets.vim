@@ -42,10 +42,11 @@ endfunc!
 func! cmake#targets#include_dirs(target)
   let flags = cmake#targets#flags(a:target)
   let dirs = []
+
   if !empty(flags)
     for key in keys(flags)
       let includes = filter(copy(flags[key]), 'stridx(v:val, "-I") == 0')
-      call map(includes, 'substitute(v:val, "-I", "", "")')
+      call map(includes, 'substitute(v:val, "^-I", "", "")')
       let dirs += includes
     endfor
   endif

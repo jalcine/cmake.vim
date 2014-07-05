@@ -86,10 +86,14 @@ describe 'cmake#targets' do
       flags = JSON.parse(flags)
 
       expect(flags['c']).to eql([])
-      expect(flags['cpp']).to eql(['-fPIC', '-Dsample_library_EXPORTS'])
+      expect(flags['cpp']).to eql([
+        '-fPIC',
+        "-I#{vim.command('echo cmake#util#source_dir()').gsub(/\/$/,'')}",
+        '-Dsample_library_EXPORTS',
+      ])
     end
 
-    it 'obtains flags for a unknown target' do
+    it 'fails to obtains flags for a unknown target' do
       flags = validate_response 'echo cmake#targets#flags("sample-kid")'
       expect(flags).to_not be_empty
 
@@ -126,9 +130,20 @@ describe 'cmake#targets' do
     end
 
   end
+
   describe '#include_dirs' do
-    xit 'exists as a function'
+    it 'exists as a function' do
+      expect(function_exists? 'cmake#targets#include_dirs').to eql(true)
+      expect(function_exists? 'cmake#targets#include_dirs(target)').to eql(true)
+    end
+
+    it 'obtains the include directories for a target' do
+      includedirs = validate_response('echo cmake#targets#include_dirs("sample-library")')
+      expect(includedirs).to_not be_empty
+      expect(includedirs).to include '/usr/include'
+    end
   end
+
   describe '#libraries' do
     xit 'exists as a function'
   end
