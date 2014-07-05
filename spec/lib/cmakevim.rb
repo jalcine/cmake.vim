@@ -20,19 +20,16 @@ module CMakeVim
     end
 
     def configure_project(args = {})
+      definitions = []
       args = {
         build_dir: 'build',
         definitions: {},
       }.merge(args)
 
-      definitions = []
-
       args[:definitions].each do | key, value | 
         aDef = "-D#{key}:STRING=\"#{value}\""
         definitions.push aDef
       end
-
-      definitions.join ' '
 
       Dir.mkdir './build' unless Dir.exists? './build'
       `cd build && cmake .. #{definitions.join(' ')}`
@@ -44,6 +41,8 @@ module CMakeVim
     def destroy_project
       FileUtils.rm_r "#{Dir.pwd}/*", force: true
     end
+
+    alias :create_project :create_new_project
   end
 end
 

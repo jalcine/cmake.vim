@@ -7,7 +7,7 @@
 
 function! cmake#util#echo_msg(msg)
   if empty(a:msg) | return | endif
-  redraw | echomsg "[cmake] " . a:msg
+  redraw | echomsg "[cmake] " . a:msg | redraw
 endfunction
 
 " Function: cmake#util#binary_dir
@@ -25,11 +25,12 @@ function! cmake#util#binary_dir()
   " Walk over each directory upwards and check if the file exists in it.
   for l:directory in l:directories
     let l:directory = fnamemodify(l:directory, ':p')
-    let l:file = findfile(directory . '/CMakeCache.txt', ".;")
+    let l:file = findfile(directory . '/CMakeCache.txt', '.;')
 
     " Break out when we find something noteworthy.
     if filereadable(l:file)
-      let g:cmake_root_binary_dir = fnamemodify(substitute(l:file, '/CMakeCache.txt', '', ''), ':p')
+      let g:cmake_root_binary_dir = simplify(fnamemodify(substitute(l:file, 
+            \ '/CMakeCache.txt', '', ''), ':p'))
       break
     endif
   endfor
@@ -37,11 +38,9 @@ function! cmake#util#binary_dir()
   " Save our hard work so we can use it later.
   if exists('g:cmake_root_binary_dir')
     return g:cmake_root_binary_dir
-  else
-    return ""
   endif
 
-  return 0
+  return ""
 endfunc
 
 " Function: cmake#util#source_dir

@@ -7,13 +7,17 @@ module CMakeVim::Environment
 
   private
   def fresh_vim
-    plugin_path = File.dirname(File.expand_path('../../../', __FILE__))
     @vim_instance = Vimrunner.start
-    @vim_instance.add_plugin(plugin_path, 'plugin/cmake.vim')
+    add_plugin_to_vim 'plugin/cmake'
   end
 
   def fresh_cmake
     @cmake_instance = CMakeVim::Driver.new(vim: @vim_instance)
+  end
+
+  def add_plugin_to_vim(file)
+    plugin_path = File.dirname(File.expand_path('../../../', __FILE__))
+    @vim_instance.add_plugin(plugin_path, "#{file}.vim")
   end
 
   def vim
