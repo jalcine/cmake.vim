@@ -29,7 +29,7 @@ func! cmake#buffer#set_options()
     call cmake#util#echo_msg("Searching for target of '" . l:current_file . "'...")
     let b:cmake_target = cmake#targets#for_file(l:current_file)
 
-    if empty(b:cmake_target) | return | endif
+    if empty(b:cmake_target) | return 'no-target' | endif
 
     if !exists('b:cmake_binary_dir')
       let b:cmake_binary_dir = cmake#targets#binary_dir(b:cmake_target)
@@ -48,11 +48,14 @@ func! cmake#buffer#set_options()
     endif
 
     call cmake#util#echo_msg("Applied buffer options for '" . l:current_file . "'.")
+    return 1
   endif
+
+  return 0
 endfunc
 
 func! cmake#buffer#set_makeprg()
-  if g:cmake_set_makeprg == 1 && exists('b:cmake_target') && exists('b:cmake_root_binary_dir')
-    let &l:makeprg="make -C " . b:cmake_root_binary_dir . " " . b:cmake_target
-  endif
+  if !exists('b:cmake_binary_dir') | return | endif
+  if !exists('b:cmake_target') | return | endif
+  let &l:makeprg = "make -C " . b:cmake_binary_dir . " " . b:cmake_target
 endfunc
