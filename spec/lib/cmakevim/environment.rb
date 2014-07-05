@@ -16,8 +16,8 @@ module CMakeVim::Environment
   end
 
   def add_plugin_to_vim(file)
-    plugin_path = File.dirname(File.expand_path('../../../', __FILE__))
-    @vim_instance.add_plugin(plugin_path, "#{file}.vim")
+      plugin_path = File.dirname(File.expand_path('../../../', __FILE__))
+      @vim_instance.add_plugin(plugin_path, "#{file}.vim")
   end
 
   def vim

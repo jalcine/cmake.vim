@@ -91,7 +91,8 @@ function! cmake#commands#create_build(directory)
   " Make the build.
   call cmake#util#echo_msg('Configuring project for the first time...')
   call cmake#util#run_cmake(l:build_options, getcwd() . "/" . a:directory, getcwd())
-  call cmake#augroup#on_vim_enter()
+  call cmake#util#echo_msg('Caching the newly minted project...')
+  call cmake#targets#cache()
   call cmake#util#echo_msg('Project configured.')
 endfunc
 

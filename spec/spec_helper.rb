@@ -15,13 +15,16 @@ RSpec.configure do | config |
   config.include CMakeVim::RSpec
 
   config.around(:each) do | example |
+    fresh_vim
     dir = Dir.mktmpdir
     Dir.chdir(dir) do
       vim.command('cd ' + dir)
-      expect(vim.command('pwd')).to match(dir)
-      example.run
-      cleanup_cmake unless cmake.nil?
-      vim.kill
+      begin
+        example.run
+      rescue Exception => e
+      end
+      cleanup_cmake
     end
+    kill_vim
   end
 end
