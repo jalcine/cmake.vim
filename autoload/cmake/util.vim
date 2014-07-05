@@ -98,7 +98,7 @@ function! cmake#util#run_cmake(command, binary_dir, source_dir)
 endfunc
 
 function! cmake#util#shell_exec(command)
-  if g:loaded_dispatch == 1
+  if exists('g:loaded_dispatch') && g:loaded_dispatch == 1
     execute 'Dispatch ' . a:command . '<CR>'
   else
     return system(a:command)

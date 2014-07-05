@@ -40,21 +40,23 @@ describe 'cmake.vim#augroup' do
 
     end
   end
-  
+
   describe '#on_buf_read' do
     {
       'source file'  => 'plugin.cpp',
       'header file'  => 'plugin.hpp',
-      'CMake source file' => 'CMakeLists.txt'
+      #'CMake source file' => 'CMakeLists.txt'
     }.each do | label, file |
       context "for a #{label}'s buffer" do
-        before(:all) { vim.edit file }
+        before(:each) { vim.edit file }
 
         [
-          'target', 'binary_dir',
-          'source_dir', 'include_dirs',
+          'target',
+          'binary_dir',
+          'source_dir',
+          'include_dirs',
           'libraries',
-        ].each do | option |
+        ].shuffle.each do | option |
           it 'sets the option "b:cmake_' + option + '"' do
             expect(validate_response('echo b:cmake_' + option)).to_not be_empty
           end
@@ -71,11 +73,10 @@ describe 'cmake.vim#augroup' do
           'CMakeCtagsBuildAll',
           'CMakeCtagsBuildCurrent',
           'CMakeInfoForCurrentFile',
-        ].each do | buffer_command |
+        ].shuffle.each do | buffer_command |
           it 'sets the command ":' + buffer_command + '"' do
             expect(command_exists? buffer_command).to eql(true)
             expect(command_exists? ('b ' + buffer_command)).to eql(true)
-            expect(command_exists? ('! b ' + buffer_command)).to eql(true)
           end
         end
       end
@@ -84,18 +85,20 @@ describe 'cmake.vim#augroup' do
 
   describe '#on_buf_enter' do
     before(:each) do
-      vim.edit 'plugin.cpp.cpp'
+      vim.edit 'plugin.cpp'
     end
 
     it 'sets the makeprg variable for this buffer' do
-      makeprg = vim.command('let &l:makeprg')
+      makeprg = vim.command('setl makeprg')
       expect(makeprg).to_not be_empty
       expect(makeprg).to match 'make'
       expect(makeprg).to match vim.command('echo b:cmake_target')
+      expect(makeprg).to match vim.command('echo b:cmake_binary_dir')
     end
 
-    it 'sets the flags for this file\'s target' do
+    xit 'sets the flags for this file\'s target' do
       flags_json = vim.command('let b:cmake_flags')
+      flags_json.gsub! '\'', '"'
       flags = JSON.parse(flags_json)
       filetype = vim.command('let &l:filetype')
 
@@ -105,50 +108,58 @@ describe 'cmake.vim#augroup' do
     end
 
     it 'sets the ctags file for this file\'s target' do
-      ctags_list = vim.command('let &l:tags')
-      known_ctags_files_json = vim.command('call cmake#ctags#paths_for_target(b:cmake_target)')
+      ctags_list = vim.command('echo &l:tags')
+      known_ctags_files_json = validate_response('echo cmake#ctags#paths_for_target(b:cmake_target)')
+      known_ctags_files_json.gsub! '\'', '"'
       expect(known_ctags_files_json).to_not be_empty
       begin
         known_ctags_files = JSON.parse(known_ctags_files_json)
       rescue Exception => e
-        fail 'No target found.'
+        fail 'No target found.' + e.message
       end
 
       ctags = ctags_list.split ','
 
       expect(ctags).to_not be_empty
       known_ctags_files.each do | a_path |
-        expect(ctags).to contain(a_path)
+        expect(ctags).to include(a_path)
       end
     end
 
-    it 'sets the include paths for this file\'s target' do
-      path_list = vim.command('let &l:path')
+    it 'sets the include paths for this file\'s target to :path' do
+      path_list = vim.command('echo &l:path')
       paths = path_list.split ','
 
       expect(paths).to_not be_empty
-      target_paths = JSON.parse(validate_response('echo cmake#targets#include_dirs(b:cmake_target)'))
+      target_paths = validate_response('echo cmake#targets#include_dirs(b:cmake_target)')
+      target_paths.gsub! '\'', '"'
+      target_paths = JSON.parse(target_paths)
       target_paths.each do | a_path |
-        expect(paths).to contain(a_path)
+        expect(paths).to include(a_path)
       end
 
     end
   end
 
   describe '#init' do
-    let(:aucmds) { vim.command('autocommand') }
-    let(:augroups) { vim.command('augroup').split(/(\s)/) }
+    let(:aucmd_bufread)  { validate_response('autocmd BufRead') }
+    let(:aucmd_bufenter) { validate_response('autocmd BufEnter') }
+    let(:augroups) { validate_response('augroup').split(/(\s)/) }
 
     it 'loads #on_buf_read() on files that matches the regex *.*pp' do
-      expect(aucmds).to match('cmake.vim BufReadPre')
+      expect(aucmd_bufread).to include('cmake.vim  BufRead')
+      expect(aucmd_bufread).to include('*.*pp')
+      expect(aucmd_bufread).to include('cmake#augroup#on_buf_read()')
     end
 
     it 'loads #on_buf_enter() on files that matches the regex *.*pp' do
-      expect(aucmds).to match('cmake.vim BufEnter')
+      expect(aucmd_bufenter).to include('cmake.vim  BufEnter')
+      expect(aucmd_bufenter).to include('*.*pp')
+      expect(aucmd_bufenter).to include('cmake#augroup#on_buf_enter()')
     end
 
     it 'uses a augroup' do
-      expect(augroups).to have('cmake.vim')
+      expect(augroups).to include('cmake.vim')
     end
   end
 end

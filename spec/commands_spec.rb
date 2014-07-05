@@ -4,6 +4,7 @@ describe 'cmake.vim#commands' do
   describe '#apply_global_commands' do
     it 'exists as a function' do
       expect(function_exists?('cmake#commands#apply_global_commands')).to eql(true)
+      expect(function_exists?('cmake#commands#apply_global_commands()')).to eql(true)
     end
 
     global_commands = [
@@ -22,6 +23,7 @@ describe 'cmake.vim#commands' do
 
     it 'exists as a function' do
       expect(function_exists?('cmake#commands#apply_buffer_commands')).to eql(true)
+      expect(function_exists?('cmake#commands#apply_buffer_commands()')).to eql(true)
     end
 
     buffer_commands = [
@@ -43,7 +45,6 @@ describe 'cmake.vim#commands' do
       it 'has the buffer command "' + buffer_command + '"' do
         expect(command_exists?(buffer_command)).to eql(true)
         expect(command_exists?('b ' . buffer_command)).to eql(true)
-        expect(command_exists?('! b ' . buffer_command)).to eql(true)
       end
     end
 
