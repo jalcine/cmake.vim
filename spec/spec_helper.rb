@@ -5,6 +5,7 @@ require 'vimrunner/testing'
 require_relative 'lib/cmakevim'
 require_relative 'lib/vimrunner/extras'
 
+# Faker makes this happen since it uses i18n.
 I18n.enforce_available_locales = false
 
 RSpec.configure do | config |
@@ -15,7 +16,10 @@ RSpec.configure do | config |
   config.include CMakeVim::RSpec
 
   config.around(:each) do | example |
-    fresh_vim
+    # Restart Vim.
+    spawn_vim_instance
+
+    # Give us a new directory to work in.
     dir = Dir.mktmpdir
     Dir.chdir(dir) do
       vim.command('cd ' + dir)
@@ -25,6 +29,9 @@ RSpec.configure do | config |
       end
       cleanup_cmake
     end
+
+    # Clean up our work and Vim.
+    FileUtils.rm_r dir
     kill_vim
   end
 end

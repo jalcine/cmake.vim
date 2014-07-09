@@ -6,32 +6,32 @@ module CMakeVim::Environment
   end
 
   private
-  def fresh_vim
+  def spawn_vim_instance
     @vim_instance = Vimrunner.start
     add_plugin_to_vim 'plugin/cmake'
   end
 
-  def fresh_cmake
+  def create_cmake_object
     @cmake_instance = CMakeVim::Driver.new(vim: @vim_instance)
   end
 
   def add_plugin_to_vim(file)
-      plugin_path = File.dirname(File.expand_path('../../../', __FILE__))
-      @vim_instance.add_plugin(plugin_path, "#{file}.vim")
+    plugin_path = File.dirname(File.expand_path('../../../', __FILE__))
+    @vim_instance.add_plugin(plugin_path, "#{file}.vim")
   end
 
   def vim
-    fresh_vim if @vim_instance.nil?
+    spawn_vim_instance if @vim_instance.nil?
     @vim_instance
   end
 
   def cmake
-    fresh_cmake if @cmake_instance.nil?
+    create_cmake_object if @cmake_instance.nil?
     @cmake_instance
   end
 
   def kill_vim
-    vim.kill unless @vim_instance.nil?
+    @vim_instance.kill unless @vim_instance.nil?
     @vim_instance = nil
   end
 
