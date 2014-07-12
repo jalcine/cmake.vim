@@ -1,8 +1,11 @@
 source 'https://rubygems.org'
 
-ruby '2.1.1'
-
+# Driver for Vim.
 gem 'vimrunner', '0.3.1'
+
+# Test suite.
 gem 'rspec', '3.0.0'
 gem 'rake', '10.1.1'
 gem 'faker', '1.1.2'
+
+# vim: set ft=ruby ts=2 sts=2 :
