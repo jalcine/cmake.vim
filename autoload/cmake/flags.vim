@@ -52,6 +52,10 @@ function! cmake#flags#inject()
   call cmake#flags#inject_to_syntastic(b:cmake_target)
 endfunc
 
+function! cmake#flags#file_for_target(target)
+  return cmake#targets#binary_dir(a:target) . '/flags.make'
+endfunction
+
 function! cmake#flags#inject_to_syntastic(target)
   " TODO Add options according to each checker's setup.
   if g:cmake_inject_flags.syntastic != 1 | return | endif

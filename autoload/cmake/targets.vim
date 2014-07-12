@@ -99,7 +99,7 @@ func! cmake#targets#flags(target)
     return g:cmake_cache.targets[a:target].flags
   endif
 
-  let l:flags_file = cmake#targets#binary_dir(a:target) . '/flags.make'
+  let l:flags_file = cmake#flags#file_for_target(a:target)
 
   if filereadable(l:flags_file)
     let flags = {
