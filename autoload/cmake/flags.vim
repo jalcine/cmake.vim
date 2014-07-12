@@ -56,12 +56,11 @@ function! cmake#flags#file_for_target(target)
 endfunction
 
 function! cmake#flags#inject_to_syntastic(target)
-  " TODO Add options according to each checker's setup.
   if g:cmake_inject_flags.syntastic != 1 | return | endif
 
   let l:flags = cmake#targets#flags(a:target)
   for l:language in keys(l:flags)
-    let {'g:syntastic_' .l:language . '_compiler_options'} = join(l:flags[l:language], ' ')
+    let {'g:syntastic_' . l:language . '_compiler_options'} = join(l:flags[l:language], ' ')
   endfor
 endfunction!
 
@@ -88,7 +87,9 @@ function! cmake#flags#prep_ycm()
     return 0
   endif
 
-  let l:flags_to_inject = ['b:cmake_binary_dir', 'b:cmake_root_binary_dir',
+  let l:flags_to_inject = [
+        \ 'b:cmake_binary_dir',
+        \ 'b:cmake_root_binary_dir',
         \ 'b:cmake_flags']
 
   for flags in l:flags_to_inject
