@@ -4,4 +4,3 @@ before_install: sudo apt-get install -qq vim vim-nox vim-gtk cmake gcc clang bui
 before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-

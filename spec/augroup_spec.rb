@@ -6,6 +6,7 @@ describe 'cmake.vim#augroup' do
   before(:each) do
     cmake.create_new_project
     cmake.configure_project
+    vim.command 'call cmake#targets#cache()'
   end
 
   describe '#on_vim_enter' do
@@ -86,6 +87,7 @@ describe 'cmake.vim#augroup' do
   describe '#on_buf_enter' do
     before(:each) do
       vim.edit 'plugin.cpp'
+      puts vim.command 'call cmake#flags#inject()'
     end
 
     it 'sets the makeprg variable for this buffer' do
@@ -96,15 +98,14 @@ describe 'cmake.vim#augroup' do
       expect(makeprg).to match vim.command('echo b:cmake_binary_dir')
     end
 
-    xit 'sets the flags for this file\'s target' do
-      flags_json = vim.command('let b:cmake_flags')
+    it 'sets the flags for this file\'s target' do
+      flags_json = validate_response('echo b:cmake_flags')
       flags_json.gsub! '\'', '"'
       flags = JSON.parse(flags_json)
       filetype = vim.command('let &l:filetype')
 
       expect(filetype).to_not be_empty
-      expect(flags.keys.count).to be(2)
-      expect(flags[filetype]).to_not be_empty
+      expect(flags).to_not be_empty
     end
 
     it 'sets the ctags file for this file\'s target' do
@@ -127,17 +128,17 @@ describe 'cmake.vim#augroup' do
     end
 
     it 'sets the include paths for this file\'s target to :path' do
+      puts vim.command 'call cmake#path#refresh_target_paths()'
       path_list = vim.command('echo &l:path')
       paths = path_list.split ','
 
       expect(paths).to_not be_empty
-      target_paths = validate_response('echo cmake#targets#include_dirs(b:cmake_target)')
+      target_paths = validate_response('echo cmake#targets#include_dirs(cmake#targets#for_file(expand("%:p")))')
       target_paths.gsub! '\'', '"'
       target_paths = JSON.parse(target_paths)
       target_paths.each do | a_path |
-        expect(paths).to include(a_path)
+        expect(paths).to include(a_path + '/')
       end
-
     end
   end
 

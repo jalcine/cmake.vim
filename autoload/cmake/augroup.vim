@@ -31,7 +31,7 @@ endfunc
 function! cmake#augroup#init()
   augroup cmake.vim
     au!
-    au BufReadPost  *.*pp :call cmake#augroup#on_buf_read()
-    au BufEnter     *.*pp :call cmake#augroup#on_buf_enter()
+    au BufEnter    *.*pp :call cmake#augroup#on_buf_enter()
+    au BufReadPost *.*pp :call cmake#augroup#on_buf_read()
   augroup END
 endfunction
