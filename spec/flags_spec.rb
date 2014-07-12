@@ -25,6 +25,30 @@ describe 'cmake.vim#flags' do
     it 'exists as an available function' do
       expect(function_exists? 'cmake#flags#filter').to eql(true)
     end
+
+    context 'filters out flags' do
+      it 'removes uninteresting flags' do
+        res = validate_response('echo cmake#flags#filter(["-magic"])')
+        res.gsub! '\'', '"'
+        res = JSON.parse res
+        expect(res).to be_empty
+      end
+
+      [
+        '-I/usr/include',
+        '-i/usr/src',
+        '-Wall',
+        '-fPIC',
+      ].each do | permitted_flag |
+        it "permits flags like #{permitted_flag}" do
+          command = 'echo cmake#flags#filter(["'+permitted_flag+'"])'
+          res = validate_response(command)
+          res.gsub! '\'', '"'
+          res = JSON.parse(res)
+          expect(res).to eql([permitted_flag])
+        end
+      end
+    end
   end
   describe '#inject' do
     it 'exists as an available function' do

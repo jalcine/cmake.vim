@@ -6,12 +6,11 @@
 " Version:          0.4.1
 
 function! s:sort_out_flags(val)
-  let l:good_flags = ['-i', '-I', '-W', '-f']
-  for a_good_flag in l:good_flags
-  if stridx(a:val, a_good_flag, 0) == 0
-    return 1
-  endif
-
+  for a_good_flag in ['-i', '-I', '-W', '-f']
+    if stridx(a:val, a_good_flag, 0) == 0
+      return 1
+    endif
+  endfor
   return 0
 endfunction
 
@@ -20,7 +19,7 @@ function! cmake#flags#filter(flags)
   if g:cmake_filter_flags == 1
     let l:flags = copy(a:flags)
     if !empty(l:flags)
-      call filter(flags, "s:sort_out_flags(v:val) != 1")
+      call filter(flags, "s:sort_out_flags(v:val)")
     endif
   endif
 
