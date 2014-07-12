@@ -29,7 +29,7 @@ endfunction!
 
 function! cmake#flags#inject()
   if !exists('b:cmake_target')
-    let b:cmake_target = cmake#targets#for_file(expand('%'))
+    let b:cmake_target = cmake#targets#for_file(expand('%:p:h'))
     if b:cmake_target == 0
       return
     else
@@ -37,18 +37,19 @@ function! cmake#flags#inject()
     endif
   endif
 
-  if !exists('b:cmake_flags') && exists('filetype') && !empty(&ft)
+  if !exists('b:cmake_flags') && !empty(&l:ft)
     let flags = cmake#targets#flags(b:cmake_target)
 
     if !has_key(flags,&ft)
-      let b:cmake_flags=[]
+      let b:cmake_flags = []
       return
     endif
 
     let b:cmake_flags = flags[&ft]
-    call cmake#flags#inject_to_ycm(b:cmake_target)
-    call cmake#flags#inject_to_syntastic(b:cmake_target)
   endif
+
+  call cmake#flags#inject_to_ycm(b:cmake_target)
+  call cmake#flags#inject_to_syntastic(b:cmake_target)
 endfunc
 
 function! cmake#flags#inject_to_syntastic(target)

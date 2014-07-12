@@ -87,6 +87,7 @@ describe 'cmake.vim#augroup' do
   describe '#on_buf_enter' do
     before(:each) do
       vim.edit 'plugin.cpp'
+      puts vim.command 'call cmake#flags#inject()'
     end
 
     it 'sets the makeprg variable for this buffer' do
@@ -98,14 +99,13 @@ describe 'cmake.vim#augroup' do
     end
 
     it 'sets the flags for this file\'s target' do
-      flags_json = vim.command('let b:cmake_flags')
+      flags_json = validate_response('echo b:cmake_flags')
       flags_json.gsub! '\'', '"'
       flags = JSON.parse(flags_json)
       filetype = vim.command('let &l:filetype')
 
       expect(filetype).to_not be_empty
-      expect(flags.keys.count).to be(2)
-      expect(flags[filetype]).to_not be_empty
+      expect(flags).to_not be_empty
     end
 
     it 'sets the ctags file for this file\'s target' do

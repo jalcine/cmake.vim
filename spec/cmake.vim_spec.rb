@@ -40,7 +40,7 @@ describe 'cmake.vim' do
     context 'invokes the augroup' do
       let(:known_augroups) { vim.command 'au' }
       augroups = [
-        'BufReadPre',
+        'BufRead',
         'BufEnter'
       ]
 
