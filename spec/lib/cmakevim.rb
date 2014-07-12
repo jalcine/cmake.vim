@@ -35,14 +35,13 @@ module CMakeVim
       `cd build && cmake .. #{definitions.join(' ')}`
     end
 
-    def cd_into_project
-    end
-
     def destroy_project
       FileUtils.rm_r "#{Dir.pwd}/*", force: true
     end
 
-    alias :create_project :create_new_project
+    alias :create_new :create_new_project
+    alias :configure :configure_project
+    alias :destroy :destroy_project
   end
 end
 
