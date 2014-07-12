@@ -50,7 +50,7 @@ describe 'cmake.vim#cache' do
       expect(result).to eql('ON')
     end
 
-    xit 'writes a custom variable to the CMake cache' do
+    it 'writes a custom variable to the CMake cache' do
       vim.command("echo cmake#cache#write('CMAKE_COLOR_MAKEMOVE','Purple')")
       result = vim.command("echo cmake#cache#read('CMAKE_COLOR_MAKEMOVE')")
       expect(result).to_not be_empty

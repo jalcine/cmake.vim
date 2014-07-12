@@ -97,7 +97,7 @@ describe 'cmake.vim#augroup' do
       expect(makeprg).to match vim.command('echo b:cmake_binary_dir')
     end
 
-    xit 'sets the flags for this file\'s target' do
+    it 'sets the flags for this file\'s target' do
       flags_json = vim.command('let b:cmake_flags')
       flags_json.gsub! '\'', '"'
       flags = JSON.parse(flags_json)
