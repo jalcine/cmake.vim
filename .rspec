@@ -1,0 +1,4 @@
+--color
+--no-fail-fast
+--order random
+--format progress

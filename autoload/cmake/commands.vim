@@ -17,7 +17,7 @@ function! cmake#commands#invoke_target(target)
 endfunc
 
 function! cmake#commands#build_current()
-  call cmake#commands#build_target_for_file(fnamemodify(bufname('%'), ':p'))
+  call cmake#commands#invoke_target(b:cmake_target)
 endfunc
 
 function! cmake#commands#clear_ctags()
@@ -39,15 +39,6 @@ function! cmake#commands#generate_local_ctags()
   if !exists('b:cmake_corresponding_target') | return | endif
   call cmake#ctags#generate_for_target(b:cmake_corresponding_target)
   call cmake#util#echo_msg('Generated tags for ' . b:cmake_corresponding_target . '.')
-endfunc
-
-function! cmake#commands#build_target_for_file(file)
-  let target = cmake#targets#for_file(a:file)
-  if empty(target) | return 0 | endif
-
-  call cmake#util#echo_msg("Building target '" . l:target . "'...")
-  call cmake#targets#build(target)
-  call cmake#util#echo_msg("Built target '" . l:target . "'.")
 endfunc
 
 function! cmake#commands#clean()
@@ -100,7 +91,8 @@ function! cmake#commands#create_build(directory)
   " Make the build.
   call cmake#util#echo_msg('Configuring project for the first time...')
   call cmake#util#run_cmake(l:build_options, getcwd() . "/" . a:directory, getcwd())
-  call cmake#augroup#on_vim_enter()
+  call cmake#util#echo_msg('Caching the newly minted project...')
+  call cmake#targets#cache()
   call cmake#util#echo_msg('Project configured.')
 endfunc
 
