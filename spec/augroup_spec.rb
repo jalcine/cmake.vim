@@ -128,17 +128,17 @@ describe 'cmake.vim#augroup' do
     end
 
     it 'sets the include paths for this file\'s target to :path' do
+      puts vim.command 'call cmake#path#refresh_target_paths()'
       path_list = vim.command('echo &l:path')
       paths = path_list.split ','
 
       expect(paths).to_not be_empty
-      target_paths = validate_response('echo cmake#targets#include_dirs(b:cmake_target)')
+      target_paths = validate_response('echo cmake#targets#include_dirs(cmake#targets#for_file(expand("%:p")))')
       target_paths.gsub! '\'', '"'
       target_paths = JSON.parse(target_paths)
       target_paths.each do | a_path |
-        expect(paths).to include(a_path)
+        expect(paths).to include(a_path + '/')
       end
-
     end
   end
 

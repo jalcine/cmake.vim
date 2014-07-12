@@ -14,44 +14,40 @@ func s:set_path(path)
 endfunc
 
 function! s:make_unique(list)
-  let new_list = []
+  let new_list = a:list
+  let final_list = []
   let l:the_path = ""
+  call map(new_list, 'fnamemodify(expand(v:val), ":p")')
 
-  for entry in a:list
-    if count(new_list, entry, 1) == 1 | continue | endif
-
-    if type(entry) != type("") || entry == "0"
-      let l:the_path = fnamemodify('.',':p:~')
-    else
-      let l:the_path = fnamemodify(entry,':p:.')
+  for entry in new_list
+    let l:the_path = simplify(fnamemodify(entry,':p'))
+    if count(final_list, the_path, 1) == 1 || !isdirectory(the_path)
+      continue
     endif
 
-    if isdirectory(l:the_path) | let l:new_list += [ l:the_path ] | endif
+    let final_list += [ l:the_path ]
   endfor
 
-  call filter(l:new_list, 'empty(v:val) == 0')
-  return l:new_list
+  return final_list
 endfunction
 
 func! cmake#path#refresh()
   call cmake#path#reset_path()
-  if cmake#buffer#has_project() == 1
-    call cmake#path#refresh_global_paths()
-    call cmake#path#refresh_target_paths()
-  endif
+  call cmake#path#refresh_global_paths()
+  call cmake#path#refresh_target_paths()
 endfunc
 
 func! cmake#path#reset_path()
   if !exists('g:cmake_old_path')
-    call s:set_path(split(g:cmake_old_path, ",", 0))
+    call s:set_path(split(g:cmake_old_path, ',', 0))
   else
-    call s:set_path('.:/usr/include')
+    call s:set_path('.,/usr/include')
   endif
 endfunc
 
 func! cmake#path#update(paths)
-  let l:all_paths = s:make_unique(a:paths) + split(g:cmake_old_path, ",", 0)
-  let l:paths_str = join(s:make_unique(l:all_paths), ",")
+  let l:all_paths = split(g:cmake_old_path, ',', 0) + split(s:get_path(), ',', 0) + a:paths
+  let l:paths_str = join(s:make_unique(l:all_paths), ',')
   call s:set_path(l:paths_str)
 endfunc
 
@@ -73,22 +69,15 @@ endfunc
 
 func! cmake#path#refresh_target_paths()
   let l:paths = []
-  let l:target = cmake#targets#for_file(expand('%:p'))
   let l:buffer_dir = expand('%:h:.') . '/'
-  let l:target_source_dir = fnamemodify(cmake#targets#source_dir(l:target),':p:.')
-  let l:target_binary_dir = fnamemodify(cmake#targets#binary_dir(l:target),':p:.')
+  let l:target = cmake#targets#for_file(expand('%:p'))
+  let l:target_source_dir = cmake#targets#source_dir(l:target)
+  let l:target_binary_dir = cmake#targets#binary_dir(l:target)
   let l:target_include_dirs = cmake#targets#include_dirs(l:target)
 
-  let l:paths += [ l:buffer_dir, './' ]
-
-  if count(l:paths, escape(l:target_source_dir, '\/'), 1) == 0
-    let l:paths += [ l:target_source_dir ]
-  endif
-
-  if count(l:paths, escape(l:target_binary_dir, '\/'), 1) == 0
-    let l:paths += [ l:target_binary_dir ]
-  endif
-
+  let l:paths += [ l:buffer_dir, '.',
+        \ l:target_source_dir, l:target_binary_dir ]
   let l:paths += l:target_include_dirs
+
   call cmake#path#update(l:paths)
 endfunc
