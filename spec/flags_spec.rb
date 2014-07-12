@@ -21,6 +21,7 @@ describe 'cmake.vim#flags' do
       expect(flags).to include '-fPIC'
     end
   end
+
   describe '#filter' do
     it 'exists as an available function' do
       expect(function_exists? 'cmake#flags#filter').to eql(true)
@@ -50,21 +51,31 @@ describe 'cmake.vim#flags' do
       end
     end
   end
+  
   describe '#inject' do
     it 'exists as an available function' do
       expect(function_exists? 'cmake#flags#inject').to eql(true)
     end
+
+    it 'populates "b:cmake_flags"' do
+      vim.command 'call cmake#flags#inject()'
+      flags = JSON.parse(validate_response('echo b:cmake_flags').gsub('\'', '"'))
+      expect(flags).to_not be_empty
+    end
   end
+
   describe '#inject_to_syntastic' do
     it 'exists as an available function' do
       expect(function_exists? 'cmake#flags#inject_to_syntastic').to eql(true)
     end
   end
+
   describe '#inject_to_ycm' do
     it 'exists as an available function' do
       expect(function_exists? 'cmake#flags#inject_to_ycm').to eql(true)
     end
   end
+
   describe '#prep_ycm' do
     it 'exists as an available function' do
       expect(function_exists? 'cmake#flags#prep_ycm').to eql(true)
