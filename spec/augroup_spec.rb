@@ -6,6 +6,7 @@ describe 'cmake.vim#augroup' do
   before(:each) do
     cmake.create_new_project
     cmake.configure_project
+    vim.command 'call cmake#targets#cache()'
   end
 
   describe '#on_vim_enter' do
