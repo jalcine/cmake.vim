@@ -16,7 +16,7 @@ describe 'cmake.vim#flags' do
 
     it 'obtains flags for the provided flag file' do
       flag_file = validate_response('echo cmake#flags#file_for_target("sample-library")')
-      flags = JSON.parse(validate_response('echo cmake#flags#collect("'+flag_file+'", "CXX")').gsub '\'', '"')
+      flags = validate_json_response('echo cmake#flags#collect("'+flag_file+'", "CXX")')
       expect(flags).to_not be_empty
       expect(flags).to include '-fPIC'
     end
@@ -29,9 +29,7 @@ describe 'cmake.vim#flags' do
 
     context 'filters out flags' do
       it 'removes uninteresting flags' do
-        res = validate_response('echo cmake#flags#filter(["-magic"])')
-        res.gsub! '\'', '"'
-        res = JSON.parse res
+        res = validate_json_response 'echo cmake#flags#filter(["-magic"])'
         expect(res).to be_empty
       end
 
@@ -61,7 +59,7 @@ describe 'cmake.vim#flags' do
       end
 
       it 'populates "b:cmake_flags"' do
-        flags = JSON.parse(validate_response('echo b:cmake_flags').gsub('\'', '"'))
+        flags = validate_json_response 'echo b:cmake_flags'
         expect(flags).to_not be_empty
       end
     end
@@ -85,17 +83,30 @@ describe 'cmake.vim#flags' do
       end
 
       xit 'applies options for YouCompleteMe' do
-        flag_string = validate_response('echo join(g:ycm_extra_conf_vim_data, " ")')
-        expect(flag_string).to_not be_empty
+        flags = validate_json_response 'echo join(g:ycm_extra_conf_vim_data, " ")'
+        expect(flags).to_not be_empty
       end
     end
   end
 
-  describe '#prep_ycm' do
-    it 'exists as an available function' do
-      expect(function_exists? 'cmake#flags#prep_ycm').to eql(true)
-    end
+  context 'integrations' do
+    describe '#prep_ycm' do
+      before(:each) do
+        vim.command 'call cmake#flags#inject()'
+        vim.command 'call cmake#flags#prep_ycm()'
+      end
 
-    xit 'sets the YCM option'
+      it 'exists as an available function' do
+        expect(function_exists? 'cmake#flags#prep_ycm').to eql(true)
+        expect(function_exists? 'cmake#flags#prep_ycm()').to eql(true)
+      end
+
+      xit 'sets the YouCompleteMeoption' do
+        vim.command 'let g:cmake_inject_flags.ycm = 1'
+        ycm_vim_data = validate_json_response 'echo g:ycm_extra_conf_vim_data'
+        expect(ycm_vim_data).to_not be_empty
+        expect(ycm_vim_data.length).to eql(3)
+      end
+    end
   end
 end

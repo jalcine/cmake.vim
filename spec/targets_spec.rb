@@ -32,8 +32,12 @@ describe 'cmake#targets' do
       expect(function_exists? 'cmake#targets#build(target)').to eql(true)
     end
 
-    # TODO How do we confirm said output?
-    xit 'builds the specified target'
+    it 'builds the specified target' do
+      vim.edit 'plugin.cpp'
+      output = validate_response 'echo cmake#targets#build("sample-binary")'
+      expect(output).to_not be_empty
+      expect(output).to match 'sample-binary'
+    end
   end
 
   describe '#exists' do
@@ -154,7 +158,8 @@ describe 'cmake#targets' do
     it 'obtains the libraries for a target' do
       libs = validate_response('echo cmake#targets#libraries("sample-binary")')
       libs.gsub '\'', '"'
-      skip 'Figure out how to grab all of the libraries for a specific target'
+      expect(libs).to_not be_empty
+      #skip 'Figure out how to grab all of the libraries for a specific target'
     end
   end
 
