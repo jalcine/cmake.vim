@@ -65,9 +65,21 @@ function! cmake#flags#inject_to_syntastic(target)
 endfunction!
 
 function! cmake#flags#inject_to_ycm(target)
-  if g:cmake_inject_flags.ycm != 0
-    call cmake#flags#prep_ycm()
+  if g:cmake_inject_flags.ycm == 0
+    return 0
   endif
+
+  let l:flags_to_inject = [
+        \ 'b:cmake_binary_dir',
+        \ 'b:cmake_root_binary_dir',
+        \ 'b:cmake_flags']
+
+  for flags in l:flags_to_inject
+    if index(g:ycm_extra_conf_vim_data, flag) == -1 && exists(flag)
+      let g:ycm_extra_conf_vim_data += [flag]
+    endif
+  endfor
+
 endfunc
 
 function! cmake#flags#collect(flags_file, prefix)
@@ -83,18 +95,4 @@ function! cmake#flags#collect(flags_file, prefix)
 endfunction!
 
 function! cmake#flags#prep_ycm()
-  if g:cmake_inject_flags.ycm == 0
-    return 0
-  endif
-
-  let l:flags_to_inject = [
-        \ 'b:cmake_binary_dir',
-        \ 'b:cmake_root_binary_dir',
-        \ 'b:cmake_flags']
-
-  for flags in l:flags_to_inject
-    if index(g:ycm_extra_conf_vim_data, flag) == -1 && exists(flag)
-      let g:ycm_extra_conf_vim_data += [flag]
-    endif
-  endfor
 endfunction!

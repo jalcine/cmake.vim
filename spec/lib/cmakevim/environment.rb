@@ -6,9 +6,11 @@ module CMakeVim::Environment
   end
 
   private
-  def spawn_vim_instance
-    @vim_instance = Vimrunner.start
-    add_plugin_to_vim 'plugin/cmake'
+  def spawn_vim_instance(&blk)
+    Vimrunner.start do | vim |
+      @vim_instance = vim
+      add_plugin_to_vim 'plugin/cmake'
+    end
   end
 
   def create_cmake_object

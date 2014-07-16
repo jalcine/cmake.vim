@@ -69,7 +69,7 @@ describe 'cmake.vim#flags' do
         expect(function_exists? 'cmake#flags#inject_to_syntastic').to eql(true)
       end
 
-      xit 'updates Syntastic options' do
+      it 'updates Syntastic options' do
         vim.command 'call cmake#flags#inject_to_syntastic(b:cmake_target)'
         flag_string = validate_response('echo join(b:cmake_flags, " ")')
         syntastic_options = validate_response('echo g:syntastic_cpp_compiler_options')
@@ -82,26 +82,7 @@ describe 'cmake.vim#flags' do
         expect(function_exists? 'cmake#flags#inject_to_ycm').to eql(true)
       end
 
-      xit 'applies options for YouCompleteMe' do
-        flags = validate_json_response 'echo join(g:ycm_extra_conf_vim_data, " ")'
-        expect(flags).to_not be_empty
-      end
-    end
-  end
-
-  context 'integrations' do
-    describe '#prep_ycm' do
-      before(:each) do
-        vim.command 'call cmake#flags#inject()'
-        vim.command 'call cmake#flags#prep_ycm()'
-      end
-
-      it 'exists as an available function' do
-        expect(function_exists? 'cmake#flags#prep_ycm').to eql(true)
-        expect(function_exists? 'cmake#flags#prep_ycm()').to eql(true)
-      end
-
-      xit 'sets the YouCompleteMeoption' do
+      it 'applies options for YouCompleteMe' do
         vim.command 'let g:cmake_inject_flags.ycm = 1'
         ycm_vim_data = validate_json_response 'echo g:ycm_extra_conf_vim_data'
         expect(ycm_vim_data).to_not be_empty
