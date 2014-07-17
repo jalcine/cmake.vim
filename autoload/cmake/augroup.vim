@@ -3,17 +3,15 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.1
+" Version:          0.4.2
 
 function! cmake#augroup#on_vim_enter()
   call cmake#commands#apply_global_commands()
-  if !cmake#buffer#has_project() | return | endif
-  redraw | echomsg "[cmake.vim] Caching build..."
-  for aTarget in cmake#targets#list()
-    for aFile in cmake#targets#files(aTarget)
-      let g:cmake_cache.files[aFile] = aTarget
-    endfor
-  endfor
+
+  if !cmake#util#has_project() | return | endif
+  call cmake#util#echo_msg('Caching build...')
+  call cmake#targets#cache()
+  call cmake#util#echo_msg('Project cached into cmake.vim.')
 endfunc
 
 function! cmake#augroup#on_buf_read()
@@ -26,14 +24,14 @@ function! cmake#augroup#on_buf_enter()
   if !cmake#buffer#has_project() | return | endif
   call cmake#buffer#set_makeprg()
   call cmake#flags#inject()
-  call cmake#path#refresh()
   call cmake#ctags#refresh()
+  call cmake#path#refresh()
 endfunc
 
 function! cmake#augroup#init()
   augroup cmake.vim
     au!
-    au BufRead  *.*pp :call cmake#augroup#on_buf_read()
-    au BufEnter *.*pp :call cmake#augroup#on_buf_enter()
+    au BufEnter    *.*pp :call cmake#augroup#on_buf_enter()
+    au BufReadPost *.*pp :call cmake#augroup#on_buf_read()
   augroup END
 endfunction

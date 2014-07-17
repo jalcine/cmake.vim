@@ -82,6 +82,16 @@ file.
   [+] Allow setting and getting values using `:CMakeGetVar` and `:CMakeSetVar`.
   * ~~Expose `cmake.vim`'s buffer commands only in `worthy` buffers.~~
 
+## Testing
+
+The test suite is written using RSpec and Vimrunner. The following would do a
+full unit test of the entire system:
+
+```
+bundle install
+rake
+```
+
 ## License
 This code is released and available under the MIT license. Multiply and be 
 fruitful.

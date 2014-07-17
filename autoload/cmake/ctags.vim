@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.1
+" Version:          0.4.2
 
 func! cmake#ctags#invoke(args)
   let command = g:cmake_ctags.executable . " " . a:args
@@ -27,7 +27,7 @@ func! cmake#ctags#generate_for_target(target)
 
   if type(l:files) != type([]) | return | endif
 
-  for file in files
+  for file in l:files
     let l:command = l:args . ' ' . l:file
     call cmake#ctags#invoke(l:command)
   endfor
@@ -35,15 +35,23 @@ func! cmake#ctags#generate_for_target(target)
   let g:cmake_cache.targets[a:target].tags_file = l:tag_file
 endfunc
 
-func! cmake#ctags#refresh()
-  " TODO: Add the ctags for this target.
+func! cmake#ctags#paths_for_target(target)
   let l:cache_dir = cmake#ctags#cache_directory()
-  let l:tag_file = cmake#ctags#filename(b:cmake_target)
-  let l:paths = split(&tags, ',')
-  call filter(l:paths, 'strridx(v:val, l:cache_dir,0) == -1')
+  let l:tag_file = cmake#ctags#filename(a:target)
+  let l:paths = split(&l:tags, ',')
+  call filter(l:paths, 'filereadable(v:val)')
+
   if !filereadable(l:tag_file)
-    call cmake#ctags#generate_for_target(b:cmake_target)
+    call cmake#ctags#generate_for_target(a:target)
   endif
-  let l:paths += [ l:tag_file ]
-  let tags = join(l:paths, ',')
+
+  call add(l:paths, l:tag_file)
+  return l:paths
+endfunc
+
+" TODO: Make this list unique.
+func! cmake#ctags#refresh()
+  if exists('b:cmake_target') && b:cmake_target != '0'
+    let &l:tags = join(cmake#ctags#paths_for_target(b:cmake_target), ',')
+  endif
 endfunc

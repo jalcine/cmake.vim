@@ -1,51 +1,74 @@
 " File:             autoload/cmake/util.vim
-" Description:      Power methods for cmake.vim.
+" Description:      Power methods for the CMake plugin.
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.1
+" Version:          0.4.2
 
+function! cmake#util#echo_msg(msg)
+  if empty(a:msg) | return | endif
+  redraw | echomsg "[cmake] " . a:msg | redraw
+endfunction
+
+" Function: cmake#util#binary_dir
+" Returns: On success, A file path with a trailing slash that points to the 
+" CMake binary project. On failure, an empty string.
 function! cmake#util#binary_dir()
-  if exists("b:cmake_root_binary_dir") && isdirectory(b:cmake_root_binary_dir)
-    return b:cmake_root_binary_dir
+  if exists('g:cmake_root_binary_dir') && isdirectory(g:cmake_root_binary_dir)
+    return g:cmake_root_binary_dir
   endif
 
+  " Collect directories that we'd search for the existance of that magic
+  " CMakeCache.txt file.
   let l:directories = g:cmake_build_directories + [ getcwd() ]
 
+  " Walk over each directory upwards and check if the file exists in it.
   for l:directory in l:directories
     let l:directory = fnamemodify(l:directory, ':p')
-    let l:file = findfile(directory . "/CMakeCache.txt", ".;")
+    let l:file = findfile(directory . '/CMakeCache.txt', '.;')
 
+    " Break out when we find something noteworthy.
     if filereadable(l:file)
-      let b:cmake_root_binary_dir = substitute(l:file, "/CMakeCache.txt", "", "")
+      let g:cmake_root_binary_dir = simplify(fnamemodify(substitute(l:file, 
+            \ '/CMakeCache.txt', '', ''), ':p'))
       break
     endif
   endfor
 
-  let b:cmake_root_binary_dir = fnamemodify(b:cmake_root_binary_dir,':p')
-  return b:cmake_root_binary_dir
+  " Save our hard work so we can use it later.
+  if exists('g:cmake_root_binary_dir')
+    return g:cmake_root_binary_dir
+  endif
+
+  return ""
 endfunc
 
+" Function: cmake#util#source_dir
+" Returns: On success, the path to the sources of the CMake project. On
+" failure, zero.
 function! cmake#util#source_dir()
   if !cmake#util#has_project()
     return ""
   endif
 
-  let dir = fnamemodify(cmake#cache#read("Project_SOURCE_DIR"), ':p')
+  let dir = fnamemodify(cmake#cache#read('Project_SOURCE_DIR'), ':p')
   return l:dir
 endfunc
 
+" Function: cmake#util#has_project
+" Returns: On success, whether or not this project has been configured at least
+" once.
 function! cmake#util#has_project()
   let l:bindir = cmake#util#binary_dir()
   if isdirectory(l:bindir)
-    return filereadable(simplify(l:bindir . "/CMakeCache.txt"))
+    return filereadable(simplify(l:bindir . '/CMakeCache.txt'))
   else
-    return ""
+    return 0
   endif
 endfunc
 
 function! cmake#util#run_make(command)
-  let l:command = "make -C " . cmake#util#binary_dir() . " " . a:command
+  let l:command = 'make -C ' . cmake#util#binary_dir() . ' ' . a:command
   call cmake#util#shell_exec(l:command)
 endfunc
 
@@ -75,8 +98,8 @@ function! cmake#util#run_cmake(command, binary_dir, source_dir)
 endfunc
 
 function! cmake#util#shell_exec(command)
-  if g:loaded_dispatch == 1
-    return dispatch#compile_command(0, a:command)
+  if g:cmake_use_dispatch == 1 && g:loaded_dispatch == 1
+    execute 'Dispatch ' . a:command . '<CR>'
   else
     return system(a:command)
   endif
@@ -84,7 +107,7 @@ endfunc
 
 function! cmake#util#shell_bgexec(command)
   if g:cmake_use_dispatch == 1
-    call dispatch#start(a:command, {'background': 1})
+    execute 'Start! ' . a:command . '<CR>'
   else
     call cmake#util#shell_exec(a:command)
   endif
