@@ -151,24 +151,15 @@ func! cmake#targets#cache()
   let theCount = 0
   for aTarget in cmake#targets#list()
     let files = cmake#targets#files(aTarget)
-    call cmake#util#echo_msg('Caching '.len(files).' files for target "' 
-          \ . aTarget . '"...')
-
-    call cmake#util#echo_msg(join(files, '; '))
 
     if !len(files) | continue | endif
 
     for aFile in cmake#targets#files(aTarget)
-      call cmake#util#echo_msg('Caching file "' . aFile . '" for target "'
-            \ . aTarget . '"...')
       let g:cmake_cache.files[aFile] = aTarget
     endfor
 
     let theCount += len(files)
   endfor
-
-  call cmake#util#echo_msg('Cached ' . theCount . ' files for this CMake '
-        \ . 'project.')
 endfunc
 
 func! s:parse_target_depends(dependInfoCMakeFilePath, target)
