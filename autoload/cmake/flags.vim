@@ -74,7 +74,7 @@ function! cmake#flags#inject_to_ycm(target)
         \ 'b:cmake_root_binary_dir',
         \ 'b:cmake_flags']
 
-  for flags in l:flags_to_inject
+  for flag in l:flags_to_inject
     if index(g:ycm_extra_conf_vim_data, flag) == -1 && exists(flag)
       let g:ycm_extra_conf_vim_data += [flag]
     endif

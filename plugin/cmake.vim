@@ -55,4 +55,3 @@ endfunc
 
 call s:set_options()
 call cmake#augroup#init()
-call cmake#augroup#on_vim_enter()

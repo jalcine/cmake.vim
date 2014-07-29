@@ -43,10 +43,6 @@ func! cmake#buffer#set_options()
       let b:cmake_include_dirs = cmake#targets#include_dirs(b:cmake_target)
     endif
 
-    if !exists('b:cmake_libraries')
-      let b:cmake_libraries = cmake#targets#libraries(b:cmake_target)
-    endif
-
     call cmake#util#echo_msg("Applied buffer options for '" . l:current_file . "'.")
     return 1
   endif
