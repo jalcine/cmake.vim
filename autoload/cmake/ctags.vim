@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.2
+" Version:          0.4.3
 
 func! cmake#ctags#invoke(args)
   let command = g:cmake_ctags.executable . " " . a:args
