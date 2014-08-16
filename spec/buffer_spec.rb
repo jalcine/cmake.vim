@@ -54,9 +54,9 @@ describe 'cmake#buffer' do
     context 'with a known target file' do
       it 'sets the makeprg for this current buffer' do
         current_target = validate_response('echo b:cmake_target').chomp
-        current_binary_dir = validate_response('echo b:cmake_binary_dir').chomp
+        binary_dir = validate_response('echo g:cmake_root_binary_dir').chomp
         expect(makeprg).to_not be_empty
-        expect(makeprg).to eql("make -C #{current_binary_dir} #{current_target}")
+        expect(makeprg).to eql("make -C #{binary_dir} #{current_target}")
       end
     end
 

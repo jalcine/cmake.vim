@@ -3,15 +3,13 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.2
+" Version:          0.4.3
 
 function! cmake#augroup#on_vim_enter()
   call cmake#commands#apply_global_commands()
 
   if !cmake#util#has_project() | return | endif
-  call cmake#util#echo_msg('Caching build...')
   call cmake#targets#cache()
-  call cmake#util#echo_msg('Project cached into cmake.vim.')
 endfunc
 
 function! cmake#augroup#on_buf_read()

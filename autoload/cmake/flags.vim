@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.2
+" Version:          0.4.3
 
 function! s:sort_out_flags(val)
   for a_good_flag in ['-i', '-I', '-W', '-f']
@@ -74,7 +74,7 @@ function! cmake#flags#inject_to_ycm(target)
         \ 'b:cmake_root_binary_dir',
         \ 'b:cmake_flags']
 
-  for flags in l:flags_to_inject
+  for flag in l:flags_to_inject
     if index(g:ycm_extra_conf_vim_data, flag) == -1 && exists(flag)
       let g:ycm_extra_conf_vim_data += [flag]
     endif

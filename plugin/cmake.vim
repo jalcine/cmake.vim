@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.2
+" Version:          0.4.3
 
 " If we're here, don't reload man.
 if exists("g:loaded_cmake")
@@ -55,4 +55,3 @@ endfunc
 
 call s:set_options()
 call cmake#augroup#init()
-call cmake#augroup#on_vim_enter()
