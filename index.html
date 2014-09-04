@@ -1,44 +1,39 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>CMake Support for Vim by jalcine</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="CMake Support for Vim : Incorporates the functionality of CMake into Vim.">
 
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>CMake Support for Vim</title>
   </head>
+
   <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/jalcine/cmake.vim">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/jalcine/cmake.vim/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/jalcine/cmake.vim/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
 
-    <div class="wrapper">
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/jalcine/cmake.vim">View on GitHub</a>
 
-      <section>
-        <div id="title">
-          <h1>CMake Support for Vim</h1>
-          <p>Incorporates the functionality of CMake into Vim.</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/jalcine">jalcine</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
-        </div>
+          <h1 id="project_title">CMake Support for Vim</h1>
+          <h2 id="project_tagline">Incorporates the functionality of CMake into Vim.</h2>
 
-        <h1>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/jalcine/cmake.vim/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/jalcine/cmake.vim/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><a href="https://waffle.io/jalcine/cmake.vim"><img src="https://badge.waffle.io/jalcine/cmake.vim.png?label=ready" alt="Stories in Ready"></a></p>
+
+<h1>
 <a name="cmake-project-support-in-vim" class="anchor" href="#cmake-project-support-in-vim"><span class="octicon octicon-link"></span></a><a href="http://jalcine.github.io/cmake.vim">CMake Project Support in Vim</a>
 </h1>
 
@@ -49,7 +44,7 @@ targets within Vim. It makes uses of <a href="https://github.com/benmills/vimux"
 integrations for <a href="https://github.com/scrooloose/syntastic">Syntastic</a> and <a href="https://github.com/Valloric/YouCompleteMe/">YouCompleteMe</a>.</p>
 </blockquote>
 
-<hr><p><a href="https://github.com/jalcine/cmake.vim/tree/v0.2.2"><code>cmake.vim 0.2.2</code></a> is a Vim plugin that allows you to use <a href="http://cmake.org">CMake</a>
+<hr><p><a href="https://github.com/jalcine/cmake.vim/tree/v0.4.1"><code>cmake.vim 0.4.1</code></a> is a Vim plugin that allows you to use <a href="http://cmake.org">CMake</a>
 within Vim for your projects. <strong>This is alpha-grade software and may turn your CMake
 project into a cat-overrun Telnet session</strong>.</p>
 
@@ -114,31 +109,36 @@ file.</p>
 
 <ul>
 <li><p>With the more recent changes to <a href="https://github.com/Valloric/YouCompleteMe/">YouCompleteMe</a>; it's become a bit
-difficult to dynamically add per-file flags. Right now, the best
-suggestion is to use the JSON compilation file in your <code>.ycm_extra_conf.py</code>
-to pass in <em>all of the flags</em> for your project.</p></li>
+difficult to dynamically add per-file flags. See 
+<code>:h cmake-integrations-ycm-setup</code> on how to configure YouCompleteMe with
+CMake.</p></li>
 <li><p>Getting and setting variables is still rough around the edges.</p></li>
 </ul><h2>
 <a name="to-dos" class="anchor" href="#to-dos"><span class="octicon octicon-link"></span></a>To-Dos</h2>
 
-<ul>
-<li>
-<del>Provide <code>:CMakeBuildTarget</code> that'd build the target provided. If a file is 
-to be provided, find the target for that file and build the target it
-belongs to (restricted to source files).</del>
-<strong>Implemented as :CMakeBuildCurrent</strong>.
+<p>[+] <del>Provide <code>:CMakeBuildTarget</code> that'd build the target provided. If a file is 
+    to be provided, find the target for that file and build the target it
+    belongs to (restricted to source files).</del>
+    * <del>Also for <code>:CMakeCleanTarget</code> since we can determine pre-target cleaning
+      information.</del>
+  [+] <del>Improve integration's use flag lookup and discovery on a per-target basis
+    and a per-file basis (restricted to source files).</del>
+  [+] <del>Pass an argument string to <code>:CMakeCreateBuild</code>.</del>
+  [+] Allow setting and getting values using <code>:CMakeGetVar</code> and <code>:CMakeSetVar</code>.</p>
 
 <ul>
-<li><del>Also for <code>:CMakeCleanTarget</code> since we can determine pre-target cleaning
-information.</del></li>
-</ul>
-</li>
-<li><del>Improve integration's use flag lookup and discovery on a per-target basis
-and a per-file basis (restricted to source files).</del></li>
-<li><del>Pass an argument string to <code>:CMakeCreateBuild</code>.</del></li>
-<li>Allow setting and getting values using <code>:CMakeGetVar</code> and <code>:CMakeSetVar</code>.</li>
-<li>Expose <code>cmake.vim</code>'s buffer commands only in <code>worthy</code> buffers.</li>
+<li><del>Expose <code>cmake.vim</code>'s buffer commands only in <code>worthy</code> buffers.</del></li>
 </ul><h2>
+<a name="testing" class="anchor" href="#testing"><span class="octicon octicon-link"></span></a>Testing</h2>
+
+<p>The test suite is written using RSpec and Vimrunner. The following would do a
+full unit test of the entire system:</p>
+
+<pre><code>bundle install
+rake
+</code></pre>
+
+<h2>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>This code is released and available under the MIT license. Multiply and be 
@@ -152,9 +152,16 @@ firehose so follow with caution!</p>
 
 <p><a href="https://bitdeli.com/free" title="Bitdeli Badge"><img src="https://d2weczhvl823v0.cloudfront.net/jalcine/cmake.vim/trend.png" alt="Bitdeli Badge"></a></p>
       </section>
-
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">CMake Support for Vim maintained by <a href="https://github.com/jalcine">jalcine</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -165,6 +172,7 @@ firehose so follow with caution!</p>
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
+
 
   </body>
 </html>
