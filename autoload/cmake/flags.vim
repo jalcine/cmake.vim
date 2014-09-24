@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.3
+" Version:          0.4.4
 
 function! s:sort_out_flags(val)
   for a_good_flag in ['-i', '-I', '-W', '-f']
