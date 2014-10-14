@@ -15,7 +15,7 @@
 func! cmake#buffer#has_project()
   let l:current_file = fnamemodify(expand('%'), ':p')
 
-  if &l:ft != "cpp" && &l:ft != "c" && &l:ft = "cmake" | return 0 | endif
+  if &l:ft != "cpp" && &l:ft != "c" && &l:ft != "cmake" | return 0 | endif
   if !filereadable(l:current_file) | return 0 | endif
 
   " Pass it up the chain to the heavy-duty method.
