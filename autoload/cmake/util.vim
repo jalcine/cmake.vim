@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.4
+" Version:          0.4.5
 
 function! cmake#util#echo_msg(msg)
   if empty(a:msg) | return | endif
