@@ -87,19 +87,21 @@ describe 'cmake#buffer' do
     context 'ensures that the filetype of the file' do
       before(:each) { vim.edit 'plugin.cpp' }
 
-      it 'matches for those of the "cpp" filetype' do
-        vim.command 'set ft=cpp'
-        expect(result).to eql('1')
+      valid_filetypes = ['c', 'cpp', 'cmake']
+      invalid_filetypes = ['cxx', 'foobar', 'bram']
+
+      valid_filetypes.each do | ft |
+        it 'matches for those of the "' + ft + '" filetype' do
+          vim.command 'set ft=' + ft
+          expect(result).to eql('1')
+        end
       end
 
-      it 'matches for those of the "c" filetype' do
-        vim.command 'set ft=c'
-        expect(result).to eql('1')
-      end
-
-      it 'does not matches for those of the "cmake" filetype' do
-        vim.command 'set ft=cmake'
-        expect(result).to eql('0')
+      invalid_filetypes.each do | ft |
+        it 'does not match for those of the "' + ft + '" filetype' do
+          vim.command 'set ft=' + ft
+          expect(result).to eql('0')
+        end
       end
     end
   end

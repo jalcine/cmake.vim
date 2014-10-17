@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.4
+" Version:          0.4.5
 
 " Function: cmake#buffer#has_project
 " Checks if the current buffer follows the following criteria:
@@ -15,7 +15,7 @@
 func! cmake#buffer#has_project()
   let l:current_file = fnamemodify(expand('%'), ':p')
 
-  if &l:ft != "cpp" && &l:ft != "c" && &l:ft = "cmake" | return 0 | endif
+  if &l:ft != "cpp" && &l:ft != "c" && &l:ft != "cmake" | return 0 | endif
   if !filereadable(l:current_file) | return 0 | endif
 
   " Pass it up the chain to the heavy-duty method.
