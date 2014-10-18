@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html>
-
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="CMake Support for Vim : Incorporates the functionality of CMake into Vim.">
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>CMake Support for Vim</title>
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>CMake Support for Vim by jalcine</title>
   </head>
 
   <body>
+    <div id="container">
+      <div class="inner">
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/jalcine/cmake.vim">View on GitHub</a>
-
-          <h1 id="project_title">CMake Support for Vim</h1>
-          <h2 id="project_tagline">Incorporates the functionality of CMake into Vim.</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/jalcine/cmake.vim/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/jalcine/cmake.vim/tarball/master">Download this project as a tar.gz file</a>
-            </section>
+        <header>
+          <h1>CMake Support for Vim</h1>
+          <h2>Incorporates the functionality of CMake into Vim.</h2>
         </header>
-    </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <p><a href="https://waffle.io/jalcine/cmake.vim"><img src="https://badge.waffle.io/jalcine/cmake.vim.png?label=ready" alt="Stories in Ready"></a></p>
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/jalcine/cmake.vim/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/jalcine/cmake.vim/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/jalcine/cmake.vim" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <p><a href="https://waffle.io/jalcine/cmake.vim"><img src="https://badge.waffle.io/jalcine/cmake.vim.png?label=ready" alt="Stories in Ready"></a></p>
 
 <h1>
 <a name="cmake-project-support-in-vim" class="anchor" href="#cmake-project-support-in-vim"><span class="octicon octicon-link"></span></a><a href="http://jalcine.github.io/cmake.vim">CMake Project Support in Vim</a>
@@ -44,7 +44,9 @@ targets within Vim. It makes uses of <a href="https://github.com/benmills/vimux"
 integrations for <a href="https://github.com/scrooloose/syntastic">Syntastic</a> and <a href="https://github.com/Valloric/YouCompleteMe/">YouCompleteMe</a>.</p>
 </blockquote>
 
-<hr><p><a href="https://github.com/jalcine/cmake.vim/tree/v0.4.1"><code>cmake.vim 0.4.1</code></a> is a Vim plugin that allows you to use <a href="http://cmake.org">CMake</a>
+<hr>
+
+<p><a href="https://github.com/jalcine/cmake.vim/tree/v0.4.1"><code>cmake.vim 0.4.6</code></a> is a Vim plugin that allows you to use <a href="http://cmake.org">CMake</a>
 within Vim for your projects. <strong>This is alpha-grade software and may turn your CMake
 project into a cat-overrun Telnet session</strong>.</p>
 
@@ -113,7 +115,9 @@ difficult to dynamically add per-file flags. See
 <code>:h cmake-integrations-ycm-setup</code> on how to configure YouCompleteMe with
 CMake.</p></li>
 <li><p>Getting and setting variables is still rough around the edges.</p></li>
-</ul><h2>
+</ul>
+
+<h2>
 <a name="to-dos" class="anchor" href="#to-dos"><span class="octicon octicon-link"></span></a>To-Dos</h2>
 
 <p>[+] <del>Provide <code>:CMakeBuildTarget</code> that'd build the target provided. If a file is 
@@ -128,7 +132,9 @@ CMake.</p></li>
 
 <ul>
 <li><del>Expose <code>cmake.vim</code>'s buffer commands only in <code>worthy</code> buffers.</del></li>
-</ul><h2>
+</ul>
+
+<h2>
 <a name="testing" class="anchor" href="#testing"><span class="octicon octicon-link"></span></a>Testing</h2>
 
 <p>The test suite is written using RSpec and Vimrunner. The following would do a
@@ -151,18 +157,14 @@ fruitful.</p>
 firehose so follow with caution!</p>
 
 <p><a href="https://bitdeli.com/free" title="Bitdeli Badge"><img src="https://d2weczhvl823v0.cloudfront.net/jalcine/cmake.vim/trend.png" alt="Bitdeli Badge"></a></p>
-      </section>
-    </div>
+        </section>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">CMake Support for Vim maintained by <a href="https://github.com/jalcine">jalcine</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
+        <footer>
+          CMake Support for Vim is maintained by <a href="https://github.com/jalcine">jalcine</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
 
-              <script type="text/javascript">
+                  <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
@@ -173,6 +175,7 @@ firehose so follow with caution!</p>
             } catch(err) {}
           </script>
 
-
+      </div>
+    </div>
   </body>
 </html>
