@@ -65,7 +65,7 @@ function! cmake#flags#inject_to_syntastic(target)
 endfunction!
 
 function! cmake#flags#inject_to_ycm(target)
-  if g:cmake_inject_flags.ycm == 0
+  if !exists('g:ycm_extra_conf_vim_data') || g:cmake_inject_flags.ycm == 0
     return 0
   endif
 
