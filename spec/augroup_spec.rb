@@ -46,7 +46,7 @@ describe 'cmake.vim#augroup' do
     {
       'source file'  => 'plugin.cpp',
       'header file'  => 'plugin.hpp',
-      #'CMake source file' => 'CMakeLists.txt'
+      'CMake source file' => 'CMakeLists.txt'
     }.each do | label, file |
       context "for a #{label}'s buffer" do
         before(:each) { vim.edit file }
