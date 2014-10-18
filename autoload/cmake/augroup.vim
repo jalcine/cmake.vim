@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.5
+" Version:          0.4.6
 
 function! s:render_for_cpp()
   call cmake#buffer#set_options()
