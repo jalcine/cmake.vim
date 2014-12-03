@@ -9,3 +9,4 @@ ADD_EXECUTABLE(sample-binary binary_main.cpp)
 ADD_LIBRARY(sample-library SHARED plugin.cpp)
 
 TARGET_LINK_LIBRARIES(sample-binary sample-library)
+TARGET_LINK_LIBRARIES(sample-library dl)

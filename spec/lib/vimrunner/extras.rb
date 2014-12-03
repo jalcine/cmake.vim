@@ -16,5 +16,10 @@ module Vimrunner
     def message_history
       vim.command('messages')
     end
+
+    # TODO Add logic to install & load in syntastic.
+    # TODO Add logic to install & load in vim-dispatch.
+    # TODO Add logic to install & load in vimproc.vim.
+    # TODO Add logic to install & load in unite.
   end
 end

@@ -1,15 +1,20 @@
 source 'https://rubygems.org'
 
 # Driver for Vim.
-gem 'vimrunner', '0.3.1'
+gem 'vimrunner'
 
 # Test suite.
-gem 'rspec', '3.0.0'
-gem 'rake', '10.1.1'
-gem 'faker', '1.1.2'
+gem 'rspec'
+gem 'rake'
+gem 'faker'
+gem 'parallel_tests'
 
 # Automation of tests
 gem 'guard'
 gem 'guard-spork'
 gem 'guard-bundler'
 gem 'guard-rspec'
+
+# Utilities for testing.
+gem 'awesome_print'
+gem 'pry'

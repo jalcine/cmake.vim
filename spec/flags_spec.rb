@@ -15,7 +15,7 @@ describe 'cmake.vim#flags' do
       expect(function_exists? short_function_call).to eql(true)
       expect(function_exists? function_call).to eql(true)
     end
-    
+
     it 'obtains flags for the provided flag file' do
       flag_file = validate_response('echo cmake#flags#file_for_target("sample-library")')
       flags = validate_json_response('echo cmake#flags#collect("' + flag_file + '", "CXX")')
@@ -48,47 +48,6 @@ describe 'cmake.vim#flags' do
         res.gsub! '\'', '"'
         res = JSON.parse(res)
         expect(res).to eql([permitted_flag])
-      end
-    end
-
-    context 'post injection' do
-      before(:each) { vim.command 'call cmake#flags#inject()' }
-
-      describe '#inject' do
-        it 'exists as an available function' do
-          expect(function_exists? 'cmake#flags#inject').to eql(true)
-        end
-
-        it 'populates "b:cmake_flags"' do
-          flags = validate_json_response 'echo b:cmake_flags'
-          expect(flags).to_not be_empty
-        end
-      end
-
-      describe '#inject_to_syntastic' do
-        it 'exists as an available function' do
-          expect(function_exists? 'cmake#flags#inject_to_syntastic').to eql(true)
-        end
-
-        it 'updates Syntastic options' do
-          vim.command 'call cmake#flags#inject_to_syntastic(b:cmake_target)'
-          flag_string = validate_response('echo join(b:cmake_flags, " ")')
-          syntastic_options = validate_response('echo g:syntastic_cpp_compiler_options')
-          expect(syntastic_options).to eql(flag_string)
-        end
-      end
-
-      describe '#inject_to_ycm' do
-        it 'exists as an available function' do
-          expect(function_exists? 'cmake#flags#inject_to_ycm').to eql(true)
-        end
-
-        it 'applies options for YouCompleteMe' do
-          vim.command 'let g:cmake_inject_flags.ycm = 1'
-          ycm_vim_data = validate_json_response 'echo g:ycm_extra_conf_vim_data'
-          expect(ycm_vim_data).to_not be_empty
-          expect(ycm_vim_data.length).to eql(3)
-        end
       end
     end
   end

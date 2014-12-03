@@ -3,9 +3,9 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.6
+" Version:          0.5.x
 
-" Function: cmake#buffer#has_project
+" Public Function: cmake#buffer#has_project
 " Checks if the current buffer follows the following criteria:
 "   - Has either the 'cpp' or 'c' formats applied.
 "   - Does it exist in the file system.
@@ -13,24 +13,36 @@
 " Returns: '1' if this current buffer relates to a CMake project. '0'
 " otherwise.
 func! cmake#buffer#has_project()
-  let l:current_file = fnamemodify(expand('%'), ':p')
+  let l:current_file = expand('%:p')
 
-  if &l:ft != "cpp" && &l:ft != "c" && &l:ft != "cmake" | return 0 | endif
-  if !filereadable(l:current_file) | return 0 | endif
+  " Ensure that this matches the filetypes we work with.
+  if &l:ft != "cpp" && &l:ft != "c" && &l:ft != "cmake"
+    return 0
+  endif
+
+  " If this file hasn't been saved yet, don't bother (it happens).
+  if !filereadable(l:current_file)
+    return 0
+  endif
 
   " Pass it up the chain to the heavy-duty method.
   return cmake#util#has_project()
 endfunc
 
+" Public Function:
+" Returns:
 func! cmake#buffer#set_options()
-  let l:current_file = expand('%')
+  let l:current_file = expand('%:p:t')
 
-  if cmake#buffer#has_project()
-    call cmake#util#echo_msg("Searching for target of '" . l:current_file . "'...")
-    let b:cmake_target = cmake#targets#for_file(l:current_file)
+  if !cmake#buffer#has_project()
+    return 0
+  endif
 
-    if empty(b:cmake_target) | return 'no-target' | endif
+  let b:cmake_target = cmake#targets#for_file(l:current_file)
 
+  if empty(b:cmake_target)
+    unlet b:cmake_target
+  else
     if !exists('b:cmake_binary_dir')
       let b:cmake_binary_dir = cmake#targets#binary_dir(b:cmake_target)
     endif
@@ -43,14 +55,17 @@ func! cmake#buffer#set_options()
       let b:cmake_include_dirs = cmake#targets#include_dirs(b:cmake_target)
     endif
 
-    call cmake#util#echo_msg("Applied buffer options for '" . l:current_file . "'.")
-    return 1
+    if !exists('b:cmake_libraries')
+      let b:cmake_libraries = cmake#targets#libraries(b:cmake_target)
+    endif
   endif
-
-  return 0
+  return 1
 endfunc
 
 func! cmake#buffer#set_makeprg()
-  if !exists('b:cmake_target') | return | endif
+  if !exists('b:cmake_target') || empty(b:cmake_target)
+    return
+  endif
+
   let &l:makeprg = "make -C " . g:cmake_root_binary_dir . " " . b:cmake_target
 endfunc

@@ -3,7 +3,15 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.4.6
+" Version:          0.5.x
+
+func s:get_tags()
+  return &l:tags
+endfunc
+
+func s:set_tags(tags)
+  let &l:tags = a:tags
+endfunc
 
 func! cmake#ctags#invoke(args)
   let command = g:cmake_ctags.executable . " " . a:args
@@ -12,7 +20,9 @@ endfunc
 
 func! cmake#ctags#cache_directory()
   let l:dir = fnamemodify(cmake#util#binary_dir() . 'tags', ':p')
-  if !isdirectory(l:dir) | call mkdir(l:dir) | endif
+  if !isdirectory(l:dir)
+    call mkdir(l:dir)
+  endif
   return l:dir
 endfunc
 
@@ -25,20 +35,24 @@ func! cmake#ctags#generate_for_target(target)
   let l:files = cmake#targets#files(a:target)
   let l:args = '--append --excmd=mixed --extra=+fq --totals=no -f ' . l:tag_file
 
-  if type(l:files) != type([]) | return | endif
+  if type(l:files) != type([])
+    return
+  endif
 
   for file in l:files
     let l:command = l:args . ' ' . l:file
     call cmake#ctags#invoke(l:command)
   endfor
 
-  let g:cmake_cache.targets[a:target].tags_file = l:tag_file
+  if !empty(l:files)
+    let g:cmake_cache.targets[a:target].tags_file = l:tag_file
+  endif
 endfunc
 
 func! cmake#ctags#paths_for_target(target)
   let l:cache_dir = cmake#ctags#cache_directory()
   let l:tag_file = cmake#ctags#filename(a:target)
-  let l:paths = split(&l:tags, ',')
+  let l:paths = split(&tags, ',')
   call filter(l:paths, 'filereadable(v:val)')
 
   if !filereadable(l:tag_file)
@@ -49,9 +63,6 @@ func! cmake#ctags#paths_for_target(target)
   return l:paths
 endfunc
 
-" TODO: Make this list unique.
 func! cmake#ctags#refresh()
-  if exists('b:cmake_target') && b:cmake_target != '0'
-    let &l:tags = join(cmake#ctags#paths_for_target(b:cmake_target), ',')
-  endif
+  call s:set_tags(join(cmake#ctags#paths_for_target(b:cmake_target), ','))
 endfunc

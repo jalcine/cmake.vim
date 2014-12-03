@@ -9,7 +9,6 @@ describe 'cmake.vim#ctags' do
 
   describe '#cache_directory' do
     it 'exists as an available functon' do
-      expect(function_exists? 'cmake#ctags#cache_directory').to eql(true)
       expect(function_exists? 'cmake#ctags#cache_directory()').to eql(true)
     end
 
@@ -23,7 +22,6 @@ describe 'cmake.vim#ctags' do
 
   describe '#filename' do
     it 'exists as an available functon' do
-      expect(function_exists? 'cmake#ctags#filename').to eql(true)
       expect(function_exists? 'cmake#ctags#filename(target)').to eql(true)
     end
 
@@ -41,12 +39,11 @@ describe 'cmake.vim#ctags' do
 
   describe '#generate_for_target' do
     it 'exists as an available functon' do
-      expect(function_exists? 'cmake#ctags#generate_for_target').to eql(true)
       expect(function_exists? 'cmake#ctags#generate_for_target(target)').to eql(true)
     end
 
     it 'populates the cache with the generated ctags filepath' do
-      validate_response 'echo cmake#ctags#generate_for_target("sample-binary")'
+      vim.command 'call cmake#ctags#generate_for_target("sample-binary")'
       cache_dir = validate_response 'echo cmake#ctags#cache_directory()'
       path = validate_response 'echo g:cmake_cache.targets["sample-binary"].tags_file'
       expect(path).to end_with('sample-binary.tags')
@@ -57,7 +54,6 @@ describe 'cmake.vim#ctags' do
 
   describe '#paths_for_target' do
     it 'exists as an available functon' do
-      expect(function_exists? 'cmake#ctags#paths_for_target').to eql(true)
       expect(function_exists? 'cmake#ctags#paths_for_target(target)').to eql(true)
     end
 
@@ -69,14 +65,13 @@ describe 'cmake.vim#ctags' do
 
   describe '#refresh' do
     it 'exists as an available functon' do
-      expect(function_exists? 'cmake#ctags#refresh').to eql(true)
       expect(function_exists? 'cmake#ctags#refresh()').to eql(true)
     end
 
     it 'populates the local "tags" option' do
-      validate_response 'echo cmake#ctags#refresh()'
-      paths = validate_response('echo &l:tags').split ','
-      expect(paths).to include(/sample-binary/)
+      vim.command 'call cmake#ctags#refresh()'
+      tag_paths = validate_json_response 'echo split(&tags,",")'
+      expect(tag_paths).to include(/sample-binary/)
     end
   end
 

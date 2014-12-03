@@ -1,0 +1,5 @@
+--require parallel_tests
+--format ParallelTests::RSpec::RuntimeLogger
+--format ParallelTests::RSpec::SummaryLogger
+--format ParallelTests::RSpec::FailuresLogger
+--no-drb

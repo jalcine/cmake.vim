@@ -4,6 +4,7 @@ describe 'cmake#buffer' do
   before(:each) do
     cmake.create_new_project
     cmake.configure_project
+    vim.command 'au! cmake.vim'
   end
 
   describe '#set_options' do
@@ -12,33 +13,31 @@ describe 'cmake#buffer' do
       vim.command 'echo cmake#buffer#set_options()'
     end
 
-    it 'adds binary directory for current file\'s target' do
-      bindir = validate_response('echo b:cmake_binary_dir')
+    it 'adds target binary directory for current buffer' do
+      bindir = validate_response 'echo b:cmake_binary_dir'
       expect(bindir).to_not be_empty
       expect(Dir.exists? bindir).to eql(true)
     end
 
-    it 'adds source directory for current file\'s target' do
+    it 'adds target source directory for current buffer' do
       srcdir = validate_response('echo b:cmake_source_dir')
       expect(srcdir).to_not be_empty
+      expect(srcdir).to_not start_with('0')
       expect(Dir.exists? srcdir).to eql(true)
     end
 
-    it 'adds include directories for current file\'s target' do
-      includedirs_json = validate_response 'echo b:cmake_include_dirs'
-      includedirs_json.gsub! '\'', '"'
-      includedirs = JSON.parse(includedirs_json)
+    it 'adds target include directories for current buffer' do
+      includedirs = validate_json_response 'echo b:cmake_include_dirs'
       expect(includedirs).to_not be_empty
 
       includedirs.each { | dir | expect(Dir.exist? dir).to eql(true) }
     end
 
-    it 'adds libraries for current file\'s target' do
-      skip 'cmake#targets#libraries returns empty all of the time'
-      libdirs_json = validate_response 'echo b:cmake_libraries'
-      libdirs = JSON.parse(libdirs_json)
-      expect(libdirs).to_not be_empty
-      includedirs.each { | dir | expect(Dir.exist? dir).to eql(true) }
+    it 'adds target libraries for current buffer' do
+      expected_libs = [ 'dl']
+      obtained_libs = validate_json_response 'echo b:cmake_libraries'
+      expect(obtained_libs).to_not be_empty
+      expect(obtained_libs).to eql(expected_libs)
     end
   end
 
@@ -55,8 +54,9 @@ describe 'cmake#buffer' do
       it 'sets the makeprg for this current buffer' do
         current_target = validate_response('echo b:cmake_target').chomp
         binary_dir = validate_response('echo g:cmake_root_binary_dir').chomp
+        expected_makeprg = "make -C #{binary_dir} #{current_target}"
         expect(makeprg).to_not be_empty
-        expect(makeprg).to eql("make -C #{binary_dir} #{current_target}")
+        expect(makeprg).to eql(expected_makeprg)
       end
     end
 

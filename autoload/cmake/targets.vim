@@ -3,11 +3,11 @@
 " Author:      Jacky Alciné <me@jalcine.me>
 " License:     MIT
 " Website:     https://jalcine.github.io/cmake.vim
-" Version:     0.4.6
+" Version:     0.5.x
 
 func! cmake#targets#build(target)
-  call cmake#util#echo_msg("Building target '" . a:target . "'...")
-  return cmake#util#run_cmake("--build . --target " . a:target . " -- ", "", "")
+  return cmake#util#run_cmake("--build " . cmake#util#binary_dir() .
+        \ " --target" . a:target, '', '')
 endfunc!
 
 func! cmake#targets#exists(target)
@@ -15,28 +15,36 @@ func! cmake#targets#exists(target)
 endfunc
 
 func! cmake#targets#binary_dir(target)
-  let path_lookup = simplify(cmake#util#binary_dir() . '**/CMakeFiles/' . a:target . '*/')
-  let paths_to_look_in = [ cmake#util#binary_dir(), cmake#util#source_dir() ]
-  let l:bindir = glob(path_lookup, 1, 0)
-  return bindir
-  if len(l:bindir) == 0 | return '<none>' | endif
-  let l:bindir = resolve(fnamemodify(l:bindir, ':p'))
+  let l:root_binary_dir = cmake#util#binary_dir()
+  let l:root_source_dir = cmake#util#source_dir()
+  let l:bindir = finddir('CMakeFiles/' . a:target . '.dir', l:root_binary_dir . ';' . l:root_source_dir)
+  let l:bindir = fnamemodify(l:bindir, ':p:h')
+
+  if l:bindir == l:root_source_dir || l:bindir == l:root_binary_dir
+    return ""
+  endif
+
   return l:bindir
 endfunc!
 
 func! cmake#targets#source_dir(target)
-  if index(cmake#targets#list(), a:target) == -1 | return '' | endif
-  let l:build_dir  = fnamemodify(cmake#targets#binary_dir(a:target), ':p')
-  let l:source_dir = ""
-  if !isdirectory(l:build_dir) | return l:source_dir | endif
-  let l:root_binary_dir = fnamemodify(cmake#util#binary_dir(), ':p')
-  let l:root_source_dir = fnamemodify(cmake#util#source_dir(), ':p')
+  if index(cmake#targets#list(), a:target) == -1
+    return ''
+  endif
 
-  let l:source_dir = fnamemodify(substitute(l:build_dir, l:root_binary_dir,
-        \ l:root_source_dir, ""), ':p')
-  let l:source_dir = fnamemodify(substitute(l:source_dir, "\/CMakeFiles\/" .
-        \ a:target . ".dir\/", "", ""), ':p')
-  let l:source_dir = resolve(l:source_dir)
+  let l:build_dir  = cmake#targets#binary_dir(a:target)
+  let l:source_dir = ""
+
+  if !isdirectory(l:build_dir)
+    return l:source_dir
+  endif
+
+  let l:root_binary_dir = cmake#util#binary_dir()
+  let l:root_source_dir = cmake#util#source_dir()
+  let l:source_dir = l:build_dir
+  let l:source_dir = substitute(l:source_dir, '/CMakeFiles/' . a:target . '.dir', '', '')
+  let l:source_dir = substitute(l:source_dir, l:root_binary_dir, l:root_source_dir, '')
+  let l:source_dir = resolve(fnamemodify(l:source_dir, ':p:h'))
   return l:source_dir
 endfunc!
 
@@ -44,43 +52,66 @@ func! cmake#targets#include_dirs(target)
   let flags = cmake#targets#flags(a:target)
   let dirs = []
 
-  if !empty(flags)
-    for key in keys(flags)
-      let includes = filter(copy(flags[key]), 'stridx(v:val, "-I") == 0')
-      call map(includes, 'substitute(v:val, "^-I", "", "")')
-      let dirs += includes
-    endfor
-  endif
+  for key in keys(flags)
+    let includes = filter(copy(flags[key]), 'stridx(v:val, "-I") == 0')
+    call map(includes, 'fnamemodify(substitute(v:val, "^-I", "", ""),":p:h")')
+    let dirs += includes
+  endfor
 
   return dirs
 endfunc
 
 func! cmake#targets#libraries(target)
-  return []
+  let libraries = []
+  let link_file = resolve(cmake#targets#binary_dir(a:target) . '/link.txt')
+  let link_components = split(join(readfile(link_file), ' '), ' ')
+  call filter(link_components, "stridx(v:val, '-l', 0) == 0")
+
+  for library in link_components
+    let l:library = substitute(library, "^-l", "", "")
+    call add(libraries, l:library)
+  endfor
+
+  return libraries
 endfunc
 
 func! cmake#targets#for_file(filepath)
-  let l:targets = cmake#targets#list()
-  if empty(l:targets) | return 0 | endif
-  let l:target = ''
-  let l:filepath = fnamemodify(a:filepath,':p:.:r')
+  let l:filename = fnamemodify(a:filepath,':t')
+  let l:basename = fnamemodify(a:filepath,':t:r')
 
-  if has_key(g:cmake_cache.files,l:filepath)
-    return g:cmake_cache.files[l:filepath]
+  if has_key(g:cmake_cache.files, l:filename)
+    return g:cmake_cache.files[l:filename]
   endif
 
+  if has_key(g:cmake_cache.files, l:basename)
+    return g:cmake_cache.files[l:basename]
+  endif
+
+
+  let l:targets = cmake#targets#list()
+  if empty(l:targets)
+    return ""
+  endif
+
+  let l:target = ''
   for aTarget in l:targets
     let files = cmake#targets#files(aTarget)
-    if empty(files) | continue | endif
-    call filter(files, 'strridx(v:val, l:filepath) != -1')
+    if empty(files)
+      continue
+    endif
+
+    call filter(files, 'strridx(v:val, l:filename) != -1')
 
     if len(files) != 0
       let l:target = aTarget
-    else | continue | endif
+    endif
   endfor
 
-  if empty(l:target) | return 0 | endif
-  let g:cmake_cache.files[l:filepath] = l:target
+  if empty(l:target)
+    return ""
+  endif
+
+  let g:cmake_cache.files[l:filename] = l:target
   return l:target
 endfunc!
 
@@ -88,10 +119,7 @@ func! cmake#targets#flags(target)
   let flags = { 'c' : [], 'cpp' : [] }
 
   if !cmake#targets#exists(a:target)
-    return {
-          \ 'c' : [],
-          \ 'cpp' : []
-          \ }
+    return l:flags
   endif
 
   if has_key(g:cmake_cache.targets, a:target) &&
@@ -106,14 +134,12 @@ func! cmake#targets#flags(target)
           \ 'c'   : cmake#flags#collect(l:flags_file, 'C'),
           \ 'cpp' : cmake#flags#collect(l:flags_file, 'CXX')
           \ }
-    let g:cmake_cache.targets[a:target].flags = flags
   endif
 
+  let g:cmake_cache.targets[a:target].flags = flags
   return g:cmake_cache.targets[a:target].flags
 endfunc!
 
-" TODO: Add option to load files here; warn about slower start.
-" TODO: Add option to load flags here; warn about slower start.
 func! cmake#targets#list()
   if empty(g:cmake_cache.targets)
     if !isdirectory(cmake#util#binary_dir()) | return [] | endif
@@ -136,10 +162,11 @@ func! cmake#targets#files(target)
   if empty(g:cmake_cache.targets[a:target].files)
     let l:objects = []
     let l:bindir = cmake#targets#binary_dir(a:target)
-    let l:dependInfoCMakeFile = fnamemodify(l:bindir . '/DependInfo.cmake', ':p')
+    let l:dependInfoCMakeFile = fnamemodify(l:bindir .
+          \ '/DependInfo.cmake', ':p')
 
     if filereadable(l:dependInfoCMakeFile)
-      let g:cmake_cache.targets[a:target].files =
+      let g:cmake_cache.targets[a:target].files +=
             \ s:parse_target_depends(l:dependInfoCMakeFile, a:target)
     endif
   endif
@@ -156,6 +183,7 @@ func! cmake#targets#cache()
 
     for aFile in cmake#targets#files(aTarget)
       let g:cmake_cache.files[aFile] = aTarget
+      let g:cmake_cache.files[fnamemodify(aFile, ':t:r')] = aTarget
     endfor
 
     let theCount += len(files)
@@ -177,10 +205,8 @@ func! s:parse_target_depends(dependInfoCMakeFilePath, target)
     let theFixedPath = s:normalize_object_path(object_path, a:target)
     let l:objects[theIndex] = theFixedPath
   endfor
-  return l:objects
 
-  call filter(l:objects, 'filereadable(v:val) == 1')
-  call map(l:objects, 'simplify(fnamemodify(v:val, ":p:."))')
+  call map(l:objects, '(fnamemodify(v:val, ":p:t"))')
   return l:objects
 endfunc
 
@@ -192,8 +218,6 @@ func! s:normalize_object_path(object_path, target)
   let l:object_path = substitute(a:object_path, '  "', '', '')
   let l:object_path = substitute(l:object_path, '"(\s+)$', '', '')
   let l:parts = split(l:object_path, '" "')
-  " TODO: Grab only the source file for now.
-  
   return l:parts[0]
 endfunc
 

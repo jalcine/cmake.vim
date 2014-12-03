@@ -4,12 +4,9 @@ guard :bundler do
   watch('Gemfile')
 end
 
-guard :rspec, cmd: 'bin/rspec' do
+guard :rspec, cmd: 'bin/rspec', all_on_start: false, all_after_pass: false, failed_mode: :keep do
+  watch('.rspec')
   watch(%r{^spec/.+_spec\.rb$})
-  watch('spec/spec_helper.rb')  { "spec" }
-end
-
-guard :spork, rspec_env: { 'RAILS_ENV' => 'test' } do
-  watch('Gemfile.lock')
-  watch('spec/spec_helper.rb') { :rspec }
+  watch('spec/spec_helper.rb')
+  watch(%r{^autoload/cmake/(\w+)\.vim$}) { | m | "spec/#{m[1]}_spec.rb" }
 end
