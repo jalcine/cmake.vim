@@ -1,33 +1,26 @@
-[![Stories in Ready](https://badge.waffle.io/jalcine/cmake.vim.png?label=ready)](https://waffle.io/jalcine/cmake.vim)
-# [CMake Project Support in Vim][site]
+[![Stories in Ready][waffle:img])][waffle:link]
+# [CMake Interoperability in Vim][site]
 
-> With the power of gray skull, [CMake][] support in Vim is born. This allows for
-> CMake commands for building, installing, cleaning and invoking custom
-> targets within Vim. It makes uses of [vimux][] if found and can provide
-> integrations for [Syntastic][] and [YouCompleteMe][ycm].
+[`cmake.vim 0.5.x`][release] is a Vim plugin that aims to bind [CMake][cmake]
+within Vim for your CMake-based projects. This project has not reached a 1.0.0 
+release and thus isn't fully ready for production.
 
----
-
-[`cmake.vim 0.4.6`][release] is a Vim plugin that allows you to use [CMake][cmake]
-within Vim for your projects. **This is alpha-grade software and may turn your CMake
-project into a cat-overrun Telnet session**.
-
-If lost, run `:help cmake` for a bit of guidance.
-
-## Requirements
-At the time of writing, `cmake.vim` has been tested with Vim 7.3+ in nocp mode 
-and CMake 2.8.
-
-## Installing
-I recommending using [Vundle][vundle] to install plugins. The line necessary 
+# Installing
+I recommending using [Vundle][vundle] to install plugins. The line necessary
 to add this plugin is as follows:
 
 ```viml
 Bundle 'jalcine/cmake.vim`
 ```
 
-## Getting Started
+Releases are made on Vim.org's scripts as well on patch-level releases.
 
+# Requirements
+`cmake.vim` is a **pure Vimscript** plugin, thus requiring nothing but Vim
+itself being over version 7.3 or greater. Patches to support older versions of
+Vim are greatly appreciated!
+
+# Getting Started
 After you installed the plugin, just `cd` into the directory where the
 top-level CMakeLists.txt can be found and run:
 
@@ -37,76 +30,53 @@ top-level CMakeLists.txt can be found and run:
 
 " Build all of the targets.
 :CMakeBuild
+
+" Clean up bad builds.
+:CMakeClean
 ```
 
-With that, you created (or re-configured in a vanilla-setup) a new binary
-directory and built the project.
+`cmake.vim` does not bind to any keys by default.
 
 ## Commands
 `cmake.vim` defines a few methods for generic interaction with CMake. Check
 out `:help cmake-methods` for more information.
 
 ## Options
-In order for CMake to operate, it **has** to know where the build directory is 
-located. This is done automatically by the plugin but it does need help in the 
+In order for CMake to operate, it **has** to know where the build directory is
+located. This is done automatically by the plugin but it does need help in the
 event that you happen to build your CMake project in a sub-directory. Check
 out `:help cmake-options` for more information.
 
-## Integrations
-
-See `:help cmake-integrations` for tips on integrations `cmake.vim` with
-other plug-ins like [Syntastic][] or [YouCompleteMe][ycm]. Long story short, it's
-freaking awesome but could use some work. With this version, the integrations are now
-*target-specific*, allowing for fine-grained integration for every single
-file.
-
-## Known Issues
-
-  * With the more recent changes to [YouCompleteMe][ycm]; it's become a bit
-    difficult to dynamically add per-file flags. See 
-    `:h cmake-integrations-ycm-setup` on how to configure YouCompleteMe with
-    CMake.
-
-  * Getting and setting variables is still rough around the edges.
-
-## To-Dos
-
-  [+] ~~Provide `:CMakeBuildTarget` that'd build the target provided. If a file is 
-    to be provided, find the target for that file and build the target it
-    belongs to (restricted to source files).~~
-    * ~~Also for `:CMakeCleanTarget` since we can determine pre-target cleaning
-      information.~~
-  [+] ~~Improve integration's use flag lookup and discovery on a per-target basis
-    and a per-file basis (restricted to source files).~~
-  [+] ~~Pass an argument string to `:CMakeCreateBuild`.~~
-  [+] Allow setting and getting values using `:CMakeGetVar` and `:CMakeSetVar`.
-  * ~~Expose `cmake.vim`'s buffer commands only in `worthy` buffers.~~
-
 ## Testing
-
 The test suite is written using RSpec and Vimrunner. The following would do a
 full unit test of the entire system:
 
 ```
-bundle install
-rake
+bundle install && rake
 ```
 
+The project uses Guard as well for mildly automated tests.
+
+## Known Edgecases
+ 1. If you use a header file as the source file, the plugin only knows of the
+    source files (which sometimes are generated) and doesn't update the
+   `b:cmake_target` variable correctly.
+
 ## License
-This code is released and available under the MIT license. Multiply and be 
+This code is released and available under the MIT license. Multiply and be
 fruitful.
 
 ## Author
-I'm [Jacky Alcine][jalcine] and I like code. A lot. I also chat a lot like a 
+I'm [Jacky Alcine][jalcine] and I like code. A lot. I also chat a lot like a
 firehose so follow with caution!
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jalcine/cmake.vim/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 [vundle]: https://github.com/gmarik/Vundle.vim
 [cmake]: http://cmake.org
 [syntastic]: https://github.com/scrooloose/syntastic
-[ycm]: https://github.com/Valloric/YouCompleteMe/ 
+[ycm]: https://github.com/Valloric/YouCompleteMe/
 [jalcine]: http://jalcine.me
 [vimux]: https://github.com/benmills/vimux
 [site]: http://jalcine.github.io/cmake.vim
-[release]: https://github.com/jalcine/cmake.vim/tree/v0.4.6
+[release]: https://github.com/jalcine/cmake.vim/tree/v0.4.1
+[waffle:img]: https://badge.waffle.io/jalcine/cmake.vim.png?label=ready
+[waffle:link]: https://waffle.io/jalcine/cmake.vim
