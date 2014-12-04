@@ -6,5 +6,5 @@
 " Version:          0.5.x
 
 function cmake#extension#ninja#makeprg()
-  return 'ninja'
+  return 'ninja -C {{root_build_directory}} {{target}}'
 endfunction

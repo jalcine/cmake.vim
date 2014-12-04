@@ -10,10 +10,11 @@ describe 'cmake.vim#makeprg' do
 
   let(:target) { validate_response 'echo cmake#targets#for_file("plugin.cpp")' }
   let(:binary_dir) { validate_response "echo cmake#targets#binary_dir('#{target}')" }
+  let(:root_binary_dir) { validate_response 'echo cmake#util#binary_dir()' }
 
   pairs = {
     gnumake: 'make -C {{build_directory}} {{target}}',
-    ninja: 'ninja'
+    ninja: 'ninja -C {{root_build_directory}} {{target}}'
   }
 
   pairs.each do | toolchain, command |
@@ -23,7 +24,11 @@ describe 'cmake.vim#makeprg' do
       vim.edit 'plugin.cpp'
     end
 
-    let(:expected_command) { command.gsub('{{build_directory}}', binary_dir).gsub('{{target}}', target) }
+    let(:expected_command) do 
+      command.gsub('{{build_directory}}', binary_dir)
+             .gsub('{{root_build_directory}}', root_binary_dir)
+             .gsub('{{target}}', target)
+    end
 
     describe '#for_target' do
       it "generates a command string for using in 'makeprg' for #{toolchain}" do
