@@ -26,8 +26,10 @@ func! cmake#extension#default_func(suffix, function_name)
   let l:extension='vim'
 
   if exists(l:variable)
-    if has_key({l:variable}, a:function_name)
+    if type({'a':3}) == type({l:variable}) && has_key({l:variable}, a:function_name)
       let l:extension={l:variable}[a:function_name]
+    else
+      let l:extension={l:variable}
     endif
   endif
 

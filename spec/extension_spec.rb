@@ -5,9 +5,10 @@ require 'json'
 describe 'cmake.vim#extension' do
   describe '#list' do
     it 'obtains a list of extensions' do
+      known_extensions = ['vim', 'dispatch', 'ninja', 'gnumake'].sort
       vim_response = validate_json_response 'echo cmake#extension#list()'
       expect(vim_response).to_not be_empty
-      expect(vim_response.sort).to eql(['vim', 'dispatch'].sort)
+      expect(vim_response.sort).to eql(known_extensions)
     end
   end
 

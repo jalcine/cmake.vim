@@ -41,34 +41,6 @@ describe 'cmake#buffer' do
     end
   end
 
-  describe '#set_makeprg' do
-    before(:each) do
-      vim.edit 'plugin.cpp'
-      vim.command 'call cmake#buffer#set_options()'
-      vim.command 'call cmake#buffer#set_makeprg()'
-    end
-
-    let(:makeprg) { validate_response('setlocal makeprg').gsub 'makeprg=', '' }
-
-    context 'with a known target file' do
-      it 'sets the makeprg for this current buffer' do
-        current_target = validate_response('echo b:cmake_target').chomp
-        binary_dir = validate_response('echo g:cmake_root_binary_dir').chomp
-        expected_makeprg = "make -C #{binary_dir} #{current_target}"
-        expect(makeprg).to_not be_empty
-        expect(makeprg).to eql(expected_makeprg)
-      end
-    end
-
-    context 'with a unknown target file' do
-      it 'does not set the makeprg' do
-        vim.edit 'candy_mountain.cpp'
-        expect(makeprg).to be_empty
-      end
-    end
-
-  end
-
   describe '#has_project' do
     let(:result) { validate_response 'echo cmake#buffer#has_project()' }
 

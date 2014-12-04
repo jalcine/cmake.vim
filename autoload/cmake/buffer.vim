@@ -61,11 +61,3 @@ func! cmake#buffer#set_options()
   endif
   return 1
 endfunc
-
-func! cmake#buffer#set_makeprg()
-  if !exists('b:cmake_target') || empty(b:cmake_target)
-    return
-  endif
-
-  let &l:makeprg = "make -C " . g:cmake_root_binary_dir . " " . b:cmake_target
-endfunc

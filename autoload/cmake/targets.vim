@@ -17,11 +17,11 @@ endfunc
 func! cmake#targets#binary_dir(target)
   let l:root_binary_dir = cmake#util#binary_dir()
   let l:root_source_dir = cmake#util#source_dir()
-  let l:bindir = finddir('CMakeFiles/' . a:target . '.dir', l:root_binary_dir . ';' . l:root_source_dir)
-  let l:bindir = fnamemodify(l:bindir, ':p:h')
-
-  if l:bindir == l:root_source_dir || l:bindir == l:root_binary_dir
-    return ""
+  let l:bindir = finddir('CMakeFiles/' . a:target . '.dir', l:root_binary_dir . '/**')
+  if isdirectory(l:bindir) && filereadable(l:bindir . '/DependInfo.cmake')
+    let l:bindir = fnamemodify(l:bindir, ':p:h')
+  else
+    let l:bindir = ""
   endif
 
   return l:bindir
@@ -157,17 +157,22 @@ func! cmake#targets#list()
 endfunc
 
 func! cmake#targets#files(target)
-  if !cmake#targets#exists(a:target) | return [] | endif
+  if !cmake#targets#exists(a:target)
+    return []
+  endif
 
   if empty(g:cmake_cache.targets[a:target].files)
     let l:objects = []
     let l:bindir = cmake#targets#binary_dir(a:target)
-    let l:dependInfoCMakeFile = fnamemodify(l:bindir .
-          \ '/DependInfo.cmake', ':p')
+    let l:dependInfoCMakeFile = resolve(l:bindir .
+          \ '/DependInfo.cmake')
 
     if filereadable(l:dependInfoCMakeFile)
       let g:cmake_cache.targets[a:target].files +=
             \ s:parse_target_depends(l:dependInfoCMakeFile, a:target)
+    else
+      echoerr "[cmake] Can't find " . l:dependInfoCMakeFile
+      return []
     endif
   endif
 

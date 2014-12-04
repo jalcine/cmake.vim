@@ -72,6 +72,7 @@ let s:options = {
   \     'syntastic':              exists('g:loaded_syntastic_plugin'),
   \     'ycm':                    exists('g:ycm_check_if_ycm_core_present'),
   \   },
+  \  'g:cmake_build_toolchain':   'gnumake',
   \  'g:cmake_flags':             {
   \     'filter':                 1,
   \     'inject':                 1,

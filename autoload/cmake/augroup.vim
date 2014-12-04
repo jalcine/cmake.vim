@@ -44,7 +44,7 @@ function! cmake#augroup#on_buf_enter()
   call cmake#path#refresh()
 
   call cmake#util#echo_msg('Applying values for "&l:makeprg"...')
-  call cmake#buffer#set_makeprg()
+  call cmake#makeprg#set_for_buffer()
 endfunction
 
 function! cmake#augroup#on_file_type(filetype)
@@ -56,8 +56,8 @@ function! cmake#augroup#on_file_type(filetype)
     return
   endif
 
-  call cmake#util#echo_msg('Applying values for "&makeprg"...')
-  call cmake#buffer#set_makeprg()
+  call cmake#util#echo_msg('Applying values for "&l:makeprg"...')
+  call cmake#makeprg#set_for_buffer()
 
   call cmake#util#echo_msg('Applying values for "&path"...')
   call cmake#path#refresh()

@@ -53,9 +53,6 @@ describe 'cmake#targets' do
   end
 
   describe '#files' do
-    let(:files) { validate_response 'echo cmake#targets#files("sample-library")' }
-    let(:bad_files) { validate_response 'echo cmake#targets#files("iron-load")' }
-
     context 'function existence' do
       it 'does not exist when not called' do
         expect(function_exists? 'cmake#targets#files(target)').to eql(false)
@@ -69,15 +66,22 @@ describe 'cmake#targets' do
     end
 
     it 'procures the files for a known target' do
-      file_list = JSON.parse(files.gsub '\'', '"')
-      expect(file_list).to_not be_empty
+      file_list = validate_json_response 'echo cmake#targets#files("sample-library")'
+      expect(file_list).to include'plugin.cpp'
       expect(file_list.count).to eql(1)
-      expect(file_list[0]).to end_with 'plugin.cpp'
     end
 
     it 'procures nothing for a non-existing target' do
-      file_list = JSON.parse(bad_files.gsub '\'', '"')
+      file_list = validate_json_response 'echo cmake#targets#files("cookie-monster")'
       expect(file_list).to be_empty
+    end
+
+    it 'bails when it can not find the DependInfo.cmake file' do
+      vim.command 'let g:cmake_cache.targets["foo"] = { "files" : [], "flags" : { "c" : [], "c++" : [] } }'
+      response = vim.command 'echo cmake#targets#files("foo")'
+      expect(response).to_not be_empty
+      expect(response).to match(/Can't find/)
+      expect(response).to match(/DependInfo\.cmake/)
     end
   end
 
@@ -247,6 +251,7 @@ describe 'cmake#targets' do
 
     it 'does not find paths for non-existing targets' do
       path = vim.command 'echo cmake#targets#binary_dir("dirty_pig")'
+      expect(path).to be_empty
       expect(Dir.exists? path).to eql(false)
     end
 
