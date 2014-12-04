@@ -14,6 +14,12 @@ describe 'cmake.vim#cache' do
       expect(value).to match(/c++/)
     end
 
+    it 'reads a internal variable from the CMake cache' do
+      value = validate_response "echo cmake#cache#read('CMAKE_COMMAND')"
+      expect(value).to_not match(/:E(\d+)/)
+      expect(value).to eql('/usr/bin/cmake')
+    end
+
     it 'attempts to reads an non-existent variable from the CMake cache' do
       value = vim.command("echo cmake#cache#read('CMAKE_MAGIC_MAKEFILE')")
       expect(value).to_not match(/:E(\d+)/)

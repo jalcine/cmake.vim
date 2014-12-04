@@ -6,13 +6,16 @@
 " Version:          0.5.x
 
 function! cmake#cache#read_all()
-  let l:vars_str = cmake#util#run_cmake('-Wnodev -N -LA', cmake#util#binary_dir(), '')
-  let l:vars = split(l:vars_str, "\n", 0)
-  let l:marker_index = index(l:vars, '-- Cache values', 0, 1)
-  call remove(l:vars, 0, l:marker_index)
+  let l:vars_strings = readfile(cmake#util#binary_dir() . '/CMakeCache.txt')
+  call filter(l:vars_strings, 'stridx(v:val,"//") != 0')
+  call filter(l:vars_strings, 'stridx(v:val,"#") != 0')
   let l:var_dict = {}
 
-  for l:str in l:vars
+  for l:str in l:vars_strings
+    if empty(l:str)
+      continue
+    endif
+
     let l:components = split(l:str, '=')
     let l:property_components = split(l:components[0], ':')
     let l:property_name = l:property_components[0]
@@ -24,10 +27,6 @@ function! cmake#cache#read_all()
 endfunc
 
 function! cmake#cache#read(property)
-  "if !cmake#util#has_project()
-    "return ""
-  "endif
-
   let l:all_vars = cmake#cache#read_all()
   if !has_key(l:all_vars, a:property)
     return ""
@@ -37,9 +36,9 @@ function! cmake#cache#read(property)
 endfunc
 
 function! cmake#cache#write(property,value)
-  "if !cmake#util#has_project()
-    "return 0
-  "endif
+  if !cmake#util#has_project()
+    return 0
+  endif
 
   let l:args = '-Wnodev -D' . a:property . ':STRING=' . shellescape(a:value)
   let l:output = cmake#util#run_cmake(l:args, cmake#util#binary_dir(), '..')
