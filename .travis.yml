@@ -1,6 +1,10 @@
 language: ruby
 rvm: 2.1.1
-before_install: sudo apt-get install -qq vim vim-nox vim-gtk cmake gcc clang build-essential
+before_install: 
+  - sudo apt-get install -qq vim vim-nox vim-gtk
+  - sudo apt-get install -qq cmake gcc clang build-essential ninja-build
+  - sudo apt-get install -qq exuberant-ctags
+script: bundle exec parallel_rspec spec
 before_script:
   - "vim --version"
   - "export DISPLAY=:99.0"

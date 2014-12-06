@@ -24,6 +24,7 @@ module CMakeVim
       args = {
         build_dir: 'build',
         definitions: {},
+        options: []
       }.merge(args)
 
       args[:definitions].each do | key, value | 
@@ -32,7 +33,7 @@ module CMakeVim
       end
 
       Dir.mkdir './build' unless Dir.exists? './build'
-      `cd build && cmake .. #{definitions.join(' ')}`
+      `cd build && cmake .. #{args[:options].join(' ')} #{definitions.join(' ')}`
     end
 
     def destroy_project

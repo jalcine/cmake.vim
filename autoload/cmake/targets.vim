@@ -162,18 +162,9 @@ func! cmake#targets#files(target)
   endif
 
   if empty(g:cmake_cache.targets[a:target].files)
-    let l:objects = []
-    let l:bindir = cmake#targets#binary_dir(a:target)
-    let l:dependInfoCMakeFile = resolve(l:bindir .
-          \ '/DependInfo.cmake')
-
-    if filereadable(l:dependInfoCMakeFile)
-      let g:cmake_cache.targets[a:target].files +=
-            \ s:parse_target_depends(l:dependInfoCMakeFile, a:target)
-    else
-      echoerr "[cmake] Can't find " . l:dependInfoCMakeFile
-      return []
-    endif
+    let l:files_lookup = cmake#extension#default_func('build_toolchain', 'find_files_for_target')
+    let l:files = {l:files_lookup}(a:target)
+    let g:cmake_cache.targets[a:target].files = l:files
   endif
 
   return g:cmake_cache.targets[a:target].files
@@ -193,37 +184,6 @@ func! cmake#targets#cache()
 
     let theCount += len(files)
   endfor
-endfunc
-
-func! s:parse_target_depends(dependInfoCMakeFilePath, target)
-  let l:bindir = cmake#targets#binary_dir(a:target)
-  let l:srcdir = cmake#targets#source_dir(a:target)
-  let l:objects = readfile(a:dependInfoCMakeFilePath)
-
-  " Inside the `DependInfo.cmake` file for the project; pull out what we'd need
-  " to pick out the sources for this specific target. This would be the lines
-  " that has the source file mapping up to its respective object files.
-  let l:objects = filter(l:objects, 'v:val =~ ".o\"$"')
-
-  for object_path in objects
-    let theIndex = index(objects,object_path)
-    let theFixedPath = s:normalize_object_path(object_path, a:target)
-    let l:objects[theIndex] = theFixedPath
-  endfor
-
-  call map(l:objects, '(fnamemodify(v:val, ":p:t"))')
-  return l:objects
-endfunc
-
-func! s:normalize_object_path(object_path, target)
-  let l:bindir = cmake#targets#binary_dir(a:target)
-  let l:srcdir = cmake#targets#source_dir(a:target)
-
-  " TODO: Strip the surrounding whitespace.
-  let l:object_path = substitute(a:object_path, '  "', '', '')
-  let l:object_path = substitute(l:object_path, '"(\s+)$', '', '')
-  let l:parts = split(l:object_path, '" "')
-  return l:parts[0]
 endfunc
 
 func! s:normalize_target_name(object_old_name)

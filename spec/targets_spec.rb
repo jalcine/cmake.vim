@@ -65,23 +65,27 @@ describe 'cmake#targets' do
       end
     end
 
-    it 'procures the files for a known target' do
-      file_list = validate_json_response 'echo cmake#targets#files("sample-library")'
-      expect(file_list).to include'plugin.cpp'
-      expect(file_list.count).to eql(1)
-    end
+    [:gnumake, :ninja].each do | ext |
+      context "when using a #{ext} build system" do
+        before(:each) { vim.command "let g:cmake_build_toolchain='#{ext}'" }
 
-    it 'procures nothing for a non-existing target' do
-      file_list = validate_json_response 'echo cmake#targets#files("cookie-monster")'
-      expect(file_list).to be_empty
-    end
+        it 'procures the files for a known target' do
+          file_list = validate_json_response 'echo cmake#targets#files("sample-library")'
+          expect(file_list).to include 'plugin.cpp'
+          expect(file_list.count).to eql(1)
+        end
 
-    it 'bails when it can not find the DependInfo.cmake file' do
-      vim.command 'let g:cmake_cache.targets["foo"] = { "files" : [], "flags" : { "c" : [], "c++" : [] } }'
-      response = vim.command 'echo cmake#targets#files("foo")'
-      expect(response).to_not be_empty
-      expect(response).to match(/Can't find/)
-      expect(response).to match(/DependInfo\.cmake/)
+        it 'procures nothing for a non-existing target' do
+          file_list = validate_json_response 'echo cmake#targets#files("cookie-monster")'
+          expect(file_list).to be_empty
+        end
+
+        it 'bails when it can not find the DependInfo.cmake file' do
+          vim.command 'let g:cmake_cache.targets["foo"] = { "files" : [], "flags" : { "c" : [], "c++" : [] } }'
+          response = vim.command 'echo cmake#targets#files("foo")'
+          expect(response).to_not be_empty
+        end
+      end 
     end
   end
 
