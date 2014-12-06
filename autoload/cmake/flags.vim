@@ -5,10 +5,6 @@
 " Website:          https://jalcine.github.io/cmake.vim
 " Version:          0.4.5
 
-function! cmake#flags#file_for_target(target)
-  return cmake#targets#binary_dir(a:target) . '/flags.make'
-endfunction
-
 function! s:sort_out_flags(val)
   for a_good_flag in ['-i', '-I', '-W', '-f']
     if stridx(a:val, a_good_flag, 0) == 0
@@ -30,37 +26,25 @@ function! cmake#flags#filter(flags)
   return l:flags
 endfunction!
 
-function! cmake#flags#collect(flags_file, prefix)
-  let l:flags = split(system("grep '" . a:prefix . "_FLAGS = ' " . a:flags_file .
-    \ ' | cut -b ' . (strlen(a:prefix) + strlen('_FLAGS = ')) . '-'))
-  let l:flags = cmake#flags#filter(l:flags)
+function! cmake#flags#collect_for_target(target)
+  if !cmake#util#has_project()
+    return []
+  endif
 
-  let l:defines = split(system("grep '" . a:prefix . "_DEFINES = ' " . a:flags_file
-    \ . ' | cut -b ' . (strlen(a:prefix) + strlen('_DEFINES = ')) . '-'))
+  if !cmake#targets#exists(a:target)
+    return []
+  endif
 
-  let l:params = l:flags + l:defines
-  return l:params
+  let l:flags_lookup = cmake#extension#default_func('build_toolchain', 'find_flags_for_target')
+  let l:flags = {l:flags_lookup}(a:target)
+  return l:flags
 endfunction!
 
 function! cmake#flags#inject()
-  if !exists('b:cmake_target')
-    let b:cmake_target = cmake#targets#for_file(expand('%:p:h'))
-    if b:cmake_target == 0
-      return
-    else
-      let target = b:cmake_target
-    endif
+  if !cmake#buffer#has_project() || exists('b:cmake_flags')
+    return
   endif
 
-  if !exists('b:cmake_flags')
-    let flags = cmake#targets#flags(b:cmake_target)
-
-    if !has_key(flags,&ft)
-      let b:cmake_flags = []
-      return
-    endif
-
-    let b:cmake_flags = flags[&ft]
-  endif
+  let flags = cmake#targets#flags(b:cmake_target)
+  let b:cmake_flags = flags
 endfunc
-

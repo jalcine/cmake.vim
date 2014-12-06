@@ -18,7 +18,7 @@ func! cmake#targets#binary_dir(target)
   let l:root_binary_dir = cmake#util#binary_dir()
   let l:root_source_dir = cmake#util#source_dir()
   let l:bindir = finddir('CMakeFiles/' . a:target . '.dir', l:root_binary_dir . '/**')
-  if isdirectory(l:bindir) && filereadable(l:bindir . '/DependInfo.cmake')
+  if isdirectory(l:bindir)
     let l:bindir = fnamemodify(l:bindir, ':p:h')
   else
     let l:bindir = ""
@@ -50,29 +50,20 @@ endfunc!
 
 func! cmake#targets#include_dirs(target)
   let flags = cmake#targets#flags(a:target)
-  let dirs = []
+  if empty(flags)
+    return []
+  endif
 
-  for key in keys(flags)
-    let includes = filter(copy(flags[key]), 'stridx(v:val, "-I") == 0')
-    call map(includes, 'fnamemodify(substitute(v:val, "^-I", "", ""),":p:h")')
-    let dirs += includes
-  endfor
-
-  return dirs
+  let includes = filter(copy(flags), 'stridx(v:val, "-I") == 0')
+  call map(includes, 'resolve(fnamemodify(substitute(v:val, "^-I", "", ""),":p"))')
+  return includes
 endfunc
 
 func! cmake#targets#libraries(target)
-  let libraries = []
-  let link_file = resolve(cmake#targets#binary_dir(a:target) . '/link.txt')
-  let link_components = split(join(readfile(link_file), ' '), ' ')
-  call filter(link_components, "stridx(v:val, '-l', 0) == 0")
-
-  for library in link_components
-    let l:library = substitute(library, "^-l", "", "")
-    call add(libraries, l:library)
-  endfor
-
-  return libraries
+  let l:libraries = []
+  let l:libraries_lookup = cmake#extension#default_func('build_toolchain', 'find_libraries_for_target')
+  let l:libraries = {l:libraries_lookup}(a:target)
+  return l:libraries
 endfunc
 
 func! cmake#targets#for_file(filepath)
@@ -116,41 +107,30 @@ func! cmake#targets#for_file(filepath)
 endfunc!
 
 func! cmake#targets#flags(target)
-  let flags = { 'c' : [], 'cpp' : [] }
+  let l:flags = []
 
   if !cmake#targets#exists(a:target)
     return l:flags
   endif
 
-  if has_key(g:cmake_cache.targets, a:target) &&
-        \ !empty(g:cmake_cache.targets[a:target].flags)
-    return g:cmake_cache.targets[a:target].flags
+  if empty(g:cmake_cache.targets[a:target].flags)
+    let l:flags = cmake#flags#collect_for_target(a:target)
+    let g:cmake_cache.targets[a:target].flags = l:flags
   endif
 
-  let l:flags_file = cmake#flags#file_for_target(a:target)
-
-  if filereadable(l:flags_file)
-    let flags = {
-          \ 'c'   : cmake#flags#collect(l:flags_file, 'C'),
-          \ 'cpp' : cmake#flags#collect(l:flags_file, 'CXX')
-          \ }
-  endif
-
-  let g:cmake_cache.targets[a:target].flags = flags
   return g:cmake_cache.targets[a:target].flags
 endfunc!
 
 func! cmake#targets#list()
   if empty(g:cmake_cache.targets)
-    if !isdirectory(cmake#util#binary_dir()) | return [] | endif
-    let dirs = glob(cmake#util#binary_dir() ."**/*.dir", 0, 1)
-    let targets = []
-
-    for target_name in dirs
-      let target_name = s:normalize_target_name(target_name)
-      let targets = add(targets, target_name)
-      let g:cmake_cache.targets[target_name] = { 'files' : [], 'flags' : [] }
+    let l:targets_lookup = cmake#extension#default_func('build_toolchain', 'find_targets')
+    let l:targets = {l:targets_lookup}()
+    let l:target_dict = {}
+    for target in l:targets
+      let l:target_dict[target] = { 'files': [], 'flags' : [] }
     endfor
+
+    let g:cmake_cache.targets = l:target_dict
   endif
 
   return keys(g:cmake_cache.targets)
@@ -175,7 +155,9 @@ func! cmake#targets#cache()
   for aTarget in cmake#targets#list()
     let files = cmake#targets#files(aTarget)
 
-    if !len(files) | continue | endif
+    if empty(files)
+      continue
+    endif
 
     for aFile in cmake#targets#files(aTarget)
       let g:cmake_cache.files[aFile] = aTarget
@@ -184,12 +166,4 @@ func! cmake#targets#cache()
 
     let theCount += len(files)
   endfor
-endfunc
-
-func! s:normalize_target_name(object_old_name)
-  let object_name = substitute(a:object_old_name, cmake#util#binary_dir(), "", "g")
-  let object_name = substitute(object_name, "**CMakeFiles/", "", "g")
-  let object_name = substitute(object_name, ".dir", "", "g")
-  let object_name = fnamemodify(object_name, ":t:r")
-  return object_name
 endfunc

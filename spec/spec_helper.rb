@@ -5,6 +5,7 @@ require 'rspec'
 require 'timeout'
 require 'awesome_print'
 require 'pry'
+require 'fileutils'
 
 I18n.enforce_available_locales = false
 
