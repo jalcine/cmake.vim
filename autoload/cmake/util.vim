@@ -26,6 +26,16 @@ function! cmake#util#echo_msg(msg)
   redraw
 endfunction
 
+function! cmake#util#echo_err(msg)
+  if empty(a:msg)
+    return
+  endif
+
+  redraw
+  echoerr "[cmake] " . a:msg
+  redraw
+endfunction
+
 " Function: cmake#util#binary_dir
 " Returns: On success, A file path with a trailing slash that points to the
 " CMake binary project. On failure, an empty string.
@@ -81,27 +91,15 @@ function! cmake#util#has_project()
   return filereadable(resolve(l:bindir . '/CMakeCache.txt'))
 endfunc
 
+" TODO: Allow a different 'make' executable to be used.
 function! cmake#util#run_make(command)
   let l:command = 'make -C ' . cmake#util#binary_dir() . ' ' . a:command
   return cmake#util#shell_exec(l:command)
 endfunc
 
-function! cmake#util#run_cmake(command, binary_dir, source_dir)
-  let l:binary_dir = a:binary_dir
-  let l:source_dir = a:source_dir
-
-  " Auto-default to the root binary directory.
-  if empty(l:binary_dir)
-    let l:binary_dir = cmake#util#binary_dir()
-  endif
-
-  if !empty(l:source_dir) && empty(l:binary_dir)
-    let l:binary_dir = "/tmp/vim-cmake-" . tempname()
-    call mkdir(l:binary_dir)
-  endif
-
-  let l:command = 'cmake ' . a:command . ' ' . l:binary_dir
-
+" TODO: Allow a different 'cmake' executable to be used.
+function! cmake#util#run_cmake(command)
+  let l:command = 'cmake ' . a:command
   return cmake#util#shell_exec(l:command)
 endfunc
 

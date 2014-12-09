@@ -41,7 +41,8 @@ function! cmake#cache#write(property,value)
   endif
 
   let l:args = '-Wnodev -D' . a:property . ':STRING=' . shellescape(a:value)
-  let l:output = cmake#util#run_cmake(l:args, cmake#util#binary_dir(), '..')
+  let l:args .= ' -- ' . cmake#util#binary_dir()
+  let l:output = cmake#util#run_cmake(l:args)
   return stridx(l:output, 'Error') == -1
 endfunc
 

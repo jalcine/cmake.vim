@@ -17,7 +17,13 @@ endfunc
 
 function! cmake#commands#invoke_target(target)
   call cmake#util#echo_msg("Invoking target '" . a:target . "'...")
-  call cmake#util#run_cmake(' --target ' . a:target. ' --', b:cmake_binary_dir, b:cmake_source_dir)
+  let l:output = cmake#util#run_cmake('--build ' . cmake#util#binary_dir() . ' --target ' . a:target)
+  let l:result = l:output =~ '[100%]'
+  if l:result
+    call cmake#util#echo_msg("Target '" . a:target . "' built.")
+  else
+    call cmake#util#echo_err("Target '" . a:target . "' failed to build.")
+  endif
 endfunc
 
 function! cmake#commands#build_current()
@@ -91,7 +97,7 @@ function! cmake#commands#create_build(directory)
 
   " Make the build.
   call cmake#util#echo_msg('Configuring project for the first time...')
-  call cmake#util#run_cmake(l:build_options, getcwd() . "/" . a:directory, getcwd())
+  call cmake#util#run_cmake(l:build_options . ' -- ' .  a:directory)
   call cmake#commands#rehash_project()
   call cmake#targets#cache()
   call cmake#util#echo_msg('Project configured.')
@@ -165,8 +171,8 @@ function! s:clean_then_build()
   call cmake#commands#build()
 endfunc
 
-function! s:get_targets(A,L,P)
-  return cmake#targets#list()
+function! s:get_targets(ArgLead,L,P)
+  return filter(cmake#targets#list(), 'v:val =~ "' . a:ArgLead . '"')
 endfunc
 
 function! s:get_build_opts()

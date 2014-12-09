@@ -21,7 +21,7 @@ describe 'cmake#extension#gnumake' do
     end
 
     it 'generates the pre-processed string for GNU Make' do
-      expected_command = 'make -C {{target_build_directory}} {{target}}'
+      expected_command = 'make -C {{root_build_directory}} {{target}}'
       obtained_command = validate_response 'echo cmake#extension#gnumake#makeprg()'
       expect(obtained_command).to eql(expected_command)
     end

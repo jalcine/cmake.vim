@@ -8,7 +8,8 @@
 function! s:parse_target_depends(dependInfoCMakeFilePath, target)
   let l:bindir = cmake#targets#binary_dir(a:target)
   let l:srcdir = cmake#targets#source_dir(a:target)
-  let l:objects = filter(readfile(a:dependInfoCMakeFilePath), 'v:val =~ ".o\"$"')
+  let l:dependContents = readfile(a:dependInfoCMakeFilePath)
+  let l:objects = filter(l:dependContents, 'v:val =~ "\.o\"$"')
 
   for object_path in objects
     let theIndex = index(objects,object_path)
@@ -40,7 +41,7 @@ function! s:normalize_target_name(object_old_name)
 endfunc
 
 function! cmake#extension#gnumake#makeprg()
-  return 'make -C {{target_build_directory}} {{target}}'
+  return 'make -C {{root_build_directory}} {{target}}'
 endfunction
 
 function! cmake#extension#gnumake#find_libraries_for_target(target)
@@ -79,7 +80,7 @@ function! cmake#extension#gnumake#find_targets()
   endif
 
   let targets = []
-  let dirs = glob(cmake#util#binary_dir() ."/CMakeFiles/*.dir", 0, 1)
+  let dirs = glob(cmake#util#binary_dir() ."/**/CMakeFiles/*.dir", 0, 1)
 
   for target_name in dirs
     let target_name = s:normalize_target_name(target_name)

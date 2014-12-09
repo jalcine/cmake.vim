@@ -19,7 +19,7 @@ func! cmake#ctags#invoke(args)
 endfunc
 
 func! cmake#ctags#cache_directory()
-  let l:dir = fnamemodify(cmake#util#binary_dir() . 'tags', ':p')
+  let l:dir = fnamemodify(cmake#util#binary_dir() . '/tags', ':p')
   if !isdirectory(l:dir)
     call mkdir(l:dir)
   endif
@@ -40,7 +40,8 @@ func! cmake#ctags#generate_for_target(target)
   endif
 
   for file in l:files
-    let l:command = l:args . ' ' . l:file
+    let l:filepath = cmake#targets#source_dir(a:target) . '/' . l:file
+    let l:command = l:args . ' ' . l:filepath
     call cmake#ctags#invoke(l:command)
   endfor
 
