@@ -61,7 +61,7 @@ endfunc
 
 func! cmake#targets#libraries(target)
   let l:libraries = []
-  let l:libraries_lookup = cmake#extension#default_func('build_toolchain', 'find_libraries_for_target')
+  let l:libraries_lookup = cmake#extension#function_for('find_libraries_for_target', g:cmake_build_toolchain)
   let l:libraries = {l:libraries_lookup}(a:target)
   return l:libraries
 endfunc
@@ -123,7 +123,7 @@ endfunc!
 
 func! cmake#targets#list()
   if empty(g:cmake_cache.targets)
-    let l:targets_lookup = cmake#extension#default_func('build_toolchain', 'find_targets')
+    let l:targets_lookup = cmake#extension#function_for('find_targets', g:cmake_build_toolchain)
     let l:targets = {l:targets_lookup}()
     let l:target_dict = {}
     for target in l:targets
@@ -142,7 +142,7 @@ func! cmake#targets#files(target)
   endif
 
   if empty(g:cmake_cache.targets[a:target].files)
-    let l:files_lookup = cmake#extension#default_func('build_toolchain', 'find_files_for_target')
+    let l:files_lookup = cmake#extension#function_for('find_files_for_target', g:cmake_build_toolchain)
     let l:files = {l:files_lookup}(a:target)
     let g:cmake_cache.targets[a:target].files = l:files
   endif

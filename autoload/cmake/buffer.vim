@@ -58,6 +58,8 @@ func! cmake#buffer#set_options()
     if !exists('b:cmake_libraries')
       let b:cmake_libraries = cmake#targets#libraries(b:cmake_target)
     endif
+
+    call cmake#extension#flex({ 'target' : b:cmake_target })
   endif
   return 1
 endfunc

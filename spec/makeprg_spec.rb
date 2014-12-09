@@ -13,7 +13,7 @@ describe 'cmake.vim#makeprg' do
 
   pairs = {
     gnumake: {
-      command: 'make -C {{target_build_directory}} {{target}}',
+      command: 'make -C {{root_build_directory}} {{target}}',
       generator: 'Unix Makefiles'
     },
     ninja: {

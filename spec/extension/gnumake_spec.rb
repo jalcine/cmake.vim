@@ -10,8 +10,8 @@ describe 'cmake#extension#gnumake' do
 
   describe '#makeprg' do
     context 'function existence' do
-      it 'does not exist when not called' do
-        expect(function_exists? 'cmake#extension#gnumake#makeprg()').to eql(false)
+      it 'does exist when not called' do
+        expect(function_exists? 'cmake#extension#gnumake#makeprg()').to eql(true)
       end
 
       it 'does exist when called' do
@@ -29,8 +29,8 @@ describe 'cmake#extension#gnumake' do
 
   describe '#find_libraries_for_target' do
     context 'function existence' do
-      it 'does not exist when not called' do
-        expect(function_exists? 'cmake#extension#gnumake#find_files_for_target(target)').to eql(false)
+      it 'does exist when not called' do
+        expect(function_exists? 'cmake#extension#gnumake#find_files_for_target(target)').to eql(true)
       end
 
       it 'does exist when called' do
@@ -61,8 +61,8 @@ describe 'cmake#extension#gnumake' do
     let(:expected_files) { ['plugin.cpp'] }
 
     context 'function existence' do
-      it 'does not exist when not called' do
-        expect(function_exists? 'cmake#extension#gnumake#find_files_for_target(target)').to eql(false)
+      it 'does exist when not called' do
+        expect(function_exists? 'cmake#extension#gnumake#find_files_for_target(target)').to eql(true)
       end
 
       it 'does exist when called' do
@@ -91,8 +91,8 @@ describe 'cmake#extension#gnumake' do
 
   describe '#find_targets' do
     context 'function existence' do
-      it 'does not exist when not called' do
-        expect(function_exists? 'cmake#extension#gnumake#find_files_for_target(target)').to eql(false)
+      it 'does exist when not called' do
+        expect(function_exists? 'cmake#extension#gnumake#find_files_for_target(target)').to eql(true)
       end
 
       it 'does exist when called' do

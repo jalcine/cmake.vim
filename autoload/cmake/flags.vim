@@ -35,7 +35,7 @@ function! cmake#flags#collect_for_target(target)
     return []
   endif
 
-  let l:flags_lookup = cmake#extension#default_func('build_toolchain', 'find_flags_for_target')
+  let l:flags_lookup = cmake#extension#function_for('find_flags_for_target', g:cmake_build_toolchain)
   let l:flags = {l:flags_lookup}(a:target)
   return l:flags
 endfunction!

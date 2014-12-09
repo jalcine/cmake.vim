@@ -41,6 +41,12 @@ describe 'cmake.vim' do
     end
 
     describe 'finds the autoload scripts' do
+      before(:each) do
+        vim.command 'au! cmake.vim'
+        cmake.create_new
+        cmake.configure
+      end
+
       functions = [
         [ 'cmake#augroup#init()', 'autoload/cmake/augroup.vim' ],
         [ 'cmake#buffer#has_project()', 'autoload/cmake/buffer.vim'],

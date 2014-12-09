@@ -1,4 +1,6 @@
-class Plugin {
+class Plugin
+{
   explicit Plugin();
   virtual ~Plugin();
-}
+};
+

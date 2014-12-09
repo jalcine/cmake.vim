@@ -51,33 +51,30 @@ func! s:setauto(name, value)
 endfunc
 
 let s:options = {
-  \  'g:cmake_cxx_compiler':      s:get_cpp_compiler(),
-  \  'g:cmake_c_compiler':        s:get_c_compiler(),
-  \  'g:cmake_build_type':        'RelWithDebInfo',
-  \  'g:cmake_install_prefix':    '/usr/local',
-  \  'g:cmake_generator':         'Unix Makefiles',
-  \  'g:cmake_build_shared_libs': 1,
-  \  'g:cmake_set_makeprg':       1,
   \  'g:cmake_build_directories': [ 'build' ],
-  \  'g:cmake_ctags':             {
-  \     'project_files':          1,
-  \     'include_files':          0,
-  \     'executable':             'ctags'
-  \  },
-  \  'g:cmake_exec':              {
-  \     'async':                  'vim',
-  \     'sync':                   'vim',
-  \  },
-  \  'g:cmake_extensions':        {
-  \     'syntastic':              exists('g:loaded_syntastic_plugin'),
-  \     'ycm':                    exists('g:ycm_check_if_ycm_core_present'),
-  \   },
+  \  'g:cmake_build_shared_libs': 1,
   \  'g:cmake_build_toolchain':   'gnumake',
-  \  'g:cmake_flags':             {
-  \     'filter':                 1,
-  \     'inject':                 1,
-  \     'reload':                 'on-demand'
-  \   },
+  \  'g:cmake_build_type':        'RelWithDebInfo',
+  \  'g:cmake_c_compiler':        s:get_c_compiler(),
+  \  'g:cmake_ctags':             {
+  \       'project_files':        1,
+  \       'include_files':        0, 
+  \       'executable':           'ctags'
+  \  },
+  \  'g:cmake_cxx_compiler':      s:get_cpp_compiler(),
+  \  'g:cmake_exec':              { 
+  \       'async':                'vim',
+  \       'sync':                 'vim'
+  \  },
+  \  'g:cmake_extensions':        [],
+  \  'g:cmake_flags':             { 
+  \       'filter':               1, 
+  \       'inject':               1, 
+  \       'reload':               'on-demand'
+  \  },
+  \  'g:cmake_generator':         'Unix Makefiles',
+  \  'g:cmake_install_prefix':    '/usr/local',
+  \  'g:cmake_set_makeprg':       1,
   \ }
 
 " Public Function: cmake#set_options()
@@ -91,5 +88,7 @@ endfunc
 
 " Set up the options.
 call cmake#set_options()
+" Load all of the extensions.
+call cmake#extension#init()
 " Set up the augroups.
 call cmake#augroup#init()

@@ -9,11 +9,11 @@
 " Documentation: In doc/cmake.txt
 
 function s:get_sync_exec()
-  return cmake#extension#default_func('exec','sync')
+  return cmake#extension#function_for('sync', '')
 endfunction
 
 function s:get_async_exec()
-  return cmake#extension#default_func('exec','async')
+  return cmake#extension#function_for('async', '')
 endfunction
 
 function! cmake#util#echo_msg(msg)

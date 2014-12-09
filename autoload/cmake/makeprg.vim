@@ -10,7 +10,7 @@ function cmake#makeprg#for_target(target)
     return ""
   endif
 
-  let l:extension = cmake#extension#default_func('build_toolchain', 'makeprg')
+  let l:extension = cmake#extension#function_for('makeprg', g:cmake_build_toolchain)
   let l:makeprg_cmd = {l:extension}()
 
   let replacements = {
