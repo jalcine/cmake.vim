@@ -16,16 +16,18 @@ describe 'cmake.vim#augroup' do
       before(:each) do
         vim.command 'au! cmake.vim'
         cmake.create_new_project
-        cmake.configure({
-          options: ['-G ' + opts[:generator] ]
-        })
+        cmake.configure(
+          options: ['-G ' + opts[:generator]]
+        )
       end
 
       describe '#init' do
         before(:each) do
           vim.command 'au! cmake.vim'
-          vim.command 'call cmake#augroup#init()'
+          puts '1st: ' + vim.command('echo cmake#targets#files(cmake#targets#list()[0])')
+          puts '2nd: ' + vim.command('echo cmake#targets#files(cmake#targets#list()[1])')
           vim.command 'call cmake#targets#cache()'
+          vim.command 'call cmake#augroup#init()'
         end
 
         let(:aucmd_buf_write)      { validate_response('autocmd BufWrite') }
@@ -33,7 +35,7 @@ describe 'cmake.vim#augroup' do
         let(:aucmd_file_type)      { validate_response('autocmd FileType') }
         let(:aucmd_file_readpost)  { validate_response('autocmd FileReadPost') }
         let(:aucmd_vimenter)       { validate_response('autocmd VimEnter') }
-        let(:augroups)             { validate_response('augroup').split(/(\s)/) }
+        let(:augroups)            { validate_response('augroup').split(/(\s)/) }
 
         it 'uses a augroup we named "cmake.vim"' do
           expect(augroups).to include('cmake.vim')
@@ -45,7 +47,7 @@ describe 'cmake.vim#augroup' do
           expect(aucmd_file_readpost).to include('cmake.vim')
         end
 
-        it 'has our buffer-specific auto commands when in buffers with targets' do
+        it 'has our buffer-specific auto commands when in buffers w/ targets' do
           vim.edit 'binary_main.cpp'
           expect(validate_response 'echo b:cmake_target').to eql('sample-binary')
           expect(aucmd_buf_enter).to include('cmake.vim')

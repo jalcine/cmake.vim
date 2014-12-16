@@ -55,7 +55,9 @@ full unit test of the entire system:
 bundle install && rake
 ```
 
-The project uses Guard as well for mildly automated tests.
+The project uses Guard as well for automated tests. Be sure to check out the
+submodules as well to test if external plugins like [syntastic][] and 
+[YouCompleteMe][ycm] work as expected.
 
 ## Known Edgecases
  1. If you use a header file as the source file, the plugin only knows of the
