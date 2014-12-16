@@ -4,7 +4,9 @@ source 'https://rubygems.org'
 gem 'vimrunner'
 
 # Test suite.
-gem 'rspec'
+gem 'rspec-core'
+gem 'rspec-expectations'
+gem 'rspec-support'
 gem 'rake'
 gem 'faker'
 gem 'parallel_tests'
