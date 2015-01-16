@@ -66,6 +66,14 @@ The project uses Guard as well for mildly automated tests.
 This code is released and available under the MIT license. Multiply and be
 fruitful.
 
+## Similar Projects
+There's a few other projects out there that aim to achieve the same goal as
+`cmake.vim`. Feel free to send a PR if you want your project listed here.
+
+  + [vim-cmake](https://github.com/vhdirk/vim-cmake)
+  + [vim-cmake-project](https://github.com/Ignotus/vim-cmake-project)
+    + [sigidagi's fork of `vim-cmake-project`](https://github.com/sigidagi/vim-cmake-project)
+
 ## Author
 I'm [Jacky Alcine][jalcine] and I like code. A lot. I also chat a lot like a
 firehose so follow with caution!
