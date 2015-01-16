@@ -3,7 +3,7 @@
 " Author:      Jacky Alciné <me@jalcine.me>
 " License:     MIT
 " Website:     https://jalcine.github.io/cmake.vim
-" Version:     0.5.0
+" Version:     0.5.1
 
 function cmake#makeprg#for_target(target)
   if !cmake#targets#exists(a:target)

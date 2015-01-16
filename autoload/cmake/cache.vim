@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.5.0
+" Version:          0.5.1
 
 function! cmake#cache#read_all()
   let l:vars_strings = readfile(cmake#util#binary_dir() . '/CMakeCache.txt')
