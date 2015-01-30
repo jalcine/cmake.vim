@@ -12,10 +12,12 @@ describe 'cmake.vim#augroup' do
     }
   }.each do | ext, opts |
     context "when using a #{ext} build system" do
-
       before(:each) do
+        vim.command 'let g:cmake_build_toolchain="' + ext.to_s + '"'
         vim.command 'au! cmake.vim'
-        cmake.create_new_project
+        cmake.create_new_project(
+          options: ['-G ' + opts[:generator]]
+        )
         cmake.configure(
           options: ['-G ' + opts[:generator]]
         )
@@ -23,9 +25,6 @@ describe 'cmake.vim#augroup' do
 
       describe '#init' do
         before(:each) do
-          vim.command 'au! cmake.vim'
-          puts '1st: ' + vim.command('echo cmake#targets#files(cmake#targets#list()[0])')
-          puts '2nd: ' + vim.command('echo cmake#targets#files(cmake#targets#list()[1])')
           vim.command 'call cmake#targets#cache()'
           vim.command 'call cmake#augroup#init()'
         end
@@ -35,7 +34,7 @@ describe 'cmake.vim#augroup' do
         let(:aucmd_file_type)      { validate_response('autocmd FileType') }
         let(:aucmd_file_readpost)  { validate_response('autocmd FileReadPost') }
         let(:aucmd_vimenter)       { validate_response('autocmd VimEnter') }
-        let(:augroups)            { validate_response('augroup').split(/(\s)/) }
+        let(:augroups)             { validate_response('augroup').split(/(\s)/) }
 
         it 'uses a augroup we named "cmake.vim"' do
           expect(augroups).to include('cmake.vim')
@@ -47,11 +46,20 @@ describe 'cmake.vim#augroup' do
           expect(aucmd_file_readpost).to include('cmake.vim')
         end
 
-        it 'has our buffer-specific auto commands when in buffers w/ targets' do
+        it 'has our buffer auto commands when in buffers w/ targets' do
           vim.edit 'binary_main.cpp'
-          expect(validate_response 'echo b:cmake_target').to eql('sample-binary')
+          obtained_target = validate_response 'echo b:cmake_target'
+          expect(obtained_target).to eql('sample-binary')
           expect(aucmd_buf_enter).to include('cmake.vim')
           expect(aucmd_buf_write).to include('cmake.vim')
+        end
+
+        it 'does not have buffer auto commands when in buffers w/o targets' do
+          vim.edit 'magic_toy.cxx'
+          obtained_target = vim.command 'echo b:cmake_target'
+          expect(obtained_target).to_not eql('sample-binary')
+          expect(aucmd_buf_enter).to_not include('cmake.vim')
+          expect(aucmd_buf_write).to_not include('cmake.vim')
         end
       end
 
@@ -75,6 +83,9 @@ describe 'cmake.vim#augroup' do
 
         context 'for ft="cpp"' do
           before(:each) do
+            vim.command 'au! cmake.vim'
+            vim.command 'call cmake#targets#cache()'
+            vim.command 'call cmake#augroup#init()'
             vim.edit 'plugin.cpp'
           end
 
@@ -134,8 +145,13 @@ describe 'cmake.vim#augroup' do
         let(:obtained_paths)    { validate_json_response 'echo split(&l:path,",")' }
         let(:obtained_makeprg)  { vim.command 'echo &l:makeprg' }
 
+        before(:each) do
+          vim.command 'call cmake#targets#cache()'
+          vim.command 'call cmake#augroup#init()'
+        end
+
         it 'updates the path for the provided buffer' do
-          vim.command  "let g:cmake_old_path .= ',/usr/local/include'"
+          vim.command "let g:cmake_old_path .= ',/usr/local/include'"
           vim.edit 'plugin.cpp'
           expect(obtained_paths).to include('/usr/local/include')
         end

@@ -12,7 +12,10 @@ describe 'cmake.vim#commands' do
     context "when using a #{ext} build system" do
       before(:each) do
         vim.command 'au! cmake.vim'
-        cmake.create_new_project
+        vim.command 'let g:cmake_build_toolchain="' + ext.to_s + '"'
+        cmake.create_new_project(
+          options: ['-G ' + opts[:generator] ]
+        )
         cmake.configure({
           options: ['-G ' + opts[:generator] ]
         })
@@ -40,16 +43,18 @@ describe 'cmake.vim#commands' do
             expect(command_exists?(global_command)).to eql(true)
           end
         end
-      end
+      end if false
 
       describe '#apply_buffer_commands' do
         before(:each) do
+          vim.command 'call cmake#targets#cache()'
           vim.command 'call cmake#augroup#init()'
           vim.edit 'binary_main.cpp'
         end
 
         it 'exists as a function when entering a buffer' do
-          expect(function_exists?('cmake#commands#apply_buffer_commands()')).to eql(true)
+          obtained_result = function_exists? 'cmake#commands#apply_buffer_commands'
+          expect(obtained_result).to eql(true)
         end
 
         buffer_commands = [
