@@ -27,7 +27,9 @@ function! cmake#commands#invoke_target(target)
 endfunc
 
 function! cmake#commands#build_current()
-  call cmake#commands#invoke_target(b:cmake_target)
+  if exists('b:cmake_target')
+    call cmake#commands#invoke_target(b:cmake_target)
+  endif
 endfunc
 
 function! cmake#commands#clear_ctags()
@@ -115,6 +117,10 @@ endfunction
 " global commands one. Logic would have to be added so that $PWD of vim ==
 " $CMAKE_ROOT_SOURCE_DIR for actions to make sense.
 function! cmake#commands#apply_buffer_commands()
+  if !exists('b:cmake_target')
+    return
+  endif
+
   command! -buffer -nargs=0 CMakeClearBufferOpts
         \ :unlet b:cmake_binary_dir b:cmake_target
 
@@ -181,7 +187,7 @@ function! s:get_build_opts()
   let l:command += [ '-DCMAKE_INSTALL_PREFIX:FILEPATH='  . g:cmake_install_prefix ]
   let l:command += [ '-DCMAKE_BUILD_TYPE:STRING='        . g:cmake_build_type ]
   let l:command += [ '-DCMAKE_CXX_COMPILER:FILEPATH='    . g:cmake_cxx_compiler ]
-  let l:command += [ '-DCMAKE_C_COMPILER:FILEPATH='      . g:cmake_c_compiler ] 
+  let l:command += [ '-DCMAKE_C_COMPILER:FILEPATH='      . g:cmake_c_compiler ]
   let l:command += [ '-DBUILD_SHARED_LIBS:BOOL='         . g:cmake_build_shared_libs ]
   let l:commandstr = join(l:command, ' ')
 

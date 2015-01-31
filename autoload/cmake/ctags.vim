@@ -65,5 +65,7 @@ func! cmake#ctags#paths_for_target(target)
 endfunc
 
 func! cmake#ctags#refresh()
-  call s:set_tags(join(cmake#ctags#paths_for_target(b:cmake_target), ','))
+  if exists('b:cmake_target')
+    call s:set_tags(join(cmake#ctags#paths_for_target(b:cmake_target), ','))
+  endif
 endfunc

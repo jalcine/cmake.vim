@@ -27,13 +27,14 @@ module CMakeVim
         options: []
       }.merge(args)
 
-      args[:definitions].each do | key, value | 
+      args[:definitions].each do | key, value |
         aDef = "-D#{key}:STRING=\"#{value}\""
         definitions.push aDef
       end
 
       Dir.mkdir './build' unless Dir.exists? './build'
-      `cd build && cmake .. #{args[:options].join(' ')} #{definitions.join(' ')}`
+      pid = spawn("cd build && cmake .. #{args[:options].join(' ')} #{definitions.join(' ')}", [:out, :err] => "/dev/null")
+      Process.wait pid
     end
 
     def destroy_project
