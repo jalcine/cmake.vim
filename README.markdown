@@ -26,7 +26,7 @@ top-level CMakeLists.txt can be found and run:
 
 ```viml
 " Create a new binary directory for your clean project.
-:CMakeCreateProject <build-dir-name>
+:CMakeCreateBuild <build-dir-name>
 
 " Build all of the targets.
 :CMakeBuild
@@ -35,7 +35,8 @@ top-level CMakeLists.txt can be found and run:
 :CMakeClean
 ```
 
-`cmake.vim` does not bind to any keys by default.
+`cmake.vim` does not bind to any keys by default. Check `:h cmake` for more
+information.
 
 ## Commands
 `cmake.vim` defines a few methods for generic interaction with CMake. Check
