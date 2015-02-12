@@ -1,39 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
     <title>CMake Support for Vim by jalcine</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
+
+    <header>
+      <div class="container">
         <h1>CMake Support for Vim</h1>
-        <p>Incorporates the functionality of CMake into Vim.</p>
-        <p class="view"><a href="https://github.com/jalcine/cmake.vim">View the Project on GitHub <small>jalcine/cmake.vim</small></a></p>
-        <ul>
-          <li><a href="https://github.com/jalcine/cmake.vim/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/jalcine/cmake.vim/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/jalcine/cmake.vim">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
+        <h2>Incorporates the functionality of CMake into Vim.</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/jalcine/cmake.vim/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/jalcine/cmake.vim/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/jalcine/cmake.vim" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
         <p><a href="https://waffle.io/jalcine/cmake.vim"><img src="https://badge.waffle.io/jalcine/cmake.vim.png?label=ready" alt="Stories in Ready">)</a></p>
 
 <h1>
 <a id="cmake-interoperability-in-vim" class="anchor" href="#cmake-interoperability-in-vim" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="http://jalcine.github.io/cmake.vim">CMake Interoperability in Vim</a>
 </h1>
 
-<p><a href="https://github.com/jalcine/cmake.vim/tree/v0.4.1"><code>cmake.vim 0.5.0</code></a> is a Vim plugin that aims to bind <a href="http://cmake.org">CMake</a>
+<p><a href="https://github.com/jalcine/cmake.vim/tree/v0.4.1"><code>cmake.vim 0.5.1</code></a> is a Vim plugin that aims to bind <a href="http://cmake.org">CMake</a>
 within Vim for your CMake-based projects. This project has not reached a 1.0.0 
 release and thus isn't fully ready for production.</p>
 
@@ -112,17 +113,30 @@ source files (which sometimes are generated) and doesn't update the
 fruitful.</p>
 
 <h2>
+<a id="similar-projects" class="anchor" href="#similar-projects" aria-hidden="true"><span class="octicon octicon-link"></span></a>Similar Projects</h2>
+
+<p>There's a few other projects out there that aim to achieve the same goal as
+<code>cmake.vim</code>. Feel free to send a PR if you want your project listed here.</p>
+
+<ul>
+<li><a href="https://github.com/vhdirk/vim-cmake">vim-cmake</a></li>
+<li>
+<a href="https://github.com/Ignotus/vim-cmake-project">vim-cmake-project</a>
+
+<ul>
+<li><a href="https://github.com/sigidagi/vim-cmake-project">sigidagi's fork of <code>vim-cmake-project</code></a></li>
+</ul>
+</li>
+</ul>
+
+<h2>
 <a id="author" class="anchor" href="#author" aria-hidden="true"><span class="octicon octicon-link"></span></a>Author</h2>
 
 <p>I'm <a href="http://jalcine.me">Jacky Alcine</a> and I like code. A lot. I also chat a lot like a
 firehose so follow with caution!</p>
       </section>
     </div>
-    <footer>
-      <p>Project maintained by <a href="https://github.com/jalcine">jalcine</a></p>
-      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
-    </footer>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
