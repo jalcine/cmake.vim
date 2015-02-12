@@ -204,4 +204,4 @@ flags that are to be passed into YCM.
 
 This can be disabled by setting `g:cmake_injects_flags.ycm` to 0.
 
-vim:tw=78:ts=8:ft=help:norl:
+vim:tw=78:ts=8:ft=help:norl:nospell:
