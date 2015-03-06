@@ -35,29 +35,28 @@ describe 'cmake.vim#augroup' do
         let(:aucmd_file_write_post) { validate_response('autocmd FileWritePost') }
         let(:aucmd_vimenter)        { validate_response('autocmd VimEnter') }
         let(:augroups)              { validate_response('augroup').split(/(\s)/) }
+        let(:current_target)        { validate_response 'echo b:cmake_target' }
 
-        it 'uses a augroup we named "cmake.vim"' do
+        it 'uses augroup we named "cmake.vim"' do
           expect(augroups).to include('cmake.vim')
         end
 
-        it 'has our globals auto commands in all buffers' do
+        it 'has globals auto commands in all buffers' do
           expect(aucmd_vimenter).to include('cmake.vim')
           expect(aucmd_file_type).to include('cmake.vim')
           expect(aucmd_file_write_post).to include('cmake.vim')
         end
 
-        it 'has our buffer auto commands when in buffers w/ targets' do
+        it 'has buffer auto commands when in buffers w/ targets' do
           vim.edit 'binary_main.cpp'
-          obtained_target = validate_response 'echo b:cmake_target'
-          expect(obtained_target).to eql('sample-binary')
+          expect(current_target).to eql('sample-binary')
           expect(aucmd_buf_enter).to include('cmake.vim')
           expect(aucmd_buf_write).to include('cmake.vim')
         end
 
         it 'does not have buffer auto commands when in buffers w/o targets' do
           vim.edit 'magic_toy.cxx'
-          obtained_target = vim.command 'echo b:cmake_target'
-          expect(obtained_target).to_not eql('sample-binary')
+          expect(vim.echo 'b:cmake_target').to_not eql('sample-binary')
           expect(aucmd_buf_enter).to_not include('cmake.vim')
           expect(aucmd_buf_write).to_not include('cmake.vim')
         end
@@ -73,6 +72,7 @@ describe 'cmake.vim#augroup' do
           obtained_hash = validate_json_response 'echo g:cmake_cache'
           expect(obtained_hash['files']).to_not be_empty
           expect(obtained_hash['targets']).to_not be_empty
+          #expect(obtained_hash['targets']).to include(current_target)
         end
       end
 
@@ -93,7 +93,7 @@ describe 'cmake.vim#augroup' do
 
         it 'updates the makeprg for the provided buffer' do
           vim.edit 'plugin.cpp'
-          old_makeprg = vim.command 'echo &l:makeprg'
+          old_makeprg = vim.echo '&l:makeprg'
           expect(old_makeprg).to_not be_empty
 
           vim.command 'let &l:makeprg=""'
@@ -107,13 +107,11 @@ describe 'cmake.vim#augroup' do
       end
 
       describe '#on_buf_write' do
-        let(:tag_list) { vim.echo 'taglist("function")' }
-        let(:current_target) { vim.echo 'b:cmake_target' }
+        let(:tag_list)       { vim.echo 'taglist("function")' }
+        let(:current_target) { validate_response 'echo b:cmake_target' }
         let(:known_targets)  { vim.echo 'keys(g:cmake_cache.targets)' }
 
         it 'updates the ctags for the provided buffer' do
-          puts tag_list.awesome_inspect
-
           skip <<PENDING_TEST
   * Update buffer with a new function
   * Confirm new function is in file.
@@ -181,11 +179,7 @@ PENDING_TEST
 
         context 'for ft="cmake"' do
           before(:each) do
-            begin
-              vim.edit 'CMakeLists.txt'
-            rescue
-              puts message_history
-            end
+            vim.edit 'CMakeLists.txt'
           end
 
           it 'does not set tag information' do
@@ -194,12 +188,19 @@ PENDING_TEST
 
             expect(obtained_tags).to eql(expected_tags)
           end
+
+          it 'sets the makeprg' do
+            obtained_makeprg = vim.command 'echo &makeprg'
+            expect(obtained_makeprg).to_not be_empty
+            expect(obtained_makeprg).to start_with('make -C')
+          end
         end
       end
 
       describe '#on_file_write' do
-        let(:current_target) { vim.echo 'b:cmake_target' }
-        let(:current_flags)  { validate_json_response 'echo b:cmake_cache["sample-binary"].flags' }
+        let(:current_target)  { vim.echo 'b:cmake_target' }
+        let(:current_flags)   { validate_json_response "echo g:cmake_cache[b:cmake_target].flags" }
+        let(:current_sources) { validate_json_response "echo g:cmake_cache[b:cmake_target].files" }
 
         before(:each) do
           vim.command 'call cmake#targets#cache()'
@@ -207,27 +208,15 @@ PENDING_TEST
           vim.edit 'CMakeLists.txt'
         end
 
-        it 'updates include directories when CMake changes' do
-          old_include_dirs = current_include_dirs
-
-          vim.insert <<INCLUDE_DIR
-ADD_INCLUDE_DIRECTORIES("foo/bar/zilla")
-INCLUDE_DIR
-          vim.write
-
-          new_include_dirs = current_include_dirs
-          expect(new_include_dirs).to_not eql(old_include_dirs)
-        end
-
         it 'updates compile flags when CMake changes' do
-          old_compile_flags = current_compile_flags
+          old_compile_flags = current_flags
 
           vim.insert <<INCLUDE_DIR
 ADD_INCLUDE_DIRECTORIES("foo/bar/zilla")
 INCLUDE_DIR
           vim.write
 
-          new_compile_flags = current_compile_flags
+          new_compile_flags = current_flags
           expect(new_compile_flags).to_not eql(old_compile_flags)
         end
       end
@@ -244,18 +233,6 @@ INCLUDE_DIR
           vim.edit 'plugin.cpp'
           tag_file = "build/tags/#{current_target}.tags"
           expect(File.exists? tag_file).to be(true)
-        end
-
-        it 'updates compile definitions when CMake changes' do
-          old_compile_definitions = current_compile_definitions
-
-          vim.insert <<INCLUDE_DIR
-ADD_INCLUDE_DIRECTORIES("foo/bar/zilla")
-INCLUDE_DIR
-          vim.write
-
-          new_compile_definitions = current_compile_definitions
-          expect(new_compile_definitions).to_not eql(old_compile_definitions)
         end
 
         it 'updates sources when CMake changes' do
