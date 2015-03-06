@@ -17,9 +17,9 @@ endfunction
 function! cmake#augroup#init()
   augroup cmake.vim
     au!
-    au VimEnter      *  call cmake#augroup#on_vim_enter()
-    au FileReadPost  *  call cmake#augroup#on_file_read(fnamemodify("<afile>",":p"))
-    au FileType      *  call cmake#augroup#on_file_type("<amatch>")
+    au VimEnter      *          call cmake#augroup#on_vim_enter()
+    au FileWritePost *          call cmake#augroup#on_file_write()
+    au FileType      cpp,cmake  call cmake#augroup#on_file_type("<amatch>")
   augroup END
 endfunction
 
@@ -79,4 +79,12 @@ endfunction
 function! cmake#augroup#on_buf_write()
   call cmake#util#echo_msg('Applying values for "&tags" (will generate if not existing)...')
   call cmake#ctags#refresh()
+endfunction
+
+function! cmake#augroup#on_file_write()
+  " TODO: Update if within 'CMakeLists.txt' file.
+  let l:filepath = expand('%')
+  let l:srcdir   = cmake#util#source_dir()
+  let l:basePath = substitute(l:filepath, l:srcdir, "", "")
+  call cmake#util#echomsg(l:basedir)
 endfunction

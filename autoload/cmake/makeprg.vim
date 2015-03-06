@@ -6,7 +6,7 @@
 " Version:     0.5.4
 
 function cmake#makeprg#for_target(target)
-  if !cmake#targets#exists(a:target)
+  if !cmake#targets#exists(a:target) && a:target != 'all'
     return ""
   endif
 
@@ -14,13 +14,13 @@ function cmake#makeprg#for_target(target)
   let l:makeprg_cmd = {l:extension}()
 
   let replacements = {
-    \ 'target' : a:target,
+    \ 'target'                 : a:target,
     \ 'target_build_directory' : cmake#targets#binary_dir(a:target),
-    \ 'root_build_directory': cmake#util#binary_dir()
+    \ 'root_build_directory'   : cmake#util#binary_dir()
     \ }
 
-  for [ placeholder, value] in items(replacements)
-    let l:makeprg_cmd = substitute(l:makeprg_cmd, '{{' . placeholder . '}}', value, 'g')
+  for [ placeholder, value ] in items(replacements)
+    let l:makeprg_cmd = substitute(l:makeprg_cmd, '{{'.placeholder.'}}', value, 'g')
     unlet placeholder
     unlet value
   endfor
@@ -29,9 +29,13 @@ function cmake#makeprg#for_target(target)
 endfunction
 
 function cmake#makeprg#set_for_buffer()
-  if exists('b:cmake_target') && !empty(b:cmake_target)
-    let &l:makeprg = cmake#makeprg#for_target(b:cmake_target)
-  else
-    let &l:makeprg=""
+  if &ft == 'cpp' || &ft == 'c'
+    if exists('b:cmake_target') && !empty(b:cmake_target)
+      let &l:makeprg = cmake#makeprg#for_target(b:cmake_target)
+    else
+      let &l:makeprg = ""
+    endif
+  else if &ft == 'cmake'
+    let &l:makeprg = cmake#makeprg#for_target('all')
   endif
 endfunction
