@@ -172,8 +172,21 @@ describe 'cmake.vim#augroup' do
       end
 
       describe '#on_buf_write' do
-        it 'updates the ctags for the provided buffer' do
+        let(:current_target) { vim.command 'echo b:cmake_target' }
 
+        it 'updates the ctags for the provided buffer' do
+          vim.edit 'plugin.cpp'
+          tag_file = "build/tags/#{current_target}.tag"
+          expect(File.exists? tag_file).to be(true)
+        end
+      end
+
+      describe '#on_file_type' do
+        let(:current_target) { vim.command 'echo b:cmake_target' }
+
+        it 'sets the target for the current buffer' do
+          vim.edit 'plugin.cpp'
+          expect(current_target).to eql('sample-library')
         end
       end
     end
