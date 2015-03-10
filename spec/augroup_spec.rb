@@ -1,6 +1,4 @@
-# vim: set tw=78 sts=2 ts=2 sw=2
 require 'spec_helper'
-require 'json'
 
 describe 'cmake.vim#augroup' do
   {
@@ -12,6 +10,7 @@ describe 'cmake.vim#augroup' do
     }
   }.each do | ext, opts |
     context "when using a #{ext} build system" do
+
       before(:each) do
         vim.command 'let g:cmake_build_toolchain="' + ext.to_s + '"'
         vim.command 'au! cmake.vim'
@@ -49,6 +48,8 @@ describe 'cmake.vim#augroup' do
 
         it 'has buffer auto commands when in buffers w/ targets' do
           vim.edit 'binary_main.cpp'
+          expect(validate_json_response 'echo cmake#targets#list()').to_not be_empty
+          puts current_target
           expect(current_target).to eql('sample-binary')
           expect(aucmd_buf_enter).to include('cmake.vim')
           expect(aucmd_buf_write).to include('cmake.vim')
@@ -113,6 +114,7 @@ describe 'cmake.vim#augroup' do
 
         it 'updates the ctags for the provided buffer' do
           skip <<PENDING_TEST
+
   * Update buffer with a new function
   * Confirm new function is in file.
   * Save file
@@ -238,9 +240,9 @@ INCLUDE_DIR
         it 'updates sources when CMake changes' do
           old_sources = current_sources
 
-          vim.insert <<INCLUDE_DIR
+          vim.insert <<INCLUDEDIR
 ADD_INCLUDE_DIRECTORIES("foo/bar/zilla")
-INCLUDE_DIR
+INCLUDEDIR
           vim.write
           new_sources = current_sources
           expect(new_sources).to_not eql(old_sources)
