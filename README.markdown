@@ -1,7 +1,7 @@
 [![Stories in Ready][waffle:img])][waffle:link]
 # [CMake Interoperability in Vim][site]
 
-[`cmake.vim 0.5.1`][release] is a Vim plugin that aims to bind [CMake][cmake]
+[`cmake.vim 0.5.2`][release] is a Vim plugin that aims to bind [CMake][cmake]
 within Vim for your CMake-based projects. This project has not reached a 1.0.0 
 release and thus isn't fully ready for production.
 
