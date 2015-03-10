@@ -1,0 +1,6 @@
+[submodule "spec/plugins/vim/syntastic"]
+	path = spec/plugins/vim/syntastic
+	url = git://github.com/scrooloose/syntastic
+[submodule "spec/plugins/vim/ycm"]
+	path = spec/plugins/vim/ycm
+	url = git://github.com/Valloric/YouCompleteMe

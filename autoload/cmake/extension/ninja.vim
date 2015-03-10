@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.5.1
+" Version:          0.5.2
 
 function! s:read_target_from_ninja(target)
   let l:bindir = cmake#util#binary_dir()
@@ -20,12 +20,10 @@ endfunc
 
 function! s:parse_target_files(target)
   let l:lines_of_interest = s:read_target_from_ninja(a:target)
-  let l:objects = filter(l:lines_of_interest, 'v:val =~ "^build "')
+  let l:objects = filter(l:lines_of_interest, 'v:val =~? "^build"')
 
   for object_path in objects
-    let theIndex = index(objects,object_path)
-    let theFixedPath = s:normalize_object_path(object_path, a:target)
-    let l:objects[theIndex] = theFixedPath
+    let object_path = s:normalize_object_path(object_path, a:target)
   endfor
 
   call map(l:objects, '(fnamemodify(v:val, ":p:t"))')

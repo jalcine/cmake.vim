@@ -3,10 +3,9 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.5.1
+" Version:          0.5.2
 
 function s:add_specific_buffer_commands()
-  call cmake#commands#apply_buffer_commands()
   augroup cmake.vim
     au! BufEnter <buffer>
     au! BufWrite <buffer>
@@ -18,9 +17,9 @@ endfunction
 function! cmake#augroup#init()
   augroup cmake.vim
     au!
-    au VimEnter      *          call cmake#augroup#on_vim_enter()
-    au FileReadPost  *          call cmake#augroup#on_file_read(fnamemodify("<afile>",":p"))
-    au FileType      cpp,cmake  call cmake#augroup#on_file_type("<amatch>")
+    au VimEnter      *  call cmake#augroup#on_vim_enter()
+    au FileReadPost  *  call cmake#augroup#on_file_read(fnamemodify("<afile>",":p"))
+    au FileType      *  call cmake#augroup#on_file_type("<amatch>")
   augroup END
 endfunction
 
@@ -34,6 +33,7 @@ function! cmake#augroup#on_vim_enter()
   "   * adding global commands that would useful in creating a new CMake
   "     project.
   call cmake#targets#cache()
+  call cmake#commands#apply()
 endfunction
 
 function! cmake#augroup#on_buf_enter()

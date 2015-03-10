@@ -1,7 +1,7 @@
 [![Stories in Ready][waffle:img])][waffle:link]
 # [CMake Interoperability in Vim][site]
 
-[`cmake.vim 0.5.1`][release] is a Vim plugin that aims to bind [CMake][cmake]
+[`cmake.vim 0.5.2`][release] is a Vim plugin that aims to bind [CMake][cmake]
 within Vim for your CMake-based projects. This project has not reached a 1.0.0 
 release and thus isn't fully ready for production.
 
@@ -26,7 +26,7 @@ top-level CMakeLists.txt can be found and run:
 
 ```viml
 " Create a new binary directory for your clean project.
-:CMakeCreateProject <build-dir-name>
+:CMakeCreateBuild <build-dir-name>
 
 " Build all of the targets.
 :CMakeBuild
@@ -35,7 +35,8 @@ top-level CMakeLists.txt can be found and run:
 :CMakeClean
 ```
 
-`cmake.vim` does not bind to any keys by default.
+`cmake.vim` does not bind to any keys by default. Check `:h cmake` for more
+information.
 
 ## Commands
 `cmake.vim` defines a few methods for generic interaction with CMake. Check
@@ -55,7 +56,9 @@ full unit test of the entire system:
 bundle install && rake
 ```
 
-The project uses Guard as well for mildly automated tests.
+The project uses Guard as well for automated tests. Be sure to check out the
+submodules as well to test if external plugins like [syntastic][] and 
+[YouCompleteMe][ycm] work as expected.
 
 ## Known Edgecases
  1. If you use a header file as the source file, the plugin only knows of the

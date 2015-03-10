@@ -7,7 +7,7 @@ describe 'cmake#buffer' do
     },
     ninja: {
       generator: 'Ninja'
-    } 
+    }
   }.each do | ext, opts |
     context "when using a #{ext} build system" do
 
@@ -81,9 +81,9 @@ describe 'cmake#buffer' do
           end
 
           invalid_filetypes.each do | ft |
-            it 'does not match for those of the "' + ft + '" filetype' do
+            it 'does match for those of the "' + ft + '" filetype' do
               vim.command 'set ft=' + ft
-              expect(result).to eql('0')
+              expect(result).to eql('1')
             end
           end
         end

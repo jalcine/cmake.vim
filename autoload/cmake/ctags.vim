@@ -3,13 +3,13 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.5.1
+" Version:          0.5.2
 
-func s:get_tags()
+func! s:get_tags()
   return &l:tags
 endfunc
 
-func s:set_tags(tags)
+func! s:set_tags(tags)
   let &l:tags = a:tags
 endfunc
 
@@ -65,5 +65,12 @@ func! cmake#ctags#paths_for_target(target)
 endfunc
 
 func! cmake#ctags#refresh()
-  call s:set_tags(join(cmake#ctags#paths_for_target(b:cmake_target), ','))
+  if exists('b:cmake_target')
+    call s:set_tags(join(cmake#ctags#paths_for_target(b:cmake_target), ','))
+  endif
+endfunc
+
+func! cmake#ctags#wipe(target)
+  let l:tag_file = cmake#ctags#filename(a:target)
+  
 endfunc

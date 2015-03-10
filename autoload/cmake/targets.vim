@@ -3,7 +3,7 @@
 " Author:      Jacky Alciné <me@jalcine.me>
 " License:     MIT
 " Website:     https://jalcine.github.io/cmake.vim
-" Version:     0.5.1
+" Version:     0.5.2
 
 func! cmake#targets#build(target)
   return cmake#util#run_cmake("--build " . cmake#util#binary_dir() .
@@ -67,6 +67,8 @@ func! cmake#targets#libraries(target)
 endfunc
 
 func! cmake#targets#for_file(filepath)
+  " TODO: Need to do work for CMake files, autoset to all.
+
   let l:filename = fnamemodify(a:filepath,':t')
   let l:basename = fnamemodify(a:filepath,':t:r')
 
@@ -77,7 +79,6 @@ func! cmake#targets#for_file(filepath)
   if has_key(g:cmake_cache.files, l:basename)
     return g:cmake_cache.files[l:basename]
   endif
-
 
   let l:targets = cmake#targets#list()
   if empty(l:targets)

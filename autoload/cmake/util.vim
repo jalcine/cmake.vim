@@ -3,16 +3,16 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.5.1
+" Version:          0.5.2
 
 " Documentation: Local documentation.
 " Documentation: In doc/cmake.txt
 
-function s:get_sync_exec()
+function! s:get_sync_exec()
   return cmake#extension#function_for('sync', '')
 endfunction
 
-function s:get_async_exec()
+function! s:get_async_exec()
   return cmake#extension#function_for('async', '')
 endfunction
 
@@ -73,6 +73,10 @@ endfunc
 " Returns: On success, the path to the sources of the CMake project. On
 " failure, an empty string.
 function! cmake#util#source_dir()
+  if exists('g:cmake_root_source_dir') && isdirectory(g:cmake_root_source_dir)
+    return g:cmake_root_source_dir
+  endif
+
   let l:root_cmakelists_file = findfile('CMakeLists.txt', getcwd() . ';' . cmake#util#binary_dir())
   let l:source_dir = substitute(l:root_cmakelists_file, 'CMakeLists.txt', '.', '')
   if l:source_dir == '.'
@@ -80,7 +84,17 @@ function! cmake#util#source_dir()
   endif
 
   let l:source_dir = fnamemodify(l:source_dir, '%:p:h')
-  return l:source_dir
+
+  if isdirectory(l:source_dir)
+    let g:cmake_root_source_dir = l:source_dir
+  endif
+
+  " Save our hard work so we can use it later.
+  if exists('g:cmake_root_source_dir')
+    return g:cmake_root_source_dir
+  endif
+
+  return 0
 endfunc
 
 " Function: cmake#util#has_project

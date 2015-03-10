@@ -1,6 +1,14 @@
 require 'spec_helper'
 
 describe 'cmake#extension#ycm' do
+  before(:each) do
+    plugin_directory = File.expand_path('../../', __FILE__)
+    vim.add_plugin(plugin_directory, 'spec/plugins/vim/ycm')
+    cmake.create_new
+    cmake.configure
+    vim.command 'call cmake#targets#cache()'
+  end
+
   describe '#inject' do
     context 'function existence' do
       it 'does exist when not called' do
