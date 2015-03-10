@@ -16,13 +16,11 @@ func! cmake#buffer#has_project()
   let l:current_file = expand('%:p')
 
   " Check if this file lives under the source or binary directory.
-  let l:in_srcdir = index(l:current_file, cmake#util#root_source_dir(), 0)
-  let l:in_bindir = index(l:current_file, cmake#util#root_binary_dir(), 0)
+  let l:in_srcdir = (stridx(l:current_file, cmake#util#source_dir(), 0) == 0)
+  let l:in_bindir = (stridx(l:current_file, cmake#util#binary_dir(), 0) == 0)
 
   if cmake#util#has_project()
-    if l:in_bindir || l:in_srcdir
-      return 1
-    endif
+    return l:in_bindir || l:in_srcdir
   endif
 
   return 0
