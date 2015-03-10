@@ -15,11 +15,6 @@
 func! cmake#buffer#has_project()
   let l:current_file = expand('%:p')
 
-  " Ensure that this matches the filetypes we work with.
-  if &l:ft != "cpp" && &l:ft != "c" && &l:ft != "cmake"
-    return 0
-  endif
-
   " If this file hasn't been saved yet, don't bother (it happens).
   if !filereadable(l:current_file)
     return 0

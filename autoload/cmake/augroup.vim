@@ -17,9 +17,9 @@ endfunction
 function! cmake#augroup#init()
   augroup cmake.vim
     au!
-    au VimEnter      *          call cmake#augroup#on_vim_enter()
-    au FileReadPost  *          call cmake#augroup#on_file_read(fnamemodify("<afile>",":p"))
-    au FileType      cpp,cmake  call cmake#augroup#on_file_type("<amatch>")
+    au VimEnter      *  call cmake#augroup#on_vim_enter()
+    au FileReadPost  *  call cmake#augroup#on_file_read(fnamemodify("<afile>",":p"))
+    au FileType      *  call cmake#augroup#on_file_type("<amatch>")
   augroup END
 endfunction
 
