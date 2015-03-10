@@ -18,17 +18,14 @@ endfunc
 function! cmake#commands#invoke_target(target)
   call cmake#util#echo_msg("Invoking target '" . a:target . "'...")
   let l:output = cmake#util#run_cmake('--build ' . cmake#util#binary_dir() . ' --target ' . a:target)
-  let l:result = l:output =~ '[100%]'
-  if l:result
-    call cmake#util#echo_msg("Target '" . a:target . "' built.")
-  else
-    call cmake#util#echo_err("Target '" . a:target . "' failed to build.")
-  endif
+  " TODO: Put output in quickfix.
 endfunc
 
 function! cmake#commands#build_current()
   if exists('b:cmake_target')
     call cmake#commands#invoke_target(b:cmake_target)
+  else
+    call cmake#util#echo_msg('No target recognized for this buffer.')
   endif
 endfunc
 
@@ -37,6 +34,7 @@ function! cmake#commands#clear_ctags()
   for target in l:targets
     call cmake#ctags#wipe(l:target)
   endfor
+  call cmake#util#echo_msg('Cleared all of the generated tags for this project.')
 endfunc
 
 function! cmake#commands#generate_ctags()
@@ -48,9 +46,12 @@ function! cmake#commands#generate_ctags()
 endfunc
 
 function! cmake#commands#generate_local_ctags()
-  if !exists('b:cmake_corresponding_target') | return | endif
-  call cmake#ctags#generate_for_target(b:cmake_corresponding_target)
-  call cmake#util#echo_msg('Generated tags for ' . b:cmake_corresponding_target . '.')
+  if exists('b:cmake_target')
+    call cmake#ctags#generate_for_target(b:cmake_target)
+    call cmake#util#echo_msg('Generated tags for ' . b:cmake_target . '.')
+  else
+    call cmake#commands#generate_ctags()
+  endif
 endfunc
 
 function! cmake#commands#clean()
@@ -113,53 +114,61 @@ function! cmake#commands#rehash_project()
   call cmake#util#echo_msg('Cached the project.')
 endfunction
 
-" TODO: Extract commands that aren't target-specific and move them to the
-" global commands one. Logic would have to be added so that $PWD of vim ==
-" $CMAKE_ROOT_SOURCE_DIR for actions to make sense.
-function! cmake#commands#apply_buffer_commands()
-  if !exists('b:cmake_target')
-    return
-  endif
-
-  command! -buffer -nargs=0 CMakeClearBufferOpts
-        \ :unlet b:cmake_binary_dir b:cmake_target
-
-  command! -buffer -nargs=0 CMakeBuildCurrent
-        \ :call cmake#commands#build_current()
-
-  command! -buffer -nargs=0 CMakeCtagsBuildCurrent
-        \ :call cmake#commands#generate_local_ctags()
-
-  command! -buffer -nargs=1 -complete=customlist,s:get_targets
-        \ CMakeTarget :call cmake#targets#build("<args>")
-
-  command! -buffer -nargs=0 CMakeInfoForCurrentFile
-        \ :call s:print_info()
-endfunction!
-
-function! cmake#commands#apply_global_commands()
-  command! -buffer -nargs=0 CMakeCtagsBuildAll
+function! cmake#commands#apply()
+  command! -nargs=0 CMakeCtagsBuildAll
         \ :call cmake#commands#generate_ctags()
-  command! -buffer -nargs=0 CMakeRebuildCache
+
+  command! -nargs=0 CMakeRebuildCache
         \ :call cmake#commands#rebuild_cache()
-  command! -buffer -nargs=0 CMakeClean
+
+  command! -nargs=0 CMakeClean
         \ :call cmake#commands#clean()
-  command! -buffer -nargs=0 CMakeCleanBuild
+
+  command! -nargs=0 CMakeCleanBuild
         \ :call s:clean_then_build()
-  command! -buffer -nargs=0 CMakeTest
+
+  command! -nargs=0 CMakeTest
         \ :call cmake#commands#test()
-  command! -buffer -nargs=0 CMakeInstall
+
+  command! -nargs=0 CMakeInstall
         \ :call cmake#commands#install()
 
-  command! -buffer -nargs=0 CMakeBuild
+  command! -nargs=0 CMakeBuild
         \ :call cmake#commands#build()
-  command! -nargs=1 -complete=dir CMakeCreateBuild
-        \ :call cmake#commands#create_build("<args>")
+
   command! -nargs=0 CMakeRehashProject
         \ :call cmake#commands#rehash_project()
+
+  command! -nargs=0 CMakeClearBufferOpts
+        \ :call s:cmake_clear_buffer_opts()
+
+  command! -nargs=0 CMakeBuildCurrent
+        \ :call cmake#commands#build_current()
+
+  command! -nargs=0 CMakeCtagsBuildCurrent
+        \ :call cmake#commands#generate_local_ctags()
+
+  command! -nargs=1 -complete=dir CMakeCreateBuild
+        \ :call cmake#commands#create_build("<args>")
+
+  command! -nargs=1 -complete=customlist,s:get_targets
+        \ CMakeTarget :call cmake#targets#build("<args>")
+
+  command! -nargs=0 CMakeInfoForCurrentFile
+        \ :call s:cmake_print_info()
 endfunction!
 
-function! s:print_info()
+function s:cmake_clear_buffer_opts()
+  if exists('b:cmake_binary_dir')
+    unlet b:cmake_binary_dir
+  endif
+
+  if exists('b:cmake_target')j
+    unlet b:cmake_target
+  endif
+endfunction
+
+function! s:cmake_print_info()
   let l:current_file  = fnamemodify(expand('%'), ':p')
   let l:current_flags = filter(copy(b:cmake_flags),
         \ 'v:val =~ "-f" || v:val =~ "-W"')
@@ -169,7 +178,7 @@ function! s:print_info()
         \ "\nSource Directory:    " . fnamemodify(b:cmake_source_dir, ':p:.') .
         \ "\nFlags:               " . join(l:current_flags, ', ') . "\n" .
         \ "Include Directories: "   . join(b:cmake_include_dirs, ',') . "\n"
-        "\ "Libraries:           "   . join(b:cmake_libraries, ',')
+        \ "Libraries:           "   . join(b:cmake_libraries, ',')
 endfunction
 
 function! s:clean_then_build()
