@@ -37,13 +37,19 @@ module CMakeVim
       Process.wait pid
     end
 
+    def build_project
+      pid = spawn("make -C build", [:out, :err] => "/dev/null")
+      Process.wait pid
+    end
+
     def destroy_project
-      FileUtils.rm_r "#{Dir.pwd}/*", force: true
+      FileUtils.rm_rf "#{Dir.pwd}/*"
     end
 
     alias :create_new :create_new_project
     alias :configure :configure_project
     alias :destroy :destroy_project
+    alias :build :build_project
   end
 end
 
