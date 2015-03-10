@@ -6,7 +6,6 @@
 " Version:          0.5.1
 
 function s:add_specific_buffer_commands()
-  call cmake#commands#apply_buffer_commands()
   augroup cmake.vim
     au! BufEnter <buffer>
     au! BufWrite <buffer>
@@ -34,6 +33,7 @@ function! cmake#augroup#on_vim_enter()
   "   * adding global commands that would useful in creating a new CMake
   "     project.
   call cmake#targets#cache()
+  call cmake#commands#apply()
 endfunction
 
 function! cmake#augroup#on_buf_enter()
