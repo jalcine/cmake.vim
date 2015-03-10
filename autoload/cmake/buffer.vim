@@ -15,18 +15,15 @@
 func! cmake#buffer#has_project()
   let l:current_file = expand('%:p')
 
-  " Ensure that this matches the filetypes we work with.
-  if &l:ft != "cpp" && &l:ft != "c" && &l:ft != "cmake"
-    return 0
+  " Check if this file lives under the source or binary directory.
+  let l:in_srcdir = (stridx(l:current_file, cmake#util#source_dir(), 0) == 0)
+  let l:in_bindir = (stridx(l:current_file, cmake#util#binary_dir(), 0) == 0)
+
+  if cmake#util#has_project()
+    return l:in_bindir || l:in_srcdir
   endif
 
-  " If this file hasn't been saved yet, don't bother (it happens).
-  if !filereadable(l:current_file)
-    return 0
-  endif
-
-  " Pass it up the chain to the heavy-duty method.
-  return cmake#util#has_project()
+  return 0
 endfunc
 
 " Public Function:
