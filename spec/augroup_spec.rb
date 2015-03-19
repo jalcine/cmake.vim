@@ -199,7 +199,10 @@ describe 'cmake.vim#augroup' do
           expect(current_target).to eql('sample-library')
         end
 
-        xit "doesn't do a check when not within the project directory"
+        it "doesn't do a check when not within the project directory" do
+          vim.edit '/etc/motd'
+          expect(current_target).to match /Undefined variable/
+        end
       end
     end
   end
