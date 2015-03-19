@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.5.3
+" Version:          0.5.4
 
 " A lot of magic happening here; that magic behind interpolation.
 func! s:get_default_ext(class, type)
