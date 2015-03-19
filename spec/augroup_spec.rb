@@ -198,6 +198,8 @@ describe 'cmake.vim#augroup' do
           vim.edit 'plugin.cpp'
           expect(current_target).to eql('sample-library')
         end
+
+        xit "doesn't do a check when not within the project directory"
       end
     end
   end
