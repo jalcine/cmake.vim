@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.5.3
+" Version:          0.5.4
 
 function s:add_specific_buffer_commands()
   augroup cmake.vim
@@ -48,6 +48,10 @@ function! cmake#augroup#on_buf_enter()
 endfunction
 
 function! cmake#augroup#on_file_type(filetype)
+  if !cmake#util#has_project()
+    return
+  endif
+
   call cmake#util#echo_msg('Applying generic buffer options for this buffer...')
   call cmake#buffer#set_options()
 
