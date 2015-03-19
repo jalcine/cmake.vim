@@ -48,7 +48,7 @@ function! cmake#augroup#on_buf_enter()
 endfunction
 
 function! cmake#augroup#on_file_type(filetype)
-  if cmake#util#has_project()
+  if !cmake#util#has_project()
     return
   endif
 
