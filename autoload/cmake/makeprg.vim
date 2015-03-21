@@ -29,13 +29,13 @@ function cmake#makeprg#for_target(target)
 endfunction
 
 function cmake#makeprg#set_for_buffer()
-  if &ft == 'cpp' || &ft == 'c'
-    if exists('b:cmake_target') && !empty(b:cmake_target)
-      let &l:makeprg = cmake#makeprg#for_target(b:cmake_target)
-    else
-      let &l:makeprg = ""
-    endif
-  else if &ft == 'cmake'
+  if !cmake#buffer#has_project()
+    return
+  endif
+
+  if exists('b:cmake_target') && !empty(b:cmake_target)
+    let &l:makeprg = cmake#makeprg#for_target(b:cmake_target)
+  else
     let &l:makeprg = cmake#makeprg#for_target('all')
   endif
 endfunction

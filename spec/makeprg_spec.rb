@@ -70,19 +70,20 @@ describe 'cmake.vim#makeprg' do
 
         it 'sets the buffer for CMake files under the root source dir' do
           vim.edit 'CMakeLists.txt'
+          vim.command 'call cmake#makeprg#set_for_buffer()'
           makeprg = validate_response 'echo &l:makeprg'
           expect(makeprg).to eql(expected_generic_command)
         end
 
-        it 'empties out the makeprg for buffers with no corresponding target' do
+        it 'populates the makeprg for buffers with no corresponding target under sources' do
           vim.edit 'foobar.cpp'
           vim.command 'call cmake#makeprg#set_for_buffer()'
           makeprg = vim.command 'echo &l:makeprg'
-          expect(makeprg).to be_empty
+          expect(makeprg).to eql(expected_generic_command)
         end
 
         it 'empties out the makeprg for buffers outside of the project' do
-          vim.command 'cd $VIMRUNTIME' 
+          vim.command 'cd $VIMRUNTIME'
           path = Dir.glob("#{vim.command 'echo getcwd()'}/**.vim")[0]
           vim.edit path
           vim.command 'call cmake#makeprg#set_for_buffer()'
