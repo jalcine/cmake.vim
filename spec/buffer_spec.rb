@@ -12,8 +12,13 @@ describe 'cmake#buffer' do
     context "when using a #{ext} build system" do
 
       before(:each) do
-        cmake.create_new_project
-        cmake.configure_project
+        vim.command 'let g:cmake_build_toolchain="' + ext.to_s + '"'
+        cmake.create_new_project(
+          options: ['-G ' + opts[:generator]]
+        )
+        cmake.configure(
+          options: ['-G ' + opts[:generator]]
+        )
         vim.command 'au! cmake.vim'
         vim.command 'call cmake#targets#cache()'
       end

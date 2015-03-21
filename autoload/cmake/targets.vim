@@ -169,3 +169,11 @@ func! cmake#targets#cache()
     let theCount += len(files)
   endfor
 endfunc
+
+func! cmake#targets#clear_all()
+  let g:cmake_cache.targets = {}
+endfunc
+
+func! cmake#targets#clear(target)
+  let g:cmake_cache.targets.{a:target} = { 'files': [], 'flags' : [] }
+endfunc

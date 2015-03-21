@@ -18,7 +18,7 @@ function! cmake#augroup#init()
   augroup cmake.vim
     au!
     au VimEnter      *  call cmake#augroup#on_vim_enter()
-    au FileReadPost  *  call cmake#augroup#on_file_read(fnamemodify("<afile>",":p"))
+    au FileWritePost *  call cmake#augroup#on_file_write()
     au FileType      *  call cmake#augroup#on_file_type("<amatch>")
   augroup END
 endfunction
@@ -48,15 +48,14 @@ function! cmake#augroup#on_buf_enter()
 endfunction
 
 function! cmake#augroup#on_file_type(filetype)
-  if !cmake#util#has_project()
+  if !cmake#buffer#has_project()
     return
   endif
 
-  call cmake#util#echo_msg('Applying generic buffer options for this buffer...')
+  call cmake#util#echo_msg('Applying buffer options for this file...')
   call cmake#buffer#set_options()
 
   if !exists('b:cmake_target')
-    call cmake#util#echo_msg('No target found for this buffer.')
     return
   endif
 
@@ -74,9 +73,25 @@ function! cmake#augroup#on_file_type(filetype)
 
   call s:add_specific_buffer_commands()
   doau BufEnter <abuf>
+  redraw
 endfunction
 
 function! cmake#augroup#on_buf_write()
   call cmake#util#echo_msg('Applying values for "&tags" (will generate if not existing)...')
   call cmake#ctags#refresh()
+endfunction
+
+function! cmake#augroup#on_file_write()
+  let target = 'all'
+  if exists(b:cmake_target)
+    let target = b:cmake_target
+  endif
+
+  if target == 'all'
+    call cmake#targets#clear_all()
+  else
+    call cmake#targets#clear(target)
+  endif
+
+  call cmake#targets#cache()
 endfunction

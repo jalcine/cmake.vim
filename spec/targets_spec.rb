@@ -275,6 +275,26 @@ describe 'cmake#targets' do
         end
       end
 
-    end
+        describe 'clear_all' do
+          it 'clears out the cache of known targets, files and flags' do
+            vim.command 'call cmake#targets#cache()'
+            vim.command 'call cmake#targets#clear_all()'
+            cache = validate_json_response 'echo g:cmake_cache'
+            expect(cache['targets'].keys).to be_empty
+          end
+        end
+
+        describe 'clear' do
+          it 'clears only the provided target from the cache' do
+            target = 'sample-library'
+            vim.command 'call cmake#targets#cache()'
+            vim.command "call cmake#targets#clear('#{target}')"
+            cache = validate_json_response 'echo g:cmake_cache'
+            target_info = cache['targets']['sample-library']
+            expect(target_info['flags']).to_not include(target)
+            expect(target_info['files']).to_not include(target)
+          end
+        end
+      end
   end
 end

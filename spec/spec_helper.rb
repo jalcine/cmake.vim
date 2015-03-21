@@ -48,6 +48,7 @@ Spork.each_run do
         example.instance_variable_set :@dir, dir
 
         begin
+          # TODO: Move the different build type logic here.
           example.run
         rescue Exception => e
           puts "[cmake.vim] Error running test: #{e}"
