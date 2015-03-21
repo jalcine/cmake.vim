@@ -171,11 +171,9 @@ func! cmake#targets#cache()
 endfunc
 
 func! cmake#targets#clear_all()
-  unlet g:cmake_cache.targets
   let g:cmake_cache.targets = {}
 endfunc
 
 func! cmake#targets#clear(target)
-  unlet g:cmake_cache.targets[a:target]
-  let g:cmake_cache.targets[a:target] = { 'files': [], 'flags' : [] }
+  let g:cmake_cache.targets.{a:target} = { 'files': [], 'flags' : [] }
 endfunc
