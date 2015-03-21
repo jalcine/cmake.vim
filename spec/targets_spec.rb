@@ -275,6 +275,13 @@ describe 'cmake#targets' do
         end
       end
 
+        describe 'clear_all' do
+          xit 'clears out the cache of known targets, files and flags'
+        end
+
+        describe 'clear' do
+          xit 'clears only the provided target from the cache'
+        end
     end
   end
 end
