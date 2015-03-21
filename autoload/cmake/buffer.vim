@@ -5,13 +5,10 @@
 " Website:          https://jalcine.github.io/cmake.vim
 " Version:          0.5.4
 
-" Public Function: cmake#buffer#has_project
-" Checks if the current buffer follows the following criteria:
-"   - Has either the 'cpp' or 'c' formats applied.
-"   - Does it exist in the file system.
-"   - Check if this entire session has a CMake project associated with it.
-" Returns: '1' if this current buffer relates to a CMake project. '0'
-" otherwise.
+" Public Function: cmake#buffer#has_project()
+" Checks if the current buffer lives under either the source or binary dir.
+" Returns: '1' if the current buffer exists under the CMake sources.
+" Returns: '0' if the current buffer does not exist under the CMake sources.
 func! cmake#buffer#has_project()
   let l:current_file = expand('%:p')
 
@@ -19,11 +16,7 @@ func! cmake#buffer#has_project()
   let l:in_srcdir = (stridx(l:current_file, cmake#util#source_dir(), 0) == 0)
   let l:in_bindir = (stridx(l:current_file, cmake#util#binary_dir(), 0) == 0)
 
-  if cmake#util#has_project()
-    return l:in_bindir || l:in_srcdir
-  endif
-
-  return 0
+  return cmake#util#has_project() && (l:in_bindir || l:in_srcdir)
 endfunc
 
 " Public Function:
