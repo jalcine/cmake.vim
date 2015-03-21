@@ -17,9 +17,9 @@ endfunction
 function! cmake#augroup#init()
   augroup cmake.vim
     au!
-    au VimEnter      *          call cmake#augroup#on_vim_enter()
-    au FileWritePost *          call cmake#augroup#on_file_write()
-    au FileType      cpp,cmake  call cmake#augroup#on_file_type("<amatch>")
+    au VimEnter      *  call cmake#augroup#on_vim_enter()
+    au FileWritePost *  call cmake#augroup#on_file_write()
+    au FileType      *  call cmake#augroup#on_file_type("<amatch>")
   augroup END
 endfunction
 
@@ -48,15 +48,14 @@ function! cmake#augroup#on_buf_enter()
 endfunction
 
 function! cmake#augroup#on_file_type(filetype)
-  if !cmake#util#has_project()
+  if !cmake#buffer#has_project()
     return
   endif
 
-  call cmake#util#echo_msg('Applying generic buffer options for this buffer...')
+  call cmake#util#echo_msg('Applying buffer options for this file...')
   call cmake#buffer#set_options()
 
   if !exists('b:cmake_target')
-    call cmake#util#echo_msg('No target found for this buffer.')
     return
   endif
 
@@ -74,6 +73,7 @@ function! cmake#augroup#on_file_type(filetype)
 
   call s:add_specific_buffer_commands()
   doau BufEnter <abuf>
+  redraw
 endfunction
 
 function! cmake#augroup#on_buf_write()
@@ -82,9 +82,16 @@ function! cmake#augroup#on_buf_write()
 endfunction
 
 function! cmake#augroup#on_file_write()
-  " TODO: Update if within 'CMakeLists.txt' file.
-  let l:filepath = expand('%')
-  let l:srcdir   = cmake#util#source_dir()
-  let l:basePath = substitute(l:filepath, l:srcdir, "", "")
-  call cmake#util#echomsg(l:basedir)
+  let target = 'all'
+  if exists(b:cmake_target)
+    let target = b:cmake_target
+  endif
+
+  if target == 'all'
+    call cmake#targets#clear_all()
+  else
+    call cmake#targets#clear(target)
+  endif
+
+  call cmake#targets#cache()
 endfunction
