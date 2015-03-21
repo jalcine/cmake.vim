@@ -25,6 +25,7 @@ let g:cmake_cache = {
 
 
 " Local Function: s:get_cpp_compiler()
+" Obtains the path to the C++ compiler used on the system.
 func! s:get_cpp_compiler()
   if exists('$CXX')
     return $CXX
@@ -34,7 +35,7 @@ func! s:get_cpp_compiler()
 endfunc
 
 " Local Function: s:get_c_compiler()
-" Obtains the default compiler used on the machine.
+" Obtains the path to the C compiler used on the system.
 func! s:get_c_compiler()
   if exists('$CC')
     return $CC
@@ -76,17 +77,13 @@ let s:options = {
   \ }
 
 " Public Function: cmake#set_options()
-" Takes a hash that represents all of the known options of CMake and
-" instantiate it into existence.
+" Automatically populates options not yet defined for CMake.
 func! cmake#set_options()
   for aOption in keys(s:options)
     call s:setauto(aOption, s:options[aOption])
   endfor
 endfunc
 
-" Set up the options.
 call cmake#set_options()
-" Load all of the extensions.
 call cmake#extension#init()
-" Set up the augroups.
 call cmake#augroup#init()
