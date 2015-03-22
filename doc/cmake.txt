@@ -41,71 +41,71 @@ CONTENTS ~
   5.1 Syntastic                                    |cmake-integrations-syntastic|
   5.2 YouCompleteMe                                |cmake-integrations-ycm|
 6. API                                             |cmake-api|
-  6.1 `cmake#augroup#init()`                         |cmake#augroup#init()|
-  6.2 `cmake#augroup#on_buf_enter()`                 |cmake#augroup#on_buf_enter()|
-  6.3 `cmake#augroup#on_buf_write()`                 |cmake#augroup#on_buf_write()|
-  6.4 `cmake#augroup#on_filetype()`                  |cmake#augroup#on_filetype()|
-  6.5 `cmake#augroup#on_vim_enter()`                 |cmake#augroup#on_vim_enter()|
-  6.6 `cmake#buffer#has_project()`                   |cmake#buffer_has_project()|
-  6.7 `cmake#buffer#set_options()`                   |cmake#buffer_set_options()|
-  6.8 `cmake#cache#write()`                          |cmake#cache_write()|
-  6.9 `cmake#cache#read()`                           |cmake#cache_read()|
-  6.10 `cmake#cache#read_all()`                       |cmake#cache_read_all()|
-  6.11 `cmake#cache#write_all()`                      |cmake#cache_write_all()|
-  6.12 `cmake#commands#build()`                       |cmake#commands_build()|
-  6.13 `cmake#commands#invoke_target()`               |cmake#commands_invoke_target()|
-  6.14 `cmake#commands#build_target()`                |cmake#commands_build_target()|
-  6.15 `cmake#commands#clear_ctags()`                 |cmake#commands_clear_ctags()|
-  6.16 `cmake#commands#generate_ctags()`              |cmake#commands_generate_ctags()|
-  6.17 `cmake#commands#generate_local_ctags()`        |cmake#commands_generate_local_ctags()|
-  6.18 `cmake#commands#clean()`                       |cmake#commands_clean()|
-  6.19 `cmake#commands#test()`                        |cmake#commands_test()|
-  6.20 `cmake#commands#rebuild_cache()`               |cmake#commands_rebuild_cache()|
-  6.21 `cmake#commands#install()`                     |cmake#commands_install()|
-  6.22 `cmake#commands#create_build()`                |cmake#commands_create_build()|
-  6.23 `cmake#commands#rehash_project()`              |cmake#commands_rehash_project()|
-  6.24 `cmake#commands#apply_buffer_commands()`       |cmake#commands_apply_buffer_commands()|
-  6.25 `cmake#commands#apply_global_commands()`       |cmake#commands_apply_global_commands()|
-  6.26 `cmake#ctags#invoke()`                         |cmake#ctags#invoke()|
-  6.27 `cmake#ctags#cache_directory()`                |cmake#ctags#cache_directory()|
-  6.28 `cmake#ctags#filename()`                       |cmake#ctags#filename()|
-  6.29 `cmake#ctags#generate_for_target()`            |cmake#ctags#generate_for_target()|
-  6.30 `cmake#ctags#refresh()`                        |cmake#ctags#refresh()|
-  6.31 `cmake#extension#init()`                       |cmake#extension#init()|
-  6.32 `cmake#extension#list()`                       |cmake#extension#list()|
-  6.33 `cmake#extension#flex()`                       |cmake#extension#flex()|
-  6.34 `cmake#extension#function_for()`               |cmake#extension#function_for()|
-  6.35 `cmake#extension#functions_for()`              |cmake#extension#functions_for()|
-  6.36 `cmake#flags#inject()`                         |cmake#flags#inject()|
-  6.37 `cmake#flags#collect_for_target()`             |cmake#flags#collect_for_target()|
-  6.38 `cmake#flags#filter()`                         |cmake#flags#filter()|
-  6.39 `cmake#makeprg#for_target()`                   |cmake#makeprg#for_target()|
-  6.40 `cmake#makeprg#set_for_buffer()`               |cmake#makeprg#set_for_buffer()|
-  6.41 `cmake#path#refresh()`                         |cmake#path#refresh()|
-  6.42 `cmake#path#reset()`                           |cmake#path#reset()|
-  6.43 `cmake#path#update()`                          |cmake#path#update()|
-  6.44 `cmake#path#refresh_global_paths()`            |cmake#path#refresh_global_paths()|
-  6.45 `cmake#path#refresh_target_paths()`            |cmake#path#refresh_target_paths()|
-  6.46 `cmake#targets#build()`                        |cmake#targets#build()|
-  6.47 `cmake#targets#exists()`                       |cmake#targets#exists()|
-  6.48 `cmake#targets#binary_dir()`                   |cmake#targets#binary_dir()|
-  6.49 `cmake#targets#source_dir()`                   |cmake#targets#source_dir()|
-  6.50 `cmake#targets#include_dirs()`                 |cmake#targets#include_dirs()|
-  6.51 `cmake#targets#libraries()`                    |cmake#targets#libraries()|
-  6.52 `cmake#targets#for_file()`                     |cmake#targets#for_file()|
-  6.53 `cmake#targets#flags()`                        |cmake#targets#flags()|
-  6.54 `cmake#targets#list()`                         |cmake#targets#list()|
-  6.55 `cmake#targets#files()`                        |cmake#targets#files()|
-  6.56 `cmake#targets#cache()`                        |cmake#targets#cache()|
-  6.57 `cmake#util#echo_msg()`                        |cmake#util#echo_msg()|
-  6.58 `cmake#util#echo_err()`                        |cmake#util#echo_err()|
-  6.59 `cmake#util#binary_dir()`                        |cmake#util#binary_dir()|
-  6.60 `cmake#util#source_dir()`                        |cmake#util#source_dir()|
-  6.61 `cmake#util#has_project()`                        |cmake#util#has_project()|
-  6.62 `cmake#util#run_make()`                        |cmake#util#run_make()|
-  6.63 `cmake#util#run_cmake()`                        |cmake#util#run_cmake()|
-  6.64 `cmake#util#shell_exec()`                        |cmake#util#shell_exec()|
-  6.65 `cmake#util#shell_bgexec()`                        |cmake#util#shell_bgexec()|
+  6.1  `cmake#augroup#init()`                        |cmake#augroup#init()|
+  6.2  `cmake#augroup#on_buf_enter()`                |cmake#augroup#on_buf_enter()|
+  6.3  `cmake#augroup#on_buf_write()`                |cmake#augroup#on_buf_write()|
+  6.4  `cmake#augroup#on_filetype()`                 |cmake#augroup#on_filetype()|
+  6.5  `cmake#augroup#on_vim_enter()`                |cmake#augroup#on_vim_enter()|
+  6.6  `cmake#buffer#has_project()`                  |cmake#buffer_has_project()|
+  6.7  `cmake#buffer#set_options()`                  |cmake#buffer_set_options()|
+  6.8  `cmake#cache#write()`                         |cmake#cache_write()|
+  6.9  `cmake#cache#read()`                          |cmake#cache_read()|
+  6.10 `cmake#cache#read_all()`                      |cmake#cache_read_all()|
+  6.11 `cmake#cache#write_all()`                     |cmake#cache_write_all()|
+  6.12 `cmake#commands#build()`                      |cmake#commands_build()|
+  6.13 `cmake#commands#invoke_target()`              |cmake#commands_invoke_target()|
+  6.14 `cmake#commands#build_target()`               |cmake#commands_build_target()|
+  6.15 `cmake#commands#clear_ctags()`                |cmake#commands_clear_ctags()|
+  6.16 `cmake#commands#generate_ctags()`             |cmake#commands_generate_ctags()|
+  6.17 `cmake#commands#generate_local_ctags()`       |cmake#commands_generate_local_ctags()|
+  6.18 `cmake#commands#clean()`                      |cmake#commands_clean()|
+  6.19 `cmake#commands#test()`                       |cmake#commands_test()|
+  6.20 `cmake#commands#rebuild_cache()`              |cmake#commands_rebuild_cache()|
+  6.21 `cmake#commands#install()`                    |cmake#commands_install()|
+  6.22 `cmake#commands#create_build()`               |cmake#commands_create_build()|
+  6.23 `cmake#commands#rehash_project()`             |cmake#commands_rehash_project()|
+  6.24 `cmake#commands#apply_buffer_commands()`      |cmake#commands_apply_buffer_commands()|
+  6.25 `cmake#commands#apply_global_commands()`      |cmake#commands_apply_global_commands()|
+  6.26 `cmake#ctags#invoke()`                        |cmake#ctags#invoke()|
+  6.27 `cmake#ctags#cache_directory()`               |cmake#ctags#cache_directory()|
+  6.28 `cmake#ctags#filename()`                      |cmake#ctags#filename()|
+  6.29 `cmake#ctags#generate_for_target()`           |cmake#ctags#generate_for_target()|
+  6.30 `cmake#ctags#refresh()`                       |cmake#ctags#refresh()|
+  6.31 `cmake#extension#init()`                      |cmake#extension#init()|
+  6.32 `cmake#extension#list()`                      |cmake#extension#list()|
+  6.33 `cmake#extension#flex()`                      |cmake#extension#flex()|
+  6.34 `cmake#extension#function_for()`              |cmake#extension#function_for()|
+  6.35 `cmake#extension#functions_for()`             |cmake#extension#functions_for()|
+  6.36 `cmake#flags#inject()`                        |cmake#flags#inject()|
+  6.37 `cmake#flags#collect_for_target()`            |cmake#flags#collect_for_target()|
+  6.38 `cmake#flags#filter()`                        |cmake#flags#filter()|
+  6.39 `cmake#makeprg#for_target()`                  |cmake#makeprg#for_target()|
+  6.40 `cmake#makeprg#set_for_buffer()`              |cmake#makeprg#set_for_buffer()|
+  6.41 `cmake#path#refresh()`                        |cmake#path#refresh()|
+  6.42 `cmake#path#reset()`                          |cmake#path#reset()|
+  6.43 `cmake#path#update()`                         |cmake#path#update()|
+  6.44 `cmake#path#refresh_global_paths()`           |cmake#path#refresh_global_paths()|
+  6.45 `cmake#path#refresh_target_paths()`           |cmake#path#refresh_target_paths()|
+  6.46 `cmake#targets#build()`                       |cmake#targets#build()|
+  6.47 `cmake#targets#exists()`                      |cmake#targets#exists()|
+  6.48 `cmake#targets#binary_dir()`                  |cmake#targets#binary_dir()|
+  6.49 `cmake#targets#source_dir()`                  |cmake#targets#source_dir()|
+  6.50 `cmake#targets#include_dirs()`                |cmake#targets#include_dirs()|
+  6.51 `cmake#targets#libraries()`                   |cmake#targets#libraries()|
+  6.52 `cmake#targets#for_file()`                    |cmake#targets#for_file()|
+  6.53 `cmake#targets#flags()`                       |cmake#targets#flags()|
+  6.54 `cmake#targets#list()`                        |cmake#targets#list()|
+  6.55 `cmake#targets#files()`                       |cmake#targets#files()|
+  6.56 `cmake#targets#cache()`                       |cmake#targets#cache()|
+  6.57 `cmake#util#echo_msg()`                       |cmake#util#echo_msg()|
+  6.58 `cmake#util#echo_err()`                       |cmake#util#echo_err()|
+  6.59 `cmake#util#binary_dir()`                     |cmake#util#binary_dir()|
+  6.60 `cmake#util#source_dir()`                     |cmake#util#source_dir()|
+  6.61 `cmake#util#has_project()`                    |cmake#util#has_project()|
+  6.62 `cmake#util#run_make()`                       |cmake#util#run_make()|
+  6.63 `cmake#util#run_cmake()`                      |cmake#util#run_cmake()|
+  6.64 `cmake#util#shell_exec()`                     |cmake#util#shell_exec()|
+  6.65 `cmake#util#shell_bgexec()`                   |cmake#util#shell_bgexec()|
 
 ===============================================================================
 
@@ -242,7 +242,7 @@ happened to remove said augroup. It's used by the project on
 
 
 6.2 cmake#augroup#on_vim_enter() ~
-                                                   *cmake#augroup#on_vim_enter()*
+                                                 *cmake#augroup#on_vim_enter()*
 
 Arguments: None
 Returns: None
@@ -252,7 +252,7 @@ NOTE: For now, this just caches the entire project's target information.
 
 
 6.3 cmake#augroup#on_buf_enter() ~
-                                                   *cmake#augroup#on_buf_enter()*
+                                                 *cmake#augroup#on_buf_enter()*
 
 Arguments: None
 Returns: None
@@ -264,7 +264,7 @@ This currently does the following:
   - Updates the `&makeprg` variable for the current buffer.
 
 6.4 cmake#augroup#on_file_type(filetype) ~
-                                              *cmake#augroup#on_file_type(filetype)*
+                                          *cmake#augroup#on_file_type(filetype)*
 
 Arguments: filetype
 Returns: None
