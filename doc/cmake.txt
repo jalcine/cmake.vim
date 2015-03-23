@@ -5,9 +5,7 @@ CONTENTS ~
 ===============================================================================
 
 1. About                                           |cmake-about|
-2. Quick start                                     |cmake-quickstart|
-  2.1. Discovering CMake                           |cmake-quickstart-discover|
-  2.2. Installing the Plugin                       |cmake-quickstart-install|
+2. Quick Start                                     |cmake-quickstart|
 3. Options                                         |cmake-options|
   3.1. Buffer-Specifc Options                      |cmake-buffer-options|
     3.1.1 `b:cmake_target`                           |b:cmake_target|
@@ -125,7 +123,7 @@ CMake's version of the build system. It can also incorporate support with other
 plugins like |dispatch|, |YouCompleteMe|, and |syntastic|.
 
 2. QUICK START ~
-                                                    *cmake-quickstart*
+                                                           *cmake-quickstart*
 Ensure that you have a working (discoverable in '$PATH' by Vim) version of
 CMake. You can check that CMake is invokable by Vim by running the following
 command: >
@@ -245,6 +243,7 @@ NOTE: This currently isn't an option to handle out-of-source builds for CMake.
                                                     *g:cmake_build_directories*
 
 Default: `['build']`
+Valid values: A |List| of paths relative to Vim's working directory.
 
 A |List| of relative paths to Vim's working directory that Vim should search
 in to find out-of-source builds. This can be used to get around the fact that
@@ -256,6 +255,27 @@ for your preferred build directory.
   let g:cmake_build_directories += [ '../build' ]
 
 NOTE: The first match found by the options is used by |cmake#util#binary_dir()|.
+
+3.3.2. g:cmake_build_shared_libs ~
+                                                   *g:cmake_build_shared_libs*
+
+Default: 1
+Valid values: 0, 1
+
+A |boolean| value that'd determine whether or not shared library builds are
+built by default.
+
+3.3.3. g:cmake_build_toolchain ~
+                                                     *g:cmake_build_toolchain*
+
+Default: 'gnumake'
+Valid values: 'gnumake', 'ninja'
+
+A |string| value that'd represent what kind of build system 'cmake' is
+currently working with.
+
+NOTE: This option is going to be removed soon, since detection of the build
+toolchain is expected for the `0.6.` release of 'cmake'.
 
 4. METHODS ~
                                                                *cmake-methods*
