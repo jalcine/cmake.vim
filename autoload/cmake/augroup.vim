@@ -80,12 +80,14 @@ function! cmake#augroup#on_file_type(filetype)
   endif
 
   call cmake#buffer#set_options()
-  call cmake#ctags#refresh()
 
-  if exists('b:cmake_target')
-    call cmake#flags#inject()
+  if !exists('b:cmake_target')
+    return
   endif
 
+  call cmake#makeprg#set_for_buffer()
+  call cmake#path#refresh()
+  call cmake#ctags#refresh()
   call s:add_specific_buffer_commands()
   redraw
 endfunction
