@@ -14,18 +14,21 @@ CONTENTS ~
     3.1.4 `b:cmake_include_dirs`                     |b:cmake_include_dirs|
     3.1.5 `b:cmake_libraries`                        |b:cmake_libraries|
   3.2. Global Options                              |cmake-global-options|
-    3.2.1  `g:cmake_build_directories`               |g:cmake_build_directories|
-    3.2.2  `g:cmake_build_shared_libs`               |g:cmake_build_shared_libs|
-    3.2.3  `g:cmake_build_toolchain`                 |g:cmake_build_toolchain|
-    3.2.4  `g:cmake_build_type`                      |g:cmake_build_type|
-    3.2.5  `g:cmake_c_compiler`                      |g:cmake_c_compiler|
-    3.2.6  `g:cmake_cxx_compiler`                    |g:cmake_cxx_compiler|
-    3.2.7  `g:cmake_ctags`                           |g:cmake_ctags|
-    3.2.8  `g:cmake_extensions`                      |g:cmake_extensions|
-    3.2.9  `g:cmake_flags`                           |g:cmake_flags|
-    3.2.10 `g:cmake_generator`                       |g:cmake_generator|
-    3.2.11 `g:cmake_install_prefix`                  |g:cmake_install_prefix|
-    3.2.12 `g:cmake_set_makeprg`                     |g:cmake_set_makeprg|
+    3.2.1    `g:cmake_build_directories`             |g:cmake_build_directories|
+    3.2.2    `g:cmake_build_shared_libs`             |g:cmake_build_shared_libs|
+    3.2.3    `g:cmake_build_toolchain`               |g:cmake_build_toolchain|
+    3.2.4    `g:cmake_build_type`                    |g:cmake_build_type|
+    3.2.5    `g:cmake_c_compiler`                    |g:cmake_c_compiler|
+    3.2.6    `g:cmake_cxx_compiler`                  |g:cmake_cxx_compiler|
+    3.2.7    `g:cmake_ctags`                         |g:cmake_ctags|
+      3.2.7.1  `.project_files`                      |g:cmake_ctags.project_files|
+      3.2.7.2  `.include_files`                      |g:cmake_ctags.include_files|
+      3.2.7.3  `.executable`                         |g:cmake_ctags.executable|
+    3.2.8    `g:cmake_extensions`                    |g:cmake_extensions|
+    3.2.9    `g:cmake_flags`                         |g:cmake_flags|
+    3.2.10   `g:cmake_generator`                     |g:cmake_generator|
+    3.2.11   `g:cmake_install_prefix`                |g:cmake_install_prefix|
+    3.2.12   `g:cmake_set_makeprg`                   |g:cmake_set_makeprg|
 4. Methods                                         |cmake-methods|
   4.1 Creating a Project                           |:CMakeCreateBuild|
   4.2 Building                                     |:CMakeBuild|
@@ -287,6 +290,35 @@ A |string| value that'd be provided to 'cmake' when a new build's attempted to
 be created. This value can be whatever you'd like.
 
 See: |cmake#commands#create_build()|
+
+3.2.5. g:cmake_c_compiler ~
+                                                            *g:cmake_c_compiler*
+
+Default: $CC
+Valid values: A path to a working C compiler for CMake to use.
+
+3.2.6. g:cmake_cxx_compiler ~
+                                                          *g:cmake_cxx_compiler*
+
+Default: $CXX
+Valid values: A path to a working C++ compiler for CMake to use.
+
+3.2.7. g:cmake_ctags ~
+                                                                 *g:cmake_ctags*
+
+Default: `{'project_files':1,'include_files':0,'executable':'ctags'}`
+Valid values: Case-by-case
+
+This dictionary represents a set of options that can be set to manipulate how
+'cmake' handles `ctags`. |cmake-ctags|
+
+3.2.7.1. g:cmake_tags.project_files ~
+                                                    *g:cmake_tags.project_files*
+
+Default: `1`
+Valid values: `0`, `1`
+
+A |boolean| value determining if
 
 4. METHODS ~
                                                                *cmake-methods*
