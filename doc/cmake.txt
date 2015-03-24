@@ -256,8 +256,8 @@ for your preferred build directory.
 
 NOTE: The first match found by the options is used by |cmake#util#binary_dir()|.
 
-3.3.2. g:cmake_build_shared_libs ~
-                                                   *g:cmake_build_shared_libs*
+3.2.2. g:cmake_build_shared_libs ~
+                                                     *g:cmake_build_shared_libs*
 
 Default: 1
 Valid values: 0, 1
@@ -265,8 +265,8 @@ Valid values: 0, 1
 A |boolean| value that'd determine whether or not shared library builds are
 built by default.
 
-3.3.3. g:cmake_build_toolchain ~
-                                                     *g:cmake_build_toolchain*
+3.2.3. g:cmake_build_toolchain ~
+                                                       *g:cmake_build_toolchain*
 
 Default: 'gnumake'
 Valid values: 'gnumake', 'ninja'
@@ -276,6 +276,17 @@ currently working with.
 
 NOTE: This option is going to be removed soon, since detection of the build
 toolchain is expected for the `0.6.` release of 'cmake'.
+
+3.2.4. g:cmake_build_type ~
+                                                            *g:cmake_build_type*
+
+Default: '`Debug`'
+Valid values: *any string*
+
+A |string| value that'd be provided to 'cmake' when a new build's attempted to
+be created. This value can be whatever you'd like.
+
+See: |cmake#commands#create_build()|
 
 4. METHODS ~
                                                                *cmake-methods*
