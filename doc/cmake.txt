@@ -21,14 +21,13 @@ CONTENTS ~
     3.2.5    `g:cmake_c_compiler`                    |g:cmake_c_compiler|
     3.2.6    `g:cmake_cxx_compiler`                  |g:cmake_cxx_compiler|
     3.2.7    `g:cmake_ctags`                         |g:cmake_ctags|
-      3.2.7.1  `.project_files`                      |g:cmake_ctags.project_files|
-      3.2.7.2  `.include_files`                      |g:cmake_ctags.include_files|
-      3.2.7.3  `.executable`                         |g:cmake_ctags.executable|
+      3.2.7.1  `.executable`                         |g:cmake_ctags.executable|
     3.2.8    `g:cmake_extensions`                    |g:cmake_extensions|
     3.2.9    `g:cmake_flags`                         |g:cmake_flags|
     3.2.10   `g:cmake_generator`                     |g:cmake_generator|
     3.2.11   `g:cmake_install_prefix`                |g:cmake_install_prefix|
     3.2.12   `g:cmake_set_makeprg`                   |g:cmake_set_makeprg|
+    3.2.13   `g:cmake_exec`                          |g:cmake_exec|
 4. Methods                                         |cmake-methods|
   4.1 Creating a Project                           |:CMakeCreateBuild|
   4.2 Building                                     |:CMakeBuild|
@@ -306,19 +305,76 @@ Valid values: A path to a working C++ compiler for CMake to use.
 3.2.7. g:cmake_ctags ~
                                                                  *g:cmake_ctags*
 
-Default: `{'project_files':1,'include_files':0,'executable':'ctags'}`
+Default: `{'executable':'ctags'}`
 Valid values: Case-by-case
 
 This dictionary represents a set of options that can be set to manipulate how
 'cmake' handles `ctags`. |cmake-ctags|
 
-3.2.7.1. g:cmake_tags.project_files ~
-                                                    *g:cmake_tags.project_files*
+3.2.7.1. g:cmake_tags.exectuables ~
+                                                      *g:cmake_tags.exectuables*
+
+Default: `ctags`
+Valid values: A |string| to the path of where a `ctags` program can be found.
+
+3.2.8. g:cmake_extensions ~
+                                                            *g:cmake_extensions*
+
+Default: `{'async':'vim','sync':'vim'}`
+Valid values: Case-by-case
+
+A |dictionary| that holds the name of a |cmake-extension| to use for both
+asynchronous and synchronous actions.
+
+See: |cmake#util#shell_bgexec()|, |cmake#util#shell_exec()| and
+|cmake-extensions|.
+
+3.2.9. g:cmake_flags ~
+                                                                 *g:cmake_flags*
+
+Default: `{'filter':1,'inject':1,'reload':'on-demand'}`
+Valid values: Case-by-case
+
+A |dictionary| that holds values for handling flags fetched by 'cmake'.
+
+`g:cmake_flags.filter`                                   *g:cmake_flags.filter*
 
 Default: `1`
-Valid values: `0`, `1`
+Valid values: `0`, `1.`
 
-A |boolean| value determining if
+A |Boolean| value that determines if the act of filtering out specific flags
+should happen on processing. If enabled, only flags prefixed with `-i`, `-I`,
+`-W`, and `-f` will be available to 'cmake'. Otherwise, 'cmake' will obtain
+all of the provided flags.
+
+`g:cmake_flags.inject`                                   *g:cmake_flags.inject*
+
+Default: `1`
+Valid values: `0`, `1.`
+
+A |Boolean| value that determines if the act of injecting flag information
+into the buffer should happen. If enabled, then the value |b:cmake_flags| gets
+populated with the flags obtained by |cmake#targets#flags()|. Setting it to
+`0` just prohibits interacting with |b:cmake_flags| for now.
+
+NOTE: Setting this to `0` in the future will remove the |b:cmake_flags| variable.
+
+`g:cmake_flags.reload`                                   *g:cmake_flags.reload*
+
+Default: `on-demand`
+Valid values: `on-demand`, `automatic`, `always`, and `never`.
+
+NOTE: This is currently not implemented so the following documentation is
+subject to vary.
+
+A |String| value that determines when the act of updating the flag information
+for a provided target (by default, the one provided by |b:cmake_target|).
+
+    `on-demand`: (TODO)
+    `automatic`: (TODO)
+    `always`:    (TODO)
+    `never`:     (TODO)
+
 
 4. METHODS ~
                                                                *cmake-methods*
