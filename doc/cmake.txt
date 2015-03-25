@@ -320,14 +320,15 @@ Valid values: A |string| to the path of where a `ctags` program can be found.
 3.2.8. g:cmake_extensions ~
                                                             *g:cmake_extensions*
 
-Default: `{'async':'vim','sync':'vim'}`
-Valid values: Case-by-case
+Default: `[]`
+Valid values: A |List| of extension names that 'cmake' accepts.
 
-A |dictionary| that holds the name of a |cmake-extension| to use for both
-asynchronous and synchronous actions.
+A |List| of extension names that 'cmake' will accept to use for extending its
+usefulness. For now, the following are accepted:
 
-See: |cmake#util#shell_bgexec()|, |cmake#util#shell_exec()| and
-|cmake-extensions|.
+ * `dispatch` - requires |dispatch| (https://github.com/tpope/vim-dispatch)
+ * `syntastic` - requires |syntastic| (https://github.com/scrooloose/syntastic)
+ * `ycm` - requires |YouCompleteMe| (https://github.com/Valloric/YouCompleteMe)
 
 3.2.9. g:cmake_flags ~
                                                                  *g:cmake_flags*
@@ -375,15 +376,58 @@ for a provided target (by default, the one provided by |b:cmake_target|).
     `always`:    (TODO)
     `never`:     (TODO)
 
+3.2.10. g:cmake_generator ~
+                                                            *g:cmake_generator*
+
+Default: '`Unix Makefiles`'
+Valid values: '`Ninja`', '`Unix Makefiles`'
+
+A |String| value that represents the name of the CMake-supported generator
+that'll be used for driving the build system. Out of the box, 'cmake' has
+support for GNU Make and Ninja. Support for other build systems can be added
+via the extension system |cmake-extensions|.
+
+3.2.11. g:cmake_install_prefix ~
+                                                        *g:cmake_install_prefix*
+
+Default: '`/usr/local`'
+Valid values: A |String| to an existing path.
+
+A |String| value that represents a directory that can be used as an
+installation prefix for CMake's `install_target` and family of methods.
+
+3.2.12. g:cmake_set_makeprg ~
+                                                          *g:cmake_set_makeprg*
+
+Default: `1`
+Valid values: `0`, `1`.
+
+A |Boolean| value that tells 'cmake' if it's okay to update the |makeprg|
+value with a command specific to 'cmake' that'd rebuild the target that the
+corresponding buffer's file relates to, or the whole project itself if the
+file exists within the source directory |cmake#util#source_dir()| or within the
+binary directory |cmake#util#binary_dir()|.
+
+3.2.13. g:cmake_exec ~
+                                                                 *g:cmake_exec*
+Default: `{'async':'vim','sync':'vim'}`
+Valid values: Case-by-case
+
+A |dictionary| that holds the name of a |cmake-extension| to use for both
+asynchronous and synchronous actions.
+
+See: |cmake#util#shell_bgexec()|, |cmake#util#shell_exec()| and
+|cmake-extensions|.
 
 4. METHODS ~
-                                                               *cmake-methods*
+                                                                 *cmake-methods*
+
 There's a few methods binded to the editor for use of the developer. In the
 future, some of these methods might be automatically mapped to the keyboard
 within CMake files for easy use.
 
 4.1 CREATING A BUILD ~
-                                          *CMakeCreateBuild* *:CMakeCreateBuild*
+                                            *CMakeCreateBuild* *:CMakeCreateBuild*
 
 `:CMakeCreateBuild` takes only one argument, the name of the directory that
 the build directory will be. It'll fail if the name isn't one of the values
@@ -393,82 +437,87 @@ It'll make the directory if it doesn't exist, remove `CMakeCache.txt` if it
 exists (with confirmation) and invoke CMake within that directory.
 
 4.2 BUILDING ~
-                                                                 *:CMakeBuild*
+                                                        *CMakeBuild* *:CMakeBuild*
 
 Invokes `cmake --build $CMAKE_BINARY_DIR --target all`, building all CMake
-targets at once.
+targets at once. This command is agnostic of the underlying build system but
+doesn't allow for population of the |quickfix| or |locationlist| windows.
 
 4.3 CLEANING ~
-                                                                 *:CMakeClean*
+                                                       *CMakeClean*  *:CMakeClean*
 
 Invokes `cmake --build $CMAKE_BINARY_DIR --target clean`, cleaning the project
-of build artificats.
+of build artificats. This command is agnostic of the underlying build system but
+doesn't allow for population of the |quickfix| or |locationlist| windows.
 
 4.4 TESTING ~
-                                                                  *:CMakeTest*
+                                                                    *:CMakeTest*
 
 Invokes `make -C $CMAKE_BINARY_DIR test`, running whatever you got for that
 target.
 
+NOTE: This is hard coded to use `gnumake` commands at the moment. The next
+major release will include more support for agnostic builds.
+
 4.5 INSTALLING ~
-                                                                *:CMakeInstall*
+                                                                 *:CMakeInstall*
 
 Invokes `make -C $CMAKE_BINARY_DIR install`, installs all of the things!
 Doesn't take into consideration file permissions or access, silly ol' make.
 
 4.6 GET CACHE VARIABLE'S VALUE ~
-                                                                *:CMakeGetVar*
+                                                                  *:CMakeGetVar*
 
 Obtains the specified variable's value from CMake's cache. Note that fact, it
 has to be set into the cache for it to be retrieved.
 
 4.7 INVOKING TARGETS ~
-                                                                *:CMakeTarget*
+                                                                  *:CMakeTarget*
 
 Invokes `cmake --build $CMAKE_BINARY_DIR --target <target>`, <target> being
 the target you'd choose to invoke.
 
 4.8 CLEANING & BUILDING AT ONCE ~
-                                                            *:CMakeCleanBuild*
+                                                              *:CMakeCleanBuild*
 
 Invokes `:CMakeClean` and then `:CMakeBuild`.
 
-5. INTEGRATIONS ~
-                                                          *cmake-integrations*
+5. INTEGRATIONS / EXTENSIONS ~
+                                           *cmake-extensions* *cmake-integrations*
 
 Life isn't fun if a plug-in doesn't integrate to another. `cmake.vim`, with a
-bit of lost sleep, can work with syntastic and You Complete Me with with the
+bit of lost sleep, can work with |syntastic| and |YouCompleteMe| with the
 enabling of an option.
 
 5.1. SYNTASTIC ~
-                                                *cmake-integrations-syntastic*
+                                                  *cmake-integrations-syntastic*
 
 No extra work is required. `cmake.vim` adds the necessary flags to all of the
 C and C++ checkers. Work is planned to refactor this logic and allow explicit
 checker parameters (since it's targeted for the gcc/ycm checkers and not
-cpplint).
+cpplint). To enable this, add the following line to your |vimrc|:
+
+  let g:cmake_exec = ['syntastic']
 
 5.2. YOU COMPLETE ME ~
-                                                      *cmake-integrations-ycm*
+                                                        *cmake-integrations-ycm*
 
-YouCompleteMe provides a means of extending its configuration for the use of
-autocompletion. To do so, you'd need to get the "b:cmake_flags" variables
+|YouCompleteMe| provides a means of extending its configuration for the use of
+autocompletion. To do so, you'd need to get the |b:cmake_flags| variable
 from your "client_data" dictionary. From there, you'd add it to the list of
 flags that are to be passed into YCM.
 
     cmake_flags = kwargs['client_data']
     final_flags += cmake_flags
 
-This can be disabled by setting `g:cmake_injects_flags.ycm` to 0.
-
-6. CMake's API ~
-                                                        *cmake-api*
+6. CMAKE'S API ~
+                                                                     *cmake-api*
 
 `cmake.vim` exposes an API of sorts that's used for every aspect of the plugin
 for other people to use.
 
 6.1 cmake#augroup#init() ~
-                                                       *cmake#augroup#init()*
+                                                          *cmake#augroup#init()*
 
 Arguments: None
 Returns: None
@@ -479,7 +528,7 @@ happened to remove said augroup. It's used by the project on
 
 
 6.2 cmake#augroup#on_vim_enter() ~
-                                                 *cmake#augroup#on_vim_enter()*
+                                                  *cmake#augroup#on_vim_enter()*
 
 Arguments: None
 Returns: None
@@ -489,7 +538,7 @@ NOTE: For now, this just caches the entire project's target information.
 
 
 6.3 cmake#augroup#on_buf_enter() ~
-                                                 *cmake#augroup#on_buf_enter()*
+                                                  *cmake#augroup#on_buf_enter()*
 
 Arguments: None
 Returns: None
@@ -506,8 +555,8 @@ This currently does the following:
 Arguments: filetype
 Returns: None
 
-Handles the work necessary for the provided filetype.
-This currently does the following:
+Handles the work necessary for the provided filetype. This currently does the
+following:
   - Updates meta-data for the current buffer (`cmake#buffer#set_options()`)
   - Updates `&makeprg`, `&path`, `&tags` options for the buffer.
   - Updates `&flags` for the buffer's target.
@@ -515,14 +564,50 @@ This currently does the following:
 Bails out early if `b:cmake_target` isn't set.
 
 6.5 cmake#augroup#on_buf_write() ~
-                                              *cmake#augroup#on_buf_write()*
+                                                  *cmake#augroup#on_buf_write()*
 
 Arguments: None
 Returns: None
 
-Handles the work necessary after the buffer's written.
-This currently does the following:
+Handles the work necessary after the buffer's written. This currently does the
+following:
   - Regenerates tags from the buffer's target files.
+
+6.6. cmake#buffer#has_project() ~
+                                                    *cmake#buffer#has_project()*
+
+Arguments: None
+Returns: None
+
+Determines if the current buffer exists within a CMake source directory
+|cmake#util#source_dir()| or a CMake binary directory
+|cmake#util#binary_dir()|.
+
+6.7. cmake#buffer#set_options() ~
+                                                    *cmake#buffer#set_options()*
+
+Arguments: None
+Returns: None
+
+Applies |buffer-variable|s for 'cmake'. The variables set are:
+  * |b:cmake_target|
+  * |b:cmake_binary_dir|
+  * |b:cmake_source_dir|
+  * |b:cmake_include_dirs|
+  * |b:cmake_libraries|
+
+6.8. cmake#cache#write() ~
+                                                           *cmake#cache#write()*
+
+Arguments: `variable_name`, `variable_value`
+Returns: `0`, `1`
+
+Sets a new value or updates a old value in `CMakeCache.txt`. Returns `0` if
+the value could not be updated or if Vim is not in a CMake project. Returns
+`1` if it was successful in updating the cache.
+
+
+
 
 
 vim:tw=78:ts=8:ft=help:norl:nospell:
