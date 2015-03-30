@@ -173,16 +173,18 @@ function s:cmake_clear_buffer_opts()
 endfunction
 
 function! s:cmake_print_info()
+  if exists('b:cmake_target')
   let l:current_file  = fnamemodify(expand('%'), ':p')
-  let l:current_flags = filter(copy(b:cmake_flags),
-        \ 'v:val =~ "-f" || v:val =~ "-W"')
+  let l:current_flags = uniq(filter(copy(b:cmake_flags),
+        \ 'v:val =~ "-f" || v:val =~ "-W"'))
   echo "CMake Info for '" . fnamemodify(l:current_file,':t') . "':\n" .
         \ "Target:              "   . b:cmake_target . "\n" .
         \ "Binary Directory:    "   . fnamemodify(b:cmake_binary_dir, ':p:.') .
         \ "\nSource Directory:    " . fnamemodify(b:cmake_source_dir, ':p:.') .
         \ "\nFlags:               " . join(l:current_flags, ', ') . "\n" .
-        \ "Include Directories: "   . join(b:cmake_include_dirs, ',') . "\n"
-        \ "Libraries:           "   . join(b:cmake_libraries, ',')
+        \ "Include Directories: "   . join(uniq(copy(b:cmake_include_dirs)), ',') . "\n"
+        \ "Libraries:           "   . join(uniq(copy(b:cmake_libraries)), ',')
+  endif
 endfunction
 
 function! s:clean_then_build()
