@@ -68,8 +68,8 @@ endfunc
 
 func! cmake#targets#for_file(filepath)
   let l:filename = fnamemodify(a:filepath,':t')
-  let l:basename = fnamemodify(a:filepath,':t:r')
-  let l:fullname = fnamemodify(a:filepath,':p')
+  let l:basename = substitute(fnamemodify(a:filepath,':t:r'), getcwd(), '', 'g')
+  let l:fullname = substitute(fnamemodify(a:filepath,':p'), getcwd(), '', 'g')
 
   if has_key(g:cmake_cache.files, l:filename)
     return g:cmake_cache.files[l:filename]
