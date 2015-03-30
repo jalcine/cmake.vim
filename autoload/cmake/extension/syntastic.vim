@@ -17,4 +17,12 @@ func! cmake#extension#syntastic#inject(args)
   if !exists('b:syntastic_cpp_compiler_options')
     let b:syntastic_cpp_compiler_options = join(l:flags, ' ')
   endif
+
+  if !exists('b:syntastic_cpp_clang_tidy_args')
+    let b:syntastic_cpp_clang_tidy_args = b:syntastic_cpp_compiler_options
+  endif
+
+  if !exists('b:syntastic_cpp_clang_check_args')
+    let b:syntastic_cpp_clang_check_args = b:syntastic_cpp_compiler_options
+  endif
 endfunc
