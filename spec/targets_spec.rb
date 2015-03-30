@@ -293,6 +293,19 @@ describe 'cmake#targets' do
           expect(target_info['files']).to_not include(target)
         end
       end
+
+      describe 'cache' do
+        it 'populate target list' do
+          validate_response 'call cmake#targets#cache()'
+          cache_json = validate_json_response 'echo g:cmake_cache'
+          expect(cache_json[:targets]).to_not be_empty
+          expect(cache_json[:files]).to_not be_empty
+        end
+
+        xit 'populate file list'
+        xit 'provides short filenames'
+        xit 'prevents collisions with filenames'
+      end
     end
   end
 end
