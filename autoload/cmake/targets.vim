@@ -157,7 +157,6 @@ func! cmake#targets#cache()
     let files = cmake#targets#files(aTarget)
 
     if empty(files)
-      call cmake#util#echo_msg("The target '" . aTarget . "' has no files.")
       continue
     endif
 
