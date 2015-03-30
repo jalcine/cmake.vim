@@ -37,24 +37,23 @@ function! cmake#augroup#on_vim_enter()
 endfunction
 
 function! cmake#augroup#on_buf_enter()
-  call cmake#util#echo_msg('Applying generic buffer options for this buffer...')
+  call cmake#util#echo_msg('Refreshing local buffer variables & options...')
   call cmake#buffer#set_options()
-
-  call cmake#util#echo_msg('Applying values for "&l:path"...')
   call cmake#path#refresh()
-
-  call cmake#util#echo_msg('Applying values for "&l:makeprg"...')
   call cmake#makeprg#set_for_buffer()
+  call cmake#util#echo_msg('Local buffer variables & options refreshed.')
 endfunction
 
 function! cmake#augroup#on_file_type(filetype)
+  if !empty(&buftype)
+    return " Make sure this is a normal buffer.
+  endif
+
   if !cmake#buffer#has_project()
     return
   endif
 
   call cmake#buffer#set_options()
-  call cmake#path#refresh()
-  call cmake#makeprg#set_for_buffer()
   call cmake#ctags#refresh()
 
   if exists('b:cmake_target')
@@ -62,26 +61,16 @@ function! cmake#augroup#on_file_type(filetype)
   endif
 
   call s:add_specific_buffer_commands()
-  doau BufEnter <abuf>
   redraw
-
 endfunction
 
 function! cmake#augroup#on_buf_write()
-  call cmake#util#echo_msg('Applying values for "&tags" (will generate if not existing)...')
   call cmake#ctags#refresh()
 endfunction
 
 function! cmake#augroup#on_file_write()
-  let target = 'all'
-  if exists(b:cmake_target)
-    let target = b:cmake_target
-  endif
-
-  if target == 'all'
-    call cmake#targets#clear_all()
-  else
-    call cmake#targets#clear(target)
+  if exists('b:cmake_target')
+    call cmake#targets#clear(b:cmake_target)
   endif
 
   call cmake#targets#cache()
