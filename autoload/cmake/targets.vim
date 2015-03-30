@@ -67,10 +67,9 @@ func! cmake#targets#libraries(target)
 endfunc
 
 func! cmake#targets#for_file(filepath)
-  " TODO: Need to do work for CMake files, autoset to all.
-
   let l:filename = fnamemodify(a:filepath,':t')
   let l:basename = fnamemodify(a:filepath,':t:r')
+  let l:fullname = fnamemodify(a:filepath,':p')
 
   if has_key(g:cmake_cache.files, l:filename)
     return g:cmake_cache.files[l:filename]
@@ -88,14 +87,18 @@ func! cmake#targets#for_file(filepath)
   let l:target = ''
   for aTarget in l:targets
     let files = cmake#targets#files(aTarget)
-    if empty(files)
-      continue
-    endif
+    let l:srcdir = cmake#targets#source_dir(aTarget)
+    let l:bindir = cmake#targets#binary_dir(aTarget)
+    let l:file_exists = filereadable(l:fullname)
 
+    let l:in_srcdir = (stridx(l:fullname, l:srcdir, 0) == 0)
+    let l:in_bindir = (stridx(l:fullname, l:bindir, 0) == 0)
+    let l:in_project = (l:in_srcdir || l:in_bindir) && l:file_exists
     call filter(files, 'strridx(v:val, l:filename) != -1')
 
-    if len(files) != 0
+    if len(files) != 0 || l:in_project
       let l:target = aTarget
+      break
     endif
   endfor
 
