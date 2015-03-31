@@ -20,10 +20,12 @@ func! cmake#extension#syntastic#inject(args)
   endif
 
   if !exists('b:syntastic_cpp_clang_tidy_args')
-    let b:syntastic_cpp_clang_tidy_args = b:syntastic_cpp_compiler_options
+    let b:syntastic_cpp_clang_tidy_args = '-p ' . cmake#util#binary_dir() .
+          \ b:syntastic_cpp_compiler_options
   endif
 
   if !exists('b:syntastic_cpp_clang_check_args')
-    let b:syntastic_cpp_clang_check_args = b:syntastic_cpp_compiler_options
+    let b:syntastic_cpp_clang_check_args = '-p ' . cmake#util#binary_dir() .
+          \ b:syntastic_cpp_compiler_options
   endif
 endfunc
