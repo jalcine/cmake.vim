@@ -52,28 +52,19 @@ function! cmake#augroup#on_file_type(filetype)
     return
   endif
 
-  call cmake#util#echo_msg('Applying buffer options for this file...')
   call cmake#buffer#set_options()
-
-  if !exists('b:cmake_target')
-    return
-  endif
-
-  call cmake#util#echo_msg('Applying values for "&l:makeprg"...')
-  call cmake#makeprg#set_for_buffer()
-
-  call cmake#util#echo_msg('Applying values for "&path"...')
   call cmake#path#refresh()
-
-  call cmake#util#echo_msg('Applying values for "&tags" (will generate if not existing)...')
+  call cmake#makeprg#set_for_buffer()
   call cmake#ctags#refresh()
 
-  call cmake#util#echo_msg('Applying values for "&flags"....')
-  call cmake#flags#inject()
+  if exists('b:cmake_target')
+    call cmake#flags#inject()
+  endif
 
   call s:add_specific_buffer_commands()
   doau BufEnter <abuf>
   redraw
+
 endfunction
 
 function! cmake#augroup#on_buf_write()
