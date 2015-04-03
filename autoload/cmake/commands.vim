@@ -25,7 +25,11 @@ function! cmake#commands#build_current()
   if exists('b:cmake_target')
     call cmake#commands#invoke_target(b:cmake_target)
   else
-    call cmake#util#echo_msg('No target recognized for this buffer.')
+    if cmake#buffer#has_project()
+      call cmake#commands#invoke_target('all')
+    else
+      call cmake#util#echo_msg('This buffer does not live in a CMake project.')
+    end
   endif
 endfunc
 
