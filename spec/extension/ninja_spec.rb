@@ -3,9 +3,7 @@ require 'spec_helper'
 describe 'cmake#extension#ninja' do
   before(:each) do
     cmake.create_new_project
-    cmake.configure_project({
-      options: ['-G Ninja']
-    })
+    cmake.configure_project(options: ['-G Ninja'])
   end
 
   describe '#makeprg' do
