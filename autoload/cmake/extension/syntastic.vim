@@ -5,6 +5,7 @@
 " Website:          https://jalcine.github.io/cmake.vim
 " Version:          0.5.4
 
+" TODO: Complete support of syntastic.
 func! cmake#extension#syntastic#inject(args)
   let l:target = a:args.target
   let l:include_dirs = cmake#targets#include_dirs(target)
