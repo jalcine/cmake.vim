@@ -10,6 +10,11 @@
 " Returns: '1' if the current buffer exists under the CMake sources.
 " Returns: '0' if the current buffer does not exist under the CMake sources.
 func! cmake#buffer#has_project()
+  if !empty(&buftype)
+    return
+    " Make sure this is a normal buffer.
+  endif
+
   let l:current_file = expand('%:p')
 
   " Check if this file lives under the source or binary directory.
