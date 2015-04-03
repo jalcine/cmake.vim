@@ -45,10 +45,6 @@ function! cmake#augroup#on_buf_enter()
 endfunction
 
 function! cmake#augroup#on_file_type(filetype)
-  if !empty(&buftype)
-    return " Make sure this is a normal buffer.
-  endif
-
   if !cmake#buffer#has_project()
     return
   endif

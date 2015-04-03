@@ -158,7 +158,7 @@ PENDING_TEST
 
             expect(obtained_tags).to_not be_empty
 
-            expected_tags.each do | expected_tag |
+            expected_tags.each do |expected_tag|
               expect(obtained_tags).to include(expected_tag)
             end
           end
@@ -201,9 +201,9 @@ PENDING_TEST
 
       describe '#on_file_write' do
         let(:current_target)  { vim.echo 'b:cmake_target' }
-        let(:current_flags)   { validate_json_response "echo g:cmake_cache.targets[b:cmake_target].flags" }
-        let(:current_sources) { validate_json_response "echo g:cmake_cache.targets[b:cmake_target].files" }
-        let(:targets) { validate_json_response "echo cmake#targets#list()" }
+        let(:current_flags)   { validate_json_response 'echo g:cmake_cache.targets[b:cmake_target].flags' }
+        let(:current_sources) { validate_json_response 'echo g:cmake_cache.targets[b:cmake_target].files' }
+        let(:targets) { validate_json_response 'echo cmake#targets#list()' }
 
         before(:each) do
           vim.command 'call cmake#targets#cache()'
@@ -225,7 +225,7 @@ PENDING_TEST
           FILE
 
           vim.write
-          pending "Check this out."
+          pending 'Check this out.'
           expect(targets).to include(old_target)
 
           vim.edit 'plugin.cpp'
@@ -236,7 +236,7 @@ PENDING_TEST
 
       describe '#on_buf_write' do
         let(:current_target) { validate_response('echo b:cmake_target').chomp }
-        let(:current_sources) { validate_json_response "echo g:cmake_cache[b:cmake_target].files" }
+        let(:current_sources) { validate_json_response 'echo g:cmake_cache[b:cmake_target].files' }
 
         before(:each) do
           vim.command 'call cmake#targets#cache()'
@@ -246,7 +246,7 @@ PENDING_TEST
         it 'updates the ctags for the provided buffer' do
           vim.edit 'plugin.cpp'
           tag_file = "build/tags/#{current_target}.tags"
-          expect(File.exists? tag_file).to be(true)
+          expect(File.exist? tag_file).to be(true)
           # TODO: Use timestamping changes.
         end
       end
