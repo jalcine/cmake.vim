@@ -8,15 +8,12 @@ describe 'cmake#targets' do
     ninja: {
       generator: 'Ninja'
     }
-  }.each do | ext, opts |
+  }.each do |ext, opts|
     context "when using a #{ext} build system" do
-
       before(:each) do
         vim.command 'au! cmake.vim'
         cmake.create_new_project
-        cmake.configure({
-          options: ['-G ' + opts[:generator] ]
-        })
+        cmake.configure(options: ['-G ' + opts[:generator]])
         vim.command "let g:cmake_build_toolchain='#{ext}'"
       end
 
@@ -63,7 +60,7 @@ describe 'cmake#targets' do
       end
 
       describe '#exists' do
-        context'function existence' do
+        context 'function existence' do
           it 'does not exist when not called' do
             expect(function_exists? 'cmake#targets#exists(target)').to eql(false)
           end
@@ -131,11 +128,11 @@ describe 'cmake#targets' do
         end
 
         it 'obtains flags for a known target' do
-          source_dir = vim.command('echo cmake#util#source_dir()').gsub(/\/$/,'')
+          source_dir = vim.command('echo cmake#util#source_dir()').gsub(/\/$/, '')
           expected_cpp_flags = [
             '-Dsample_library_EXPORTS',
             /-I(#{source_dir}|\.\.)/,
-            '-fPIC',
+            '-fPIC'
           ]
 
           flags = validate_json_response('echo cmake#targets#flags("sample-library")').sort
@@ -177,7 +174,6 @@ describe 'cmake#targets' do
           expect(plugin_hpp).to eql('sample-library')
           expect(just_plugin).to eql('sample-library')
         end
-
       end
 
       describe '#libraries' do
@@ -216,7 +212,7 @@ describe 'cmake#targets' do
         it 'obtains the include directories for a target' do
           include_dirs = validate_json_response('echo cmake#targets#include_dirs("sample-library")')
           expect(include_dirs).to_not be_empty
-          include_dirs.each { | include_dir | expect(Dir.exists? include_dir).to eql(true) }
+          include_dirs.each { |include_dir| expect(Dir.exist? include_dir).to eql(true) }
         end
       end
 
@@ -236,15 +232,14 @@ describe 'cmake#targets' do
           path = validate_response 'echo cmake#targets#binary_dir("sample-binary")'
           expect(path).to_not end_with '/'
           expect(path).to include 'build'
-          expect(Dir.exists? path).to eql(true)
+          expect(Dir.exist? path).to eql(true)
         end
 
         it 'does not find paths for non-existing targets' do
           path = vim.command 'echo cmake#targets#binary_dir("dirty_pig")'
           expect(path).to be_empty
-          expect(Dir.exists? path).to eql(false)
+          expect(Dir.exist? path).to eql(false)
         end
-
       end
 
       describe '#source_dir' do
@@ -266,35 +261,35 @@ describe 'cmake#targets' do
           expect(path).to_not include 'build'
           expect(path).to_not end_with '/'
           expect(path).to_not eql(bin_path)
-          expect(Dir.exists? path).to eql(true)
+          expect(Dir.exist? path).to eql(true)
         end
 
         it 'does not find them for non-existing targets' do
           path = vim.command 'echo cmake#targets#source_dir("dirty_pig")'
-          expect(Dir.exists? path).to eql(false)
+          expect(Dir.exist? path).to eql(false)
         end
       end
 
-        describe 'clear_all' do
-          it 'clears out the cache of known targets, files and flags' do
-            vim.command 'call cmake#targets#cache()'
-            vim.command 'call cmake#targets#clear_all()'
-            cache = validate_json_response 'echo g:cmake_cache'
-            expect(cache['targets'].keys).to be_empty
-          end
-        end
-
-        describe 'clear' do
-          it 'clears only the provided target from the cache' do
-            target = 'sample-library'
-            vim.command 'call cmake#targets#cache()'
-            vim.command "call cmake#targets#clear('#{target}')"
-            cache = validate_json_response 'echo g:cmake_cache'
-            target_info = cache['targets']['sample-library']
-            expect(target_info['flags']).to_not include(target)
-            expect(target_info['files']).to_not include(target)
-          end
+      describe 'clear_all' do
+        it 'clears out the cache of known targets, files and flags' do
+          vim.command 'call cmake#targets#cache()'
+          vim.command 'call cmake#targets#clear_all()'
+          cache = validate_json_response 'echo g:cmake_cache'
+          expect(cache['targets'].keys).to be_empty
         end
       end
+
+      describe 'clear' do
+        it 'clears only the provided target from the cache' do
+          target = 'sample-library'
+          vim.command 'call cmake#targets#cache()'
+          vim.command "call cmake#targets#clear('#{target}')"
+          cache = validate_json_response 'echo g:cmake_cache'
+          target_info = cache['targets']['sample-library']
+          expect(target_info['flags']).to_not include(target)
+          expect(target_info['files']).to_not include(target)
+        end
+      end
+    end
   end
 end

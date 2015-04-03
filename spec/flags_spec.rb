@@ -9,9 +9,8 @@ describe 'cmake.vim#flags' do
       generator: 'Ninja'
     }
   }
-  build_systems.each { | ext, opts |
+  build_systems.each do |ext, _opts|
     context "when using a #{ext} build system" do
-
       before(:each) do
         vim.command 'au! cmake.vim'
         cmake.create_new_project
@@ -21,7 +20,6 @@ describe 'cmake.vim#flags' do
       end
 
       describe '#collect_for_target' do
-
         context 'function existence' do
           it 'does not exist when not called' do
             expect(function_exists? 'cmake#flags#collect_for_target(target)').to eql(false)
@@ -47,7 +45,6 @@ describe 'cmake.vim#flags' do
       end
 
       describe '#filter' do
-
         context 'function existence' do
           it 'does not exist when not called' do
             expect(function_exists? 'cmake#flags#filter(flags)').to eql(false)
@@ -69,12 +66,12 @@ describe 'cmake.vim#flags' do
           '-I/usr/include',
           '-i/usr/src',
           '-Wall',
-          '-fPIC',
+          '-fPIC'
         ]
 
-        flags.each do | permitted_flag |
+        flags.each do |permitted_flag|
           it "permits flags like #{permitted_flag}" do
-            command = 'echo cmake#flags#filter(["'+permitted_flag+'"])'
+            command = 'echo cmake#flags#filter(["' + permitted_flag + '"])'
             res = validate_response(command)
             res.gsub! '\'', '"'
             res = JSON.parse(res)
@@ -84,7 +81,6 @@ describe 'cmake.vim#flags' do
       end
 
       describe '#inject' do
-
         context 'function existence' do
           it 'does not exist when not called' do
             expect(function_exists? 'cmake#flags#inject()').to eql(false)
@@ -114,5 +110,5 @@ describe 'cmake.vim#flags' do
         end
       end
     end
-  }
+  end
 end
