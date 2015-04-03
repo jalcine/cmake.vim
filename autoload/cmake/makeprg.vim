@@ -33,7 +33,7 @@ function cmake#makeprg#set_for_buffer()
     return
   endif
 
-  if exists('b:cmake_target') && !empty(b:cmake_target)
+  if exists('b:cmake_target')
     let &l:makeprg = cmake#makeprg#for_target(b:cmake_target)
   else
     let &l:makeprg = cmake#makeprg#for_target('all')
