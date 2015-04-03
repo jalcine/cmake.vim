@@ -65,12 +65,12 @@ func! cmake#ctags#paths_for_target(target)
 endfunc
 
 func! cmake#ctags#refresh()
-  if exists('b:cmake_target')
-    call s:set_tags(join(cmake#ctags#paths_for_target(b:cmake_target), ','))
-  endif
+  for target in cmake#targets#list()
+    call s:set_tags(join(cmake#ctags#paths_for_target(target), ','))
+  endfor
 endfunc
 
 func! cmake#ctags#wipe(target)
   let l:tag_file = cmake#ctags#filename(a:target)
-  
+
 endfunc
