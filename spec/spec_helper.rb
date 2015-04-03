@@ -18,14 +18,14 @@ Spork.prefork do
   require_relative 'lib/cmakevim'
   require_relative 'lib/vimrunner/extras'
 
-  RSpec.configure do | config |
+  RSpec.configure do |config|
     config.include Vimrunner::Testing
     config.include Vimrunner::Extras
     config.include CMakeVim::Environment
     config.include CMakeVim::RSpec
   end
 
-  Vimrunner::RSpec.configure do | config |
+  Vimrunner::RSpec.configure do |config|
     config.reuse_server = false
 
     config.start_vim do
@@ -38,8 +38,8 @@ Spork.prefork do
 end
 
 Spork.each_run do
-  RSpec.configure do | config |
-    config.around do | example |
+  RSpec.configure do |config|
+    config.around do |example|
       # Give us a new directory to work in.
       dir = Dir.mktmpdir
       Dir.chdir(dir) do
@@ -50,7 +50,7 @@ Spork.each_run do
         begin
           # TODO: Move the different build type logic here.
           example.run
-        rescue Exception => e
+        rescue StandardError => e
           puts "[cmake.vim] Error running test: #{e}"
         end
 
