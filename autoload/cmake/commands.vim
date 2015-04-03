@@ -167,7 +167,7 @@ function s:cmake_clear_buffer_opts()
     unlet b:cmake_binary_dir
   endif
 
-  if exists('b:cmake_target')j
+  if exists('b:cmake_target')
     unlet b:cmake_target
   endif
 endfunction
