@@ -86,7 +86,6 @@ func! cmake#targets#for_file(filepath)
 
   let l:target = ''
   for aTarget in l:targets
-    let files = cmake#targets#files(aTarget)
     let l:srcdir = cmake#targets#source_dir(aTarget)
     let l:bindir = cmake#targets#binary_dir(aTarget)
     let l:file_exists = filereadable(l:fullname)
@@ -94,11 +93,18 @@ func! cmake#targets#for_file(filepath)
     let l:in_srcdir = (stridx(l:fullname, l:srcdir, 0) == 0)
     let l:in_bindir = (stridx(l:fullname, l:bindir, 0) == 0)
     let l:in_project = (l:in_srcdir || l:in_bindir) && l:file_exists
-    call filter(files, 'strridx(v:val, l:filename) != -1')
 
-    if len(files) != 0 || l:in_project
+    if l:in_project
       let l:target = aTarget
       break
+    else
+      let files = cmake#targets#files(aTarget)
+      call filter(files, 'strridx(v:val, l:filename) != -1')
+
+      if len(files) != 0
+        let l:target = aTarget
+        break
+      endif
     endif
   endfor
 
@@ -145,9 +151,33 @@ func! cmake#targets#files(target)
     return []
   endif
 
+
   if empty(g:cmake_cache.targets[a:target].files)
     let l:files_lookup = cmake#extension#function_for('find_files_for_target', g:cmake_build_toolchain)
     let l:files = {l:files_lookup}(a:target)
+
+    func s:fix_up_path(target, filename)
+      let l:filename = ""
+      let l:srcdir = cmake#targets#source_dir(a:target)
+      let l:bindir = cmake#targets#binary_dir(a:target)
+
+      let l:binfile = glob(l:bindir . "/**/" . a:filename)
+      let l:srcfile = glob(l:srcdir . "/**/" . a:filename)
+
+      if !empty(l:binfile)
+        let l:filename = l:binfile
+      endif
+
+      if !empty(l:srcfile)
+        let l:filename = l:srcfile
+      endif
+
+      return l:filename
+    endfunc
+
+    call map(l:files, "s:fix_up_path('".a:target."',v:val)")
+    delfunc s:fix_up_path
+
     let g:cmake_cache.targets[a:target].files = l:files
   endif
 

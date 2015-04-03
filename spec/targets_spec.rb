@@ -45,8 +45,8 @@ describe 'cmake#targets' do
             expect(function_exists? 'cmake#targets#build(target)').to eql(true)
           end
 
-          # NOTE: This is due to autocommands invoking this function, thus pulling
-          # in all of the extra methods.
+          # NOTE: This is due to autocommands invoking this function,
+          # thus pulling in all of the extra methods.
           it 'does not exists when not called' do
             expect(function_exists? 'cmake#targets#build(target)').to eql(false)
           end
@@ -62,7 +62,8 @@ describe 'cmake#targets' do
       describe '#exists' do
         context 'function existence' do
           it 'does not exist when not called' do
-            expect(function_exists? 'cmake#targets#exists(target)').to eql(false)
+            func_exists = function_exists? 'cmake#targets#exists(target)'
+            expect(func_exists).to eql(false)
           end
 
           it 'does exist when called' do
@@ -73,12 +74,14 @@ describe 'cmake#targets' do
         end
 
         it 'confirms the existence of known targets' do
-          resp = validate_response('echo cmake#targets#exists("sample-library")').to_i
+          command = 'echo cmake#targets#exists("sample-library")'
+          resp = validate_response(command).to_i
           expect(resp).to eql(1)
         end
 
         it 'confirms the lack of a unknown targets' do
-          resp = validate_response('echo cmake#targets#exists("kid-robot")').to_i
+          command = 'echo cmake#targets#exists("kid-robot")'
+          resp = validate_response(command).to_i
           expect(resp).to eql(0)
         end
       end
@@ -90,15 +93,15 @@ describe 'cmake#targets' do
           end
 
           it 'does exist when called' do
-            output = validate_response 'echo cmake#targets#files("sample-binary")'
+            validate_response 'echo cmake#targets#files("sample-binary")'
             expect(function_exists? 'cmake#targets#files(target)').to eql(true)
-            expect(output).to_not be_empty
           end
         end
 
         it 'procures the files for a known target' do
-          file_list = validate_json_response 'echo cmake#targets#files("sample-library")'
-          expect(file_list).to include 'plugin.cpp'
+          command = 'echo cmake#targets#files("sample-library")'
+          file_list = validate_json_response command
+          expect(file_list).to include "#{@dir}/plugin.cpp"
           expect(file_list.count).to eql(1)
         end
 
