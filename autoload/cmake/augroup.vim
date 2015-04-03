@@ -24,6 +24,9 @@ function! cmake#augroup#init()
 endfunction
 
 function! cmake#augroup#on_vim_enter()
+  if &diff
+    " We don't want cmake.vim doing any work in diff mode, it slows things down.
+  endif
   " NOTE: This function should handle the initial loading of cmake.vim's
   " necessary data in order for it to operate properly. This includes the
   " following:
