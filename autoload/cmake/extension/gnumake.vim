@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.5.4
+" Version:          0.5.5
 
 function! s:parse_target_depends(dependInfoCMakeFilePath, target)
   let l:dependContents = readfile(a:dependInfoCMakeFilePath)
