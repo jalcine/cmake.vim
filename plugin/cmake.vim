@@ -3,7 +3,7 @@
 " Author:      Jacky Alciné <me@jalcine.me>
 " License:     MIT
 " Website:     https://jalcine.github.io/cmake.vim
-" Version:     0.5.4
+" Version:     0.5.5
 
 if exists('g:loaded_cmake')
   finish
@@ -40,7 +40,7 @@ func! s:get_c_compiler()
     return $CC
   endif
 
-  return "/usr/bin/c"
+  return "/usr/bin/cc"
 endfunc
 
 " Local Function: s:setauto()
@@ -56,12 +56,10 @@ let s:options = {
   \  'g:cmake_build_toolchain':   'gnumake',
   \  'g:cmake_build_type':        'RelWithDebInfo',
   \  'g:cmake_c_compiler':        s:get_c_compiler(),
+  \  'g:cmake_cxx_compiler':      s:get_cpp_compiler(),
   \  'g:cmake_ctags':             {
-  \       'project_files':        1,
-  \       'include_files':        0, 
   \       'executable':           'ctags'
   \  },
-  \  'g:cmake_cxx_compiler':      s:get_cpp_compiler(),
   \  'g:cmake_exec':              { 
   \       'async':                'vim',
   \       'sync':                 'vim'

@@ -3,7 +3,7 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.5.4
+" Version:          0.5.5
 
 let s:failsafe_path="/usr/include,/usr/local/include,."
 
@@ -90,6 +90,10 @@ func! cmake#path#refresh_target_paths()
   let l:paths = []
   let l:buffer_dir = expand('<afile>:p:h')
   let l:target = cmake#targets#for_file(expand('<afile>:p'))
+  if empty(l:target)
+    return
+  endif
+
   let l:target_source_dir = cmake#targets#source_dir(l:target)
   let l:target_binary_dir = cmake#targets#binary_dir(l:target)
   let l:target_include_dirs = cmake#targets#include_dirs(l:target)

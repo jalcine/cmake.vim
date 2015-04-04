@@ -3,11 +3,9 @@
 " Author:           Jacky Alciné <me@jalcine.me>
 " License:          MIT
 " Website:          https://jalcine.github.io/cmake.vim
-" Version:          0.5.4
+" Version:          0.5.5
 
 function! s:parse_target_depends(dependInfoCMakeFilePath, target)
-  let l:bindir = cmake#targets#binary_dir(a:target)
-  let l:srcdir = cmake#targets#source_dir(a:target)
   let l:dependContents = readfile(a:dependInfoCMakeFilePath)
   let l:objects = filter(l:dependContents, 'v:val =~ "\.o\"$"')
 
@@ -22,9 +20,6 @@ function! s:parse_target_depends(dependInfoCMakeFilePath, target)
 endfunc
 
 function! s:normalize_object_path(object_path, target)
-  let l:bindir = cmake#targets#binary_dir(a:target)
-  let l:srcdir = cmake#targets#source_dir(a:target)
-
   " TODO: Strip the surrounding whitespace.
   let l:object_path = substitute(a:object_path, '  "', '', '')
   let l:object_path = substitute(l:object_path, '"(\s+)$', '', '')

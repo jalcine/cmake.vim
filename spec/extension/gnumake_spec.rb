@@ -3,9 +3,7 @@ require 'spec_helper'
 describe 'cmake#extension#gnumake' do
   before(:each) do
     cmake.create_new_project
-    cmake.configure_project({
-      options: ['-G "Unix Makefiles"']
-    })
+    cmake.configure_project(options: ['-G "Unix Makefiles"'])
   end
 
   describe '#makeprg' do
@@ -77,7 +75,7 @@ describe 'cmake#extension#gnumake' do
     end
 
     it 'does not find the files associated with a target when out of the project directory' do
-      vim.command 'cd! ../..' 
+      vim.command 'cd! ../..'
       obtained_files = validate_json_response 'echo cmake#extension#gnumake#find_files_for_target("sample-library")'
       expect(obtained_files).to be_empty
     end

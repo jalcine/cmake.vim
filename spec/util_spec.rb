@@ -43,28 +43,28 @@ describe 'cmake.vim#util' do
     end
 
     describe '#has_project' do
-    context 'with a created project' do
-      before(:each) { cmake.create_new_project }
-      after(:each)  { cmake.destroy_project }
+      context 'with a created project' do
+        before(:each) { cmake.create_new_project }
+        after(:each)  { cmake.destroy_project }
 
-      it 'cant find projects that havent been configured yet' do
-        result = validate_response('echo cmake#util#has_project()')
-        expect(result).to eql('0')
+        it 'cant find projects that havent been configured yet' do
+          result = validate_response('echo cmake#util#has_project()')
+          expect(result).to eql('0')
+        end
+
+        it 'finds projects that have been configured once' do
+          cmake.configure_project
+          result = validate_response('echo cmake#util#has_project()')
+          expect(result).to eql('1')
+        end
       end
 
-      it 'finds projects that have been configured once' do
-        cmake.configure_project
-        result = validate_response('echo cmake#util#has_project()')
-        expect(result).to eql('1')
+      context 'without a created project' do
+        it 'cant find projects that havent been created yet' do
+          result = validate_response('echo cmake#util#has_project()')
+          expect(result).to eql('0')
+        end
       end
-    end
-
-    context 'without a created project' do
-      it 'cant find projects that havent been created yet' do
-        result = validate_response('echo cmake#util#has_project()')
-        expect(result).to eql('0')
-      end
-    end
     end
   end
 end

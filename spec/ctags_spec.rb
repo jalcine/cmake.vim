@@ -8,7 +8,7 @@ describe 'cmake.vim#ctags' do
     ninja: {
       generator: 'Ninja'
     }
-  }.each do | ext, opts |
+  }.each do |ext, opts|
     context "when using a #{ext} build system" do
       before(:each) do
         vim.command 'au! cmake.vim'
@@ -24,13 +24,13 @@ describe 'cmake.vim#ctags' do
         context 'function existence' do
           it 'does not exist when not called' do
             expect(function_exists?(
-              'cmake#ctags#cache_directory()')).to eql(false)
+                     'cmake#ctags#cache_directory()')).to eql(false)
           end
 
           it 'does exist when called' do
             output = validate_response 'echo cmake#ctags#cache_directory()'
             expect(function_exists?(
-              'cmake#ctags#cache_directory()')).to eql(true)
+                     'cmake#ctags#cache_directory()')).to eql(true)
             expect(output).to_not be_empty
           end
         end
@@ -48,7 +48,7 @@ describe 'cmake.vim#ctags' do
         context 'function existence' do
           it 'does not exist when not called' do
             expect(function_exists?(
-              'cmake#ctags#filename(target)')).to eql(false)
+                     'cmake#ctags#filename(target)')).to eql(false)
           end
 
           it 'does exist when called' do
@@ -74,14 +74,14 @@ describe 'cmake.vim#ctags' do
         context 'function existence' do
           it 'does not exist when not called' do
             expect(function_exists?(
-              'cmake#ctags#generate_for_target(target)')).to eql(false)
+                     'cmake#ctags#generate_for_target(target)')).to eql(false)
           end
 
           it 'does exist when called' do
             output = validate_response(
               'echo cmake#ctags#generate_for_target("cookie")')
             expect(function_exists?(
-              'cmake#ctags#generate_for_target(target)')).to eql(true)
+                     'cmake#ctags#generate_for_target(target)')).to eql(true)
             expect(output).to_not be_empty
           end
         end
@@ -101,14 +101,14 @@ describe 'cmake.vim#ctags' do
         context 'function existence' do
           it 'does not exist when not called' do
             expect(function_exists?(
-              'cmake#ctags#paths_for_target(target)')).to eql(false)
+                     'cmake#ctags#paths_for_target(target)')).to eql(false)
           end
 
           it 'does exist when called' do
             output = validate_response(
               'echo cmake#ctags#paths_for_target("cookie")')
             expect(function_exists?(
-              'cmake#ctags#paths_for_target(target)')).to eql(true)
+                     'cmake#ctags#paths_for_target(target)')).to eql(true)
             expect(output).to_not be_empty
           end
         end
