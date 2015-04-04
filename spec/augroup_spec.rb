@@ -49,17 +49,17 @@ describe 'cmake.vim#augroup' do
           vim.edit 'binary_main.cpp'
           target_list = validate_json_response 'echo cmake#targets#list()'
           expect(target_list).to_not be_empty
-          expect(current_target).to eql('sample-binary')
           expect(aucmd_buf_enter).to include('cmake.vim')
           expect(aucmd_buf_write).to include('cmake.vim')
+          expect(current_target).to eql('sample-binary')
         end
 
         it 'has buffer auto commands when in buffers w/o targets' do
           vim.edit 'magic_toy.cxx'
           vim.write
-          expect(vim.echo 'b:cmake_target').to_not eql('sample-binary')
           expect(aucmd_buf_enter).to include('cmake.vim')
           expect(aucmd_buf_write).to include('cmake.vim')
+          expect(vim.echo 'b:cmake_target').to_not eql('sample-binary')
         end
       end
 
@@ -155,8 +155,6 @@ PENDING_TEST
           it 'sets tags for the project' do
             expected_tags = validate_json_response 'echo cmake#ctags#paths_for_target("sample-library")'
             obtained_tags = validate_json_response 'echo split(&l:tags, ",")'
-
-            expect(obtained_tags).to_not be_empty
 
             expected_tags.each do |expected_tag|
               expect(obtained_tags).to include(expected_tag)
