@@ -7,7 +7,6 @@ describe 'cmake.vim#cache' do
   end
 
   describe '#read' do
-
     it 'reads a known variable from the CMake cache' do
       value = validate_response "echo cmake#cache#read('CMAKE_CXX_COMPILER')"
       expect(value).to_not match(/:E(\d+)/)
@@ -30,11 +29,9 @@ describe 'cmake.vim#cache' do
       variable_name  = Faker::Internet.user_name.upcase.gsub(/(\.|_)/, '')
       variable_value = Faker::Internet.user_name
 
-      cmake.configure_project({
-        definitions: {
-          "#{variable_name}" => variable_value
-        }
-      })
+      cmake.configure_project(definitions: {
+                                "#{variable_name}" => variable_value
+                              })
 
       value = vim.command("echo cmake#cache#read('#{variable_name}')")
       expect(value).to_not be_empty

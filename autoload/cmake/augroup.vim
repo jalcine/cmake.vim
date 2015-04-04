@@ -24,6 +24,9 @@ function! cmake#augroup#init()
 endfunction
 
 function! cmake#augroup#on_vim_enter()
+  if &diff
+    " We don't want cmake.vim doing any work in diff mode, it slows things down.
+  endif
   " NOTE: This function should handle the initial loading of cmake.vim's
   " necessary data in order for it to operate properly. This includes the
   " following:
@@ -37,14 +40,11 @@ function! cmake#augroup#on_vim_enter()
 endfunction
 
 function! cmake#augroup#on_buf_enter()
-  call cmake#util#echo_msg('Applying generic buffer options for this buffer...')
+  call cmake#util#echo_msg('Refreshing local buffer variables & options...')
   call cmake#buffer#set_options()
-
-  call cmake#util#echo_msg('Applying values for "&l:path"...')
   call cmake#path#refresh()
-
-  call cmake#util#echo_msg('Applying values for "&l:makeprg"...')
   call cmake#makeprg#set_for_buffer()
+  call cmake#util#echo_msg('Local buffer variables & options refreshed.')
 endfunction
 
 function! cmake#augroup#on_file_type(filetype)
@@ -52,45 +52,24 @@ function! cmake#augroup#on_file_type(filetype)
     return
   endif
 
-  call cmake#util#echo_msg('Applying buffer options for this file...')
   call cmake#buffer#set_options()
-
-  if !exists('b:cmake_target')
-    return
-  endif
-
-  call cmake#util#echo_msg('Applying values for "&l:makeprg"...')
-  call cmake#makeprg#set_for_buffer()
-
-  call cmake#util#echo_msg('Applying values for "&path"...')
-  call cmake#path#refresh()
-
-  call cmake#util#echo_msg('Applying values for "&tags" (will generate if not existing)...')
   call cmake#ctags#refresh()
 
-  call cmake#util#echo_msg('Applying values for "&flags"....')
-  call cmake#flags#inject()
+  if exists('b:cmake_target')
+    call cmake#flags#inject()
+  endif
 
   call s:add_specific_buffer_commands()
-  doau BufEnter <abuf>
   redraw
 endfunction
 
 function! cmake#augroup#on_buf_write()
-  call cmake#util#echo_msg('Applying values for "&tags" (will generate if not existing)...')
   call cmake#ctags#refresh()
 endfunction
 
 function! cmake#augroup#on_file_write()
-  let target = 'all'
-  if exists(b:cmake_target)
-    let target = b:cmake_target
-  endif
-
-  if target == 'all'
-    call cmake#targets#clear_all()
-  else
-    call cmake#targets#clear(target)
+  if exists('b:cmake_target')
+    call cmake#targets#clear(b:cmake_target)
   endif
 
   call cmake#targets#cache()

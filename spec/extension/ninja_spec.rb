@@ -3,9 +3,7 @@ require 'spec_helper'
 describe 'cmake#extension#ninja' do
   before(:each) do
     cmake.create_new_project
-    cmake.configure_project({
-      options: ['-G Ninja']
-    })
+    cmake.configure_project(options: ['-G Ninja'])
   end
 
   describe '#makeprg' do
@@ -59,8 +57,6 @@ describe 'cmake#extension#ninja' do
   end
 
   describe '#find_files_for_target' do
-    let(:expected_files) { ['plugin.cpp'] }
-
     context 'function existence' do
       it 'does exist when not called' do
         expect(function_exists? 'cmake#extension#ninja#find_files_for_target(target)').to eql(true)
@@ -73,8 +69,16 @@ describe 'cmake#extension#ninja' do
     end
 
     it 'finds the files associated with a target' do
-      obtained_files = validate_json_response 'echo cmake#extension#ninja#find_files_for_target("sample-library")'
-      expect(obtained_files).to eql(expected_files)
+      matrix = {
+        'sample-library' => ['plugin.cpp'],
+        'sample-binary' => ['binary_main.cpp']
+      }
+
+      matrix.each do |tgt, expected_files|
+        command = "echo cmake#extension#ninja#find_files_for_target('#{tgt}')"
+        obtained_files = validate_json_response command
+        expect(obtained_files).to eql(expected_files)
+      end
     end
 
     it 'does not find the files associated with a target for a unconfigured project' do

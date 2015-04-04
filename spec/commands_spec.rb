@@ -8,17 +8,15 @@ describe 'cmake.vim#commands' do
     ninja: {
       generator: 'Ninja'
     }
-  }.each do | ext, opts |
+  }.each do |ext, opts|
     context "in #{ext}" do
       before(:each) do
         vim.command 'au! cmake.vim'
         vim.command 'let g:cmake_build_toolchain="' + ext.to_s + '"'
         cmake.create_new_project(
-          options: ['-G ' + opts[:generator] ]
+          options: ['-G ' + opts[:generator]]
         )
-        cmake.configure({
-          options: ['-G ' + opts[:generator] ]
-        })
+        cmake.configure(options: ['-G ' + opts[:generator]])
       end
 
       describe '#apply' do
@@ -33,30 +31,15 @@ describe 'cmake.vim#commands' do
           expect(function_exists? 'cmake#commands#apply').to eql(true)
         end
 
-        commands = [
-          'CMakeBuild',
-          'CMakeBuildCurrent',
-          'CMakeClean',
-          'CMakeCleanBuild',
-          'CMakeClearBufferOpts',
-          'CMakeCreateBuild',
-          'CMakeCtagsBuildAll',
-          'CMakeCtagsBuildCurrent',
-          'CMakeInfoForCurrentFile',
-          'CMakeInstall',
-          'CMakeRebuildCache',
-          'CMakeTarget',
-          'CMakeTest',
-        ]
+        commands = %w(CMakeBuild CMakeBuildCurrent CMakeClean CMakeCleanBuild CMakeClearBufferOpts CMakeCreateBuild CMakeCtagsBuildAll CMakeCtagsBuildCurrent CMakeInfoForCurrentFile CMakeInstall CMakeRebuildCache CMakeTarget CMakeTest)
 
         context do
-          commands.each do | cmake_command |
+          commands.each do |cmake_command|
             it "has the command ':#{cmake_command}'" do
               expect(command_exists? cmake_command).to eql(true)
             end
           end
         end
-
       end
 
       context 'API' do
@@ -83,7 +66,7 @@ describe 'cmake.vim#commands' do
           it 'invokes the target specified by the current buffer' do
             target = vim.echo 'b:cmake_target'
             output = validate_response 'call cmake#commands#build_current()'
-            expect(output).to include("[cmake] Invoking target")
+            expect(output).to include('[cmake] Invoking target')
           end
         end
 
@@ -91,8 +74,8 @@ describe 'cmake.vim#commands' do
           it 'invokes the "clean" target for CMake' do
             cmake.build_project
             output = validate_response 'call cmake#commands#clean()'
-            expect(output).to include("[cmake] Cleaning build...")
-            expect(output).to include("[cmake] Cleaned build.")
+            expect(output).to include('[cmake] Cleaning build...')
+            expect(output).to include('[cmake] Cleaned build.')
           end
         end
 
@@ -100,7 +83,7 @@ describe 'cmake.vim#commands' do
           it 'clears the generated ctags' do
             cmake.build_project
             output = validate_response 'call cmake#commands#clear_ctags()'
-            expect(output).to include("[cmake] Cleared all of the generated tags")
+            expect(output).to include('[cmake] Cleared all of the generated tags')
           end
         end
 
@@ -111,17 +94,17 @@ describe 'cmake.vim#commands' do
         describe '#generate_ctags' do
           it 'generates ctags for project' do
             output = validate_response 'call cmake#commands#generate_ctags()'
-            expect(output).to include("[cmake] Generated tags for all targets.")
-            expect(File.exists? 'build/tags/sample-library.tags').to eql(true)
-            expect(File.exists? 'build/tags/sample-binary.tags').to eql(true)
+            expect(output).to include('[cmake] Generated tags for all targets.')
+            expect(File.exist? 'build/tags/sample-library.tags').to eql(true)
+            expect(File.exist? 'build/tags/sample-binary.tags').to eql(true)
           end
         end
 
         describe '#generate_local_ctags' do
           it 'generate ctags for a specific project' do
             output = validate_response 'call cmake#commands#generate_local_ctags()'
-            expect(output).to include("[cmake] Generated tags for sample-binary.")
-            expect(File.exists? 'build/tags/sample-binary.tags').to eql(true)
+            expect(output).to include('[cmake] Generated tags for sample-binary.')
+            expect(File.exist? 'build/tags/sample-binary.tags').to eql(true)
           end
         end
 

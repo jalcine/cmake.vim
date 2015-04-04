@@ -30,6 +30,7 @@ func! cmake#ctags#filename(target)
   return simplify(cmake#ctags#cache_directory() . '/' .  a:target . '.tags')
 endfunc
 
+" TODO: Allow user to add options for ctags.
 func! cmake#ctags#generate_for_target(target)
   let l:tag_file = cmake#ctags#filename(a:target)
   let l:files = cmake#targets#files(a:target)
@@ -65,12 +66,12 @@ func! cmake#ctags#paths_for_target(target)
 endfunc
 
 func! cmake#ctags#refresh()
-  if exists('b:cmake_target')
-    call s:set_tags(join(cmake#ctags#paths_for_target(b:cmake_target), ','))
-  endif
+  for target in cmake#targets#list()
+    call s:set_tags(join(cmake#ctags#paths_for_target(target), ','))
+  endfor
 endfunc
 
 func! cmake#ctags#wipe(target)
   let l:tag_file = cmake#ctags#filename(a:target)
-  
+
 endfunc

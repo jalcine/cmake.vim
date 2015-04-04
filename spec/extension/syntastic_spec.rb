@@ -8,7 +8,7 @@ describe 'cmake#extension#syntastic' do
     ninja: {
       generator: 'Ninja'
     }
-  }.each do | ext, opts |
+  }.each do |ext, opts|
     context "when using a #{ext} build system" do
       before(:each) do
         vim.command 'let g:cmake_build_toolchain="' + ext.to_s + '"'
@@ -21,7 +21,7 @@ describe 'cmake#extension#syntastic' do
         )
 
         plugin_directory = File.expand_path('../../../', __FILE__) +
-          '/spec/plugins/vim/syntastic'
+                           '/spec/plugins/vim/syntastic'
         vim.append_runtimepath(plugin_directory)
       end
 

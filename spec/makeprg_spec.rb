@@ -22,15 +22,13 @@ describe 'cmake.vim#makeprg' do
     }
   }
 
-  pairs.each do | toolchain, options |
+  pairs.each do |toolchain, options|
     context "for #{toolchain}" do
       let(:command) { options[:command] }
       let(:generator) { options[:generator] }
 
       before(:each) do
-        cmake.configure_project({
-          options: [ "-G '#{generator}'"]
-        })
+        cmake.configure_project(options: ["-G '#{generator}'"])
         vim.command "let g:cmake_build_toolchain='#{toolchain}'"
         vim.command 'let &l:makeprg=""'
         vim.edit 'plugin.cpp'
@@ -38,16 +36,15 @@ describe 'cmake.vim#makeprg' do
 
       let(:expected_command) do
         command.gsub('{{target_build_directory}}', binary_dir)
-               .gsub('{{root_build_directory}}', root_binary_dir)
-               .gsub('{{target}}', target)
+          .gsub('{{root_build_directory}}', root_binary_dir)
+          .gsub('{{target}}', target)
       end
 
       let(:expected_generic_command) do
         command.gsub('{{target_build_directory}}', binary_dir)
-               .gsub('{{root_build_directory}}', root_binary_dir)
-               .gsub('{{target}}', 'all')
+          .gsub('{{root_build_directory}}', root_binary_dir)
+          .gsub('{{target}}', 'all')
       end
-
 
       describe '#for_target' do
         it "generates a command string for using in 'makeprg'" do

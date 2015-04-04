@@ -8,9 +8,8 @@ describe 'cmake.vim#path' do
     ninja: {
       generator: 'Ninja'
     }
-  }.each do | ext, opts |
+  }.each do |ext, opts|
     context "when using a #{ext} build system" do
-
       before(:each) do
         vim.command 'au! cmake.vim'
         cmake.create_new_project
@@ -70,21 +69,20 @@ describe 'cmake.vim#path' do
           expect(source_dir).to_not be_empty
           expect(vim_paths).to include(source_dir)
         end
-
       end
 
       describe '#update' do
         it 'sets the path to the buffer-local path variable' do
           new_paths = [Dir.mktmpdir, Dir.mktmpdir, Dir.mktmpdir]
           vim.command "call cmake#path#update(#{new_paths.to_json})"
-          new_paths.each { | new_path | expect(vim_paths).to include(new_path) }
+          new_paths.each { |new_path| expect(vim_paths).to include(new_path) }
         end
 
         it 'sets old paths stored in "g:cmake_old_path"' do
           cmake_old_paths =
             validate_json_response 'echo split(g:cmake_old_path, ",")'
           cmake_old_paths.uniq!
-          cmake_old_paths.each do | a_path |
+          cmake_old_paths.each do |a_path|
             expect(vim_paths).to include(a_path) unless a_path.empty?
           end
         end
