@@ -189,7 +189,6 @@ func! cmake#targets#files(target)
 endfunc!
 
 func! cmake#targets#cache()
-  let theCount = 0
   for aTarget in cmake#targets#list()
     let files = cmake#targets#files(aTarget)
 
@@ -210,8 +209,6 @@ func! cmake#targets#cache()
         let g:cmake_cache.files[shortest_name] = aTarget
       endif
     endfor
-
-    let theCount += len(files)
   endfor
 endfunc
 
