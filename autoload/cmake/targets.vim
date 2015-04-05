@@ -157,7 +157,7 @@ func! cmake#targets#files(target)
     let l:files = {l:files_lookup}(a:target)
 
     func s:fix_up_path(target, filename)
-      let l:filename = ""
+      let l:filename = a:filename
       let l:srcdir = cmake#targets#source_dir(a:target)
       let l:bindir = cmake#targets#binary_dir(a:target)
 
@@ -170,6 +170,10 @@ func! cmake#targets#files(target)
 
       if !empty(l:srcfile)
         let l:filename = l:srcfile
+      endif
+
+      if empty(l:filename)
+        let l:filename = a:filename
       endif
 
       return l:filename
