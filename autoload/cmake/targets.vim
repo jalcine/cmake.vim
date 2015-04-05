@@ -189,12 +189,6 @@ func! cmake#targets#cache()
   for aTarget in cmake#targets#list()
     let files = cmake#targets#files(aTarget)
 
-    if empty(files)
-      continue
-    endif
-
-    let files = cmake#targets#files(aTarget)
-
     if !empty(files)
       for aFile in cmake#targets#files(aTarget)
         let g:cmake_cache.files[aFile] = aTarget
