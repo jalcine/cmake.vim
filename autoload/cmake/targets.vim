@@ -189,12 +189,14 @@ func! cmake#targets#cache()
   for aTarget in cmake#targets#list()
     let files = cmake#targets#files(aTarget)
 
-    if !empty(files)
-      for aFile in cmake#targets#files(aTarget)
-        let g:cmake_cache.files[aFile] = aTarget
-        let g:cmake_cache.files[fnamemodify(aFile, ':t:r')] = aTarget
-      endfor
+    if empty(files)
+      continue
     endif
+
+    for aFile in files
+      let g:cmake_cache.files[aFile] = aTarget
+      let g:cmake_cache.files[fnamemodify(aFile, ':t:r')] = aTarget
+    endfor
 
     let theCount += len(files)
   endfor
