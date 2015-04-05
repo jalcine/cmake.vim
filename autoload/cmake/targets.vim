@@ -161,8 +161,8 @@ func! cmake#targets#files(target)
       let l:srcdir = cmake#targets#source_dir(a:target)
       let l:bindir = cmake#targets#binary_dir(a:target)
 
-      let l:binfile = glob(l:bindir . "/**/" . a:filename)
-      let l:srcfile = glob(l:srcdir . "/**/" . a:filename)
+      let l:binfile = fnamemodify(glob(l:bindir . "/**/" . a:filename),':.')
+      let l:srcfile = fnamemodify(glob(l:srcdir . "/**/" . a:filename),':.')
 
       if !empty(l:binfile)
         let l:filename = l:binfile
