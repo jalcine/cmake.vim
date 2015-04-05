@@ -194,8 +194,17 @@ func! cmake#targets#cache()
     endif
 
     for aFile in files
+      let shorter_name = fnamemodify(aFile, ':r')
+      let shortest_name = fnamemodify(aFile, ':t:r')
       let g:cmake_cache.files[aFile] = aTarget
-      let g:cmake_cache.files[fnamemodify(aFile, ':t:r')] = aTarget
+
+      if !empty(shorter_name)
+        let g:cmake_cache.files[shorter_name] = aTarget
+      endif
+
+      if !empty(shorter_name)
+        let g:cmake_cache.files[shortest_name] = aTarget
+      endif
     endfor
 
     let theCount += len(files)
