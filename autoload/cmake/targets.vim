@@ -205,7 +205,7 @@ func! cmake#targets#cache()
         let g:cmake_cache.files[shorter_name] = aTarget
       endif
 
-      if !empty(shorter_name) && !has_key(g:cmake_cache.files,shortest_name)
+      if !empty(shortest_name) && !has_key(g:cmake_cache.files,shortest_name)
         let g:cmake_cache.files[shortest_name] = aTarget
       endif
     endfor
