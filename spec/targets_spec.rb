@@ -101,7 +101,7 @@ describe 'cmake#targets' do
         it 'procures the files for a known target' do
           command = 'echo cmake#targets#files("sample-library")'
           file_list = validate_json_response command
-          expect(file_list).to include "#{@dir}/plugin.cpp"
+          expect(file_list).to end_with 'plugin.cpp'
           expect(file_list.count).to eql(1)
         end
 
