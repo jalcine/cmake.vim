@@ -11,21 +11,21 @@ func! cmake#extension#syntastic#inject(args)
   let l:include_dirs = cmake#targets#include_dirs(target)
   let l:flags = cmake#targets#flags(target)
 
-  if !exists('b:syntastic_cpp_includes')
-    let b:syntastic_cpp_includes = join(l:include_dirs, ';')
+  if !exists('g:syntastic_cpp_includes')
+    let g:syntastic_cpp_includes = join(l:include_dirs, ';')
   endif
 
-  if !exists('b:syntastic_cpp_compiler_options')
-    let b:syntastic_cpp_compiler_options = join(l:flags, ' ')
+  if !exists('g:syntastic_cpp_compiler_options')
+    let g:syntastic_cpp_compiler_options = join(l:flags, ' ')
   endif
 
   if !exists('b:syntastic_cpp_clang_tidy_args')
-    let b:syntastic_cpp_clang_tidy_args = '-p ' . cmake#util#binary_dir() .
-          \ b:syntastic_cpp_compiler_options
+    let g:syntastic_cpp_clang_tidy_args = '-p ' . cmake#util#binary_dir() .
+          \ g:syntastic_cpp_compiler_options
   endif
 
-  if !exists('b:syntastic_cpp_clang_check_args')
-    let b:syntastic_cpp_clang_check_args = '-p ' . cmake#util#binary_dir() .
-          \ b:syntastic_cpp_compiler_options
+  if !exists('g:syntastic_cpp_clang_check_args')
+    let g:syntastic_cpp_clang_check_args = '-p ' . cmake#util#binary_dir() .
+          \ g:syntastic_cpp_compiler_options
   endif
 endfunc

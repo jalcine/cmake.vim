@@ -157,12 +157,12 @@ func! cmake#targets#files(target)
     let l:files = {l:files_lookup}(a:target)
 
     func s:fix_up_path(target, filename)
-      let l:filename = ""
+      let l:filename = a:filename
       let l:srcdir = cmake#targets#source_dir(a:target)
       let l:bindir = cmake#targets#binary_dir(a:target)
 
-      let l:binfile = glob(l:bindir . "/**/" . a:filename)
-      let l:srcfile = glob(l:srcdir . "/**/" . a:filename)
+      let l:binfile = fnamemodify(glob(l:bindir . "/**/" . a:filename),':.')
+      let l:srcfile = fnamemodify(glob(l:srcdir . "/**/" . a:filename),':.')
 
       if !empty(l:binfile)
         let l:filename = l:binfile
@@ -170,6 +170,10 @@ func! cmake#targets#files(target)
 
       if !empty(l:srcfile)
         let l:filename = l:srcfile
+      endif
+
+      if empty(l:filename)
+        let l:filename = a:filename
       endif
 
       return l:filename
@@ -185,7 +189,6 @@ func! cmake#targets#files(target)
 endfunc!
 
 func! cmake#targets#cache()
-  let theCount = 0
   for aTarget in cmake#targets#list()
     let files = cmake#targets#files(aTarget)
 
@@ -193,16 +196,19 @@ func! cmake#targets#cache()
       continue
     endif
 
-    let files = cmake#targets#files(aTarget)
+    for aFile in files
+      let shorter_name = fnamemodify(aFile, ':r')
+      let shortest_name = fnamemodify(aFile, ':t:r')
+      let g:cmake_cache.files[aFile] = aTarget
 
-    if !empty(files)
-      for aFile in cmake#targets#files(aTarget)
-        let g:cmake_cache.files[aFile] = aTarget
-        let g:cmake_cache.files[fnamemodify(aFile, ':t:r')] = aTarget
-      endfor
-    endif
+      if !empty(shorter_name) && !has_key(g:cmake_cache.files,shorter_name)
+        let g:cmake_cache.files[shorter_name] = aTarget
+      endif
 
-    let theCount += len(files)
+      if !empty(shortest_name) && !has_key(g:cmake_cache.files,shortest_name)
+        let g:cmake_cache.files[shortest_name] = aTarget
+      endif
+    endfor
   endfor
 endfunc
 
