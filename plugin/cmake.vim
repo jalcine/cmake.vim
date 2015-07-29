@@ -57,6 +57,7 @@ let s:options = {
   \  'g:cmake_build_toolchain':   'gnumake',
   \  'g:cmake_build_type':        'RelWithDebInfo',
   \  'g:cmake_c_compiler':        s:get_c_compiler(),
+  \  'g:cmake_cache_on_start':    0,
   \  'g:cmake_cxx_compiler':      s:get_cpp_compiler(),
   \  'g:cmake_ctags':             {
   \       'executable':           'ctags'
