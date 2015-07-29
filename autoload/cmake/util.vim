@@ -98,11 +98,14 @@ function! cmake#util#source_dir()
 endfunc
 
 " Function: cmake#util#has_project
-" Returns: On success, whether or not this project has been configured at least
-" once.
+" Returns: On success, whether or not this project has been 
+" configured at least once by CMake.
 function! cmake#util#has_project()
   let l:bindir = cmake#util#binary_dir()
-  return filereadable(resolve(l:bindir . '/CMakeCache.txt'))
+  if l:bindir != 0
+    " TODO: Check if l:bindir is an existing directory.
+    return filereadable(resolve(l:bindir . '/CMakeCache.txt'))
+  endif
 endfunc
 
 " TODO: Allow a different 'make' executable to be used.

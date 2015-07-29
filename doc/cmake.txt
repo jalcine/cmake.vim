@@ -2,13 +2,32 @@
 
 CONTENTS ~
                                                    *cmake-contents*
-===========================================================================
+===============================================================================
 
 1. About                                           |cmake-about|
-2. Quick start                                     |cmake-quickstart|
-  2.1. Discovering CMake                           |cmake-quickstart-discover|
-  2.2. Installing the Plugin                       |cmake-quickstart-install|
+2. Quick Start                                     |cmake-quickstart|
 3. Options                                         |cmake-options|
+  3.1. Buffer-Specifc Options                      |cmake-buffer-options|
+    3.1.1 `b:cmake_target`                           |b:cmake_target|
+    3.1.2 `b:cmake_binary_dir`                       |b:cmake_binary_dir|
+    3.1.3 `b:cmake_source_dir`                       |b:cmake_source_dir|
+    3.1.4 `b:cmake_include_dirs`                     |b:cmake_include_dirs|
+    3.1.5 `b:cmake_libraries`                        |b:cmake_libraries|
+  3.2. Global Options                              |cmake-global-options|
+    3.2.1    `g:cmake_build_directories`             |g:cmake_build_directories|
+    3.2.2    `g:cmake_build_shared_libs`             |g:cmake_build_shared_libs|
+    3.2.3    `g:cmake_build_toolchain`               |g:cmake_build_toolchain|
+    3.2.4    `g:cmake_build_type`                    |g:cmake_build_type|
+    3.2.5    `g:cmake_c_compiler`                    |g:cmake_c_compiler|
+    3.2.6    `g:cmake_cxx_compiler`                  |g:cmake_cxx_compiler|
+    3.2.7    `g:cmake_ctags`                         |g:cmake_ctags|
+      3.2.7.1  `.executable`                         |g:cmake_ctags.executable|
+    3.2.8    `g:cmake_extensions`                    |g:cmake_extensions|
+    3.2.9    `g:cmake_flags`                         |g:cmake_flags|
+    3.2.10   `g:cmake_generator`                     |g:cmake_generator|
+    3.2.11   `g:cmake_install_prefix`                |g:cmake_install_prefix|
+    3.2.12   `g:cmake_set_makeprg`                   |g:cmake_set_makeprg|
+    3.2.13   `g:cmake_exec`                          |g:cmake_exec|
 4. Methods                                         |cmake-methods|
   4.1 Creating a Project                           |:CMakeCreateBuild|
   4.2 Building                                     |:CMakeBuild|
@@ -20,26 +39,28 @@ CONTENTS ~
   4.8 Cleaning & Building At Once                  |:CMakeCleanBuild|
 5. Integrations                                    |cmake-integrations|
   5.1 Syntastic                                    |cmake-integrations-syntastic|
-  5.2 YouCompleteMe                                |cmake-integrations-ycm| 
+  5.2 YouCompleteMe                                |cmake-integrations-ycm|
+6. API                                             |cmake-api|
 
-===========================================================================
+===============================================================================
 
 ABOUT                                              *cmake-about*
 
 CMake is a "Cross-Platform Makefile generator". However, CMake can generate
 more than Makefiles; including files for Eclipse and KDevelop build systems
-as well as Ninja build files (from the Chromium project), making it quite 
+as well as Ninja build files (from the Chromium project), making it quite
 diverse in its output.
 
 The act of integrating CMake with Vim allows for developers to use the
-facilities of CMake without having to constantly switch back and forth. This
-plugin goes a step further and automatically sets 'makeprg' for you to help
-other tools related to Java, C++, C, Objective C or Fortan-based programming
-easily invoke CMake's version of the build system. It can also incorporate
-support with other plugins like 'dispatch', YouCompleteMe, and 'syntastic'.
+facilities of CMake without having to constantly switch back and forth between
+Vim and your terminal (or a multiplexer in the terminal). This plugin takes it
+a step further and automatically sets 'makeprg' for you to help other tools
+related to Java, C++, C, Objective C or Fortan-based programming easily invoke
+CMake's version of the build system. It can also incorporate support with other
+plugins like |dispatch|, |YouCompleteMe|, and |syntastic|.
 
 2. QUICK START ~
-                                                    *cmake-quickstart*
+                                                           *cmake-quickstart*
 Ensure that you have a working (discoverable in '$PATH' by Vim) version of
 CMake. You can check that CMake is invokable by Vim by running the following
 command: >
@@ -53,80 +74,295 @@ You should get output similar to the following: >
 At the time of writing, CMake version 2.6+ or greater would work with
 'cmake', but feel free to send a report if older versions don't work.
 
-3. OPTIONS 
-                                                    |cmake-options|
+If you already have a CMake build for your project, chances are that when you
+start Vim, it'd be able to automatically detect your project and allow for
+quick access to targets and extension support. |cmake-methods|
 
-The options described are reflected with their default values.
+For example, the editor (Ex) command to build your project would be
+|:CMakeBuild|. There's a command for testing |:CMakeTest|, cleaning
+|:CMakeTest| and installing |:CMakeInstall| the project.
 
-3.1. C++ COMPILER ~
-                     *cmake-options-cxx-compiler* *cmake-options-cpp-compiler*
->
-  let g:cmake_cxx_compiler = 'clang++'
+NOTE: For now, 'cmake' assumes that CMake is visible via your shell. Future
+versions will allow for a provided path to an instance of CMake.
 
-Defines the default C++ compiler that CMake will use. 
+3. OPTIONS ~
+                                                               *cmake-options*
 
-3.2. C COMPILER ~
+'cmake' allows for most of its internals to be manipulated by use of options.
+Feel free to open an issue or send a patch if there's something that can be
+pulled out into an option for flexibility.
 
-                                                    *cmake-options-c-compiler*
->
-  let g:cmake_c_compiler = 'clang'
+3.1 BUFFER-SPECIFIC OPTIONS ~
+                                                         *cmake-buffer-options*
 
-Defines the default C compiler that CMake will use.
+Buffer options are provided by 'cmake' to allow for more semantic use of said
+options for the plugin to other parts of Vim like |makeprg|, |tags| and
+|path|. It can also be used to extend plugins |cmake-extensions| or help roll
+your own |cmake-extensions-custom|.
 
-3.3. BUILD DIRECTORIES ~
-                                                    *cmake-options-build-dirs*
->
-  let g:cmake_build_dirs = [ "build" ]
+NOTE: All of these values are also used by 'cmake' itself. By editing them,
+you can directly manipulate how 'cmake' operates. This can produce unintended
+side-effects if one is not careful.
 
-Defines a list of the names of directories to search for 'CMakeCache.txt'.
+NOTE: Refreshing the values to a sterile state is not currently supported. For
+now, deleting the buffer and re-opening it is the means of doing so.
 
-3.4. BUILD CONFIGURATION TYPE ~
-                                                    *cmake-options-build-type*
->
-  let g:cmake_build_type = "Debug"
-
-Defines the build configuration type to invoke CMake with. Some typical values
-for this is DEBUG, RELEASE, and RELWITHDEBINFO.
-
-3.5. INSTALLATION PREFIX ~
-                                                    *cmake-options-install-prefix*
->
-  let g:cmake_install_prefix = "$HOME/.local"
-
-Defines the installation prefix at which the project will be installed at.
-
-3.6. BUILD SHARED LIBRARIES ~
-                                                    *cmake-options-build-shared-libs*
->
-  let g:cmake_build_shared_libs = 1
-
-Determines whether or not libraries will be built as shared libraries by
-default.
-
-3.7. SET MAKEPRG ~
-                                                    *cmake-options-set-makeprg*
->
-  let g:cmake_set_makeprg = 1
-
-Determines whether or not the 'makeprg' value in Vim will be set to a tweaked
-'make' where it builds using the files in your specified build directory.
+  :bdelete %
+  :edit <PATH_TO_FILE>
 
 
-3.8. INTEGRATIONS ~
-                                                 *cmake-options-inject-flags*
+3.1.1 b:cmake_target ~
+                                                        *b:cmake_target*
 
-Determines which known integrations are to be enabled like Syntastic or
-YouCompleteMe. By default, `cmake.vim` checks if each plug-in exists and
-enables if they are present. To disable, set the value to 0.
+One of the values found in the list provided by |cmake#targets#list()|. This
+variable is non-existent in buffers that can't be determined to be associated
+with a target by 'cmake'.
+
+NOTE: It's not recommended to use this value as a means of detecting the
+support of CMake in a particular buffer. Use |cmake#buffer#has_project()| for
+this.
+
+See: |cmake#targets#list()|
+
+
+3.1.2 b:cmake_binary_dir ~
+                                                        *b:cmake_binary_dir*
+
+The target-relative binary directory of the file's target. This value is the
+path to the directory with the CMake generated files for the buffer's current
+target |b:cmake_target| binary files. It's considered to be a sub-directory of
+the root binary directory.
+
+See: |cmake#util#binary_dir()|
+
+3.1.3 b:cmake_source_dir ~
+                                                        *b:cmake_source_dir*
+
+The target-relative source directory of the file's target. This value is the
+path to the directory with the sources for the buffer's current target
+|b:cmake_target| source files. It's considered to be a sub-directory of the
+root source directory.
+
+See: |cmake#util#source_dir()|.
+
+3.1.4 b:cmake_include_dirs ~
+                                                        *b:cmake_include_dirs*
+
+The directories that the target's declared as needed for compilation in
+CMake. This is pulled out from the target's flags, accessible by the method
+|cmake#flags#collect_for_target()|. This is done in an agonstic manner
+irrespective of the build system used (Ninja & Unix Makefiles for now).
+
+See: |cmake#flags#collect_for_target()|
+
+3.1.5 b:cmake_libraries ~
+                                                        *b:cmake_libraries*
+
+The libraries that the target's declared as needed for compilation in CMake.
+This is pulled out from the target's flags, accessible by the method
+|cmake#flags#collect_for_target()|. This is done in an agonstic manner
+irrespective of the build system used (Ninja & Unix Makefiles for now).
+
+See: |cmake#flags#collect_for_target()|
+
+3.2. GLOBAL METHODS ~
+                                                      *cmake-global-options*
+
+In conjunction to the buffer-local options |cmake-buffer-options|, 'cmake'
+provides a suite of global options that allow for heavy fine tuning of its
+functionality. Common options one would like to change would be
+|g:cmake_generator|, |g:cmake_build_toolchain| and
+|g:cmake_build_directories|.
+
+NOTE: This currently isn't an option to handle out-of-source builds for CMake.
+
+3.2.1. g:cmake_build_directories ~
+                                                    *g:cmake_build_directories*
+
+Default: `['build']`
+Valid values: A |List| of paths relative to Vim's working directory.
+
+A |List| of relative paths to Vim's working directory that Vim should search
+in to find out-of-source builds. This can be used to get around the fact that
+Vim doesn't support out-of-source builds out of the box by adding the paths
+you'd want to search in. Since under the hood |cmake#util#binary_dir()| uses
+`findfile()`, you can use the tweaks in |file-searching| to enhance the search
+for your preferred build directory.
+
+  let g:cmake_build_directories += [ '../build' ]
+
+NOTE: The first match found by the options is used by |cmake#util#binary_dir()|.
+
+3.2.2. g:cmake_build_shared_libs ~
+                                                     *g:cmake_build_shared_libs*
+
+Default: 1
+Valid values: 0, 1
+
+A |boolean| value that'd determine whether or not shared library builds are
+built by default.
+
+3.2.3. g:cmake_build_toolchain ~
+                                                       *g:cmake_build_toolchain*
+
+Default: 'gnumake'
+Valid values: 'gnumake', 'ninja'
+
+A |string| value that'd represent what kind of build system 'cmake' is
+currently working with.
+
+NOTE: This option is going to be removed soon, since detection of the build
+toolchain is expected for the `0.6.` release of 'cmake'.
+
+3.2.4. g:cmake_build_type ~
+                                                            *g:cmake_build_type*
+
+Default: '`Debug`'
+Valid values: *any string*
+
+A |string| value that'd be provided to 'cmake' when a new build's attempted to
+be created. This value can be whatever you'd like.
+
+See: |cmake#commands#create_build()|
+
+3.2.5. g:cmake_c_compiler ~
+                                                            *g:cmake_c_compiler*
+
+Default: $CC
+Valid values: A path to a working C compiler for CMake to use.
+
+3.2.6. g:cmake_cxx_compiler ~
+                                                          *g:cmake_cxx_compiler*
+
+Default: $CXX
+Valid values: A path to a working C++ compiler for CMake to use.
+
+3.2.7. g:cmake_ctags ~
+                                                                 *g:cmake_ctags*
+
+Default: `{'executable':'ctags'}`
+Valid values: Case-by-case
+
+This dictionary represents a set of options that can be set to manipulate how
+'cmake' handles `ctags`. |cmake-ctags|
+
+3.2.7.1. g:cmake_tags.exectuables ~
+                                                      *g:cmake_tags.exectuables*
+
+Default: `ctags`
+Valid values: A |string| to the path of where a `ctags` program can be found.
+
+3.2.8. g:cmake_extensions ~
+                                                            *g:cmake_extensions*
+
+Default: `[]`
+Valid values: A |List| of extension names that 'cmake' accepts.
+
+A |List| of extension names that 'cmake' will accept to use for extending its
+usefulness. For now, the following are accepted:
+
+ * `dispatch` - requires |dispatch| (https://github.com/tpope/vim-dispatch)
+ * `syntastic` - requires |syntastic| (https://github.com/scrooloose/syntastic)
+ * `ycm` - requires |YouCompleteMe| (https://github.com/Valloric/YouCompleteMe)
+
+3.2.9. g:cmake_flags ~
+                                                                 *g:cmake_flags*
+
+Default: `{'filter':1,'inject':1,'reload':'on-demand'}`
+Valid values: Case-by-case
+
+A |dictionary| that holds values for handling flags fetched by 'cmake'.
+
+`g:cmake_flags.filter`                                   *g:cmake_flags.filter*
+
+Default: `1`
+Valid values: `0`, `1.`
+
+A |Boolean| value that determines if the act of filtering out specific flags
+should happen on processing. If enabled, only flags prefixed with `-i`, `-I`,
+`-W`, and `-f` will be available to 'cmake'. Otherwise, 'cmake' will obtain
+all of the provided flags.
+
+`g:cmake_flags.inject`                                   *g:cmake_flags.inject*
+
+Default: `1`
+Valid values: `0`, `1.`
+
+A |Boolean| value that determines if the act of injecting flag information
+into the buffer should happen. If enabled, then the value |b:cmake_flags| gets
+populated with the flags obtained by |cmake#targets#flags()|. Setting it to
+`0` just prohibits interacting with |b:cmake_flags| for now.
+
+NOTE: Setting this to `0` in the future will remove the |b:cmake_flags| variable.
+
+`g:cmake_flags.reload`                                   *g:cmake_flags.reload*
+
+Default: `on-demand`
+Valid values: `on-demand`, `automatic`, `always`, and `never`.
+
+NOTE: This is currently not implemented so the following documentation is
+subject to vary.
+
+A |String| value that determines when the act of updating the flag information
+for a provided target (by default, the one provided by |b:cmake_target|).
+
+    `on-demand`: (TODO)
+    `automatic`: (TODO)
+    `always`:    (TODO)
+    `never`:     (TODO)
+
+3.2.10. g:cmake_generator ~
+                                                            *g:cmake_generator*
+
+Default: '`Unix Makefiles`'
+Valid values: '`Ninja`', '`Unix Makefiles`'
+
+A |String| value that represents the name of the CMake-supported generator
+that'll be used for driving the build system. Out of the box, 'cmake' has
+support for GNU Make and Ninja. Support for other build systems can be added
+via the extension system |cmake-extensions|.
+
+3.2.11. g:cmake_install_prefix ~
+                                                        *g:cmake_install_prefix*
+
+Default: '`/usr/local`'
+Valid values: A |String| to an existing path.
+
+A |String| value that represents a directory that can be used as an
+installation prefix for CMake's `install_target` and family of methods.
+
+3.2.12. g:cmake_set_makeprg ~
+                                                          *g:cmake_set_makeprg*
+
+Default: `1`
+Valid values: `0`, `1`.
+
+A |Boolean| value that tells 'cmake' if it's okay to update the |makeprg|
+value with a command specific to 'cmake' that'd rebuild the target that the
+corresponding buffer's file relates to, or the whole project itself if the
+file exists within the source directory |cmake#util#source_dir()| or within the
+binary directory |cmake#util#binary_dir()|.
+
+3.2.13. g:cmake_exec ~
+                                                                 *g:cmake_exec*
+Default: `{'async':'vim','sync':'vim'}`
+Valid values: Case-by-case
+
+A |dictionary| that holds the name of a |cmake-extension| to use for both
+asynchronous and synchronous actions.
+
+See: |cmake#util#shell_bgexec()|, |cmake#util#shell_exec()| and
+|cmake-extensions|.
 
 4. METHODS ~
-                                                               *cmake-methods*
+                                                                 *cmake-methods*
+
 There's a few methods binded to the editor for use of the developer. In the
 future, some of these methods might be automatically mapped to the keyboard
 within CMake files for easy use.
 
 4.1 CREATING A BUILD ~
-                                                           *:CMakeCreateBuild*
+                                            *CMakeCreateBuild* *:CMakeCreateBuild*
 
 `:CMakeCreateBuild` takes only one argument, the name of the directory that
 the build directory will be. It'll fail if the name isn't one of the values
@@ -136,72 +372,87 @@ It'll make the directory if it doesn't exist, remove `CMakeCache.txt` if it
 exists (with confirmation) and invoke CMake within that directory.
 
 4.2 BUILDING ~
-                                                                 *:CMakeBuild*
+                                                        *CMakeBuild* *:CMakeBuild*
 
-Invokes `cmake --build $CMAKE_BINARY_DIR --target all`, building all CMake 
-targets at once.
+Invokes `cmake --build $CMAKE_BINARY_DIR --target all`, building all CMake
+targets at once. This command is agnostic of the underlying build system but
+doesn't allow for population of the |quickfix| or |locationlist| windows.
 
 4.3 CLEANING ~
-                                                                 *:CMakeClean*
+                                                       *CMakeClean*  *:CMakeClean*
 
 Invokes `cmake --build $CMAKE_BINARY_DIR --target clean`, cleaning the project
-of build artificats. 
+of build artificats. This command is agnostic of the underlying build system but
+doesn't allow for population of the |quickfix| or |locationlist| windows.
 
 4.4 TESTING ~
-                                                                  *:CMakeTest*
+                                                                    *:CMakeTest*
 
 Invokes `make -C $CMAKE_BINARY_DIR test`, running whatever you got for that
 target.
 
+NOTE: This is hard coded to use `gnumake` commands at the moment. The next
+major release will include more support for agnostic builds.
+
 4.5 INSTALLING ~
-                                                                *:CMakeInstall*
+                                                                 *:CMakeInstall*
 
 Invokes `make -C $CMAKE_BINARY_DIR install`, installs all of the things!
 Doesn't take into consideration file permissions or access, silly ol' make.
 
 4.6 GET CACHE VARIABLE'S VALUE ~
-                                                                *:CMakeGetVar*
+                                                                  *:CMakeGetVar*
 
 Obtains the specified variable's value from CMake's cache. Note that fact, it
 has to be set into the cache for it to be retrieved.
 
 4.7 INVOKING TARGETS ~
-                                                                *:CMakeTarget*
+                                                                  *:CMakeTarget*
 
 Invokes `cmake --build $CMAKE_BINARY_DIR --target <target>`, <target> being
 the target you'd choose to invoke.
 
 4.8 CLEANING & BUILDING AT ONCE ~
-                                                            *:CMakeCleanBuild*
+                                                              *:CMakeCleanBuild*
 
 Invokes `:CMakeClean` and then `:CMakeBuild`.
 
-5. INTEGRATIONS ~
-                                                          *cmake-integrations*
+5. INTEGRATIONS / EXTENSIONS ~
+                                           *cmake-extensions* *cmake-integrations*
 
 Life isn't fun if a plug-in doesn't integrate to another. `cmake.vim`, with a
-bit of lost sleep, can work with syntastic and You Complete Me with with the
+bit of lost sleep, can work with |syntastic| and |YouCompleteMe| with the
 enabling of an option.
 
 5.1. SYNTASTIC ~
-                                                *cmake-integrations-syntastic*
+                                                  *cmake-integrations-syntastic*
 
 No extra work is required. `cmake.vim` adds the necessary flags to all of the
 C and C++ checkers. Work is planned to refactor this logic and allow explicit
 checker parameters (since it's targeted for the gcc/ycm checkers and not
-cpplint).
+cpplint). To enable this, add the following line to your |vimrc|:
+
+  let g:cmake_exec = ['syntastic']
 
 5.2. YOU COMPLETE ME ~
-                                                      *cmake-integrations-ycm*
+                                                        *cmake-integrations-ycm*
 
-YouCompleteMe provides a means of extending its configuration for the use of
-autocompletion. To do so, you'd need to get the "b:cmake_flags" variables
+|YouCompleteMe| provides a means of extending its configuration for the use of
+autocompletion. To do so, you'd need to get the |b:cmake_flags| variable
 from your "client_data" dictionary. From there, you'd add it to the list of
 flags that are to be passed into YCM.
 
     cmake_flags = kwargs['client_data']
     final_flags += cmake_flags
 
-This can be disabled by setting `g:cmake_injects_flags.ycm` to 0.
+6. CMAKE'S API ~
+                                                                     *cmake-api*
 
-vim:tw=78:ts=8:ft=help:norl:
+`cmake.vim` exposes an API of sorts that's used for every aspect of the plugin
+for other people to use. This documentation file will not contain the explicit
+documentation. Instead, look in the individual files for said documentation.
+For example, the function `cmake#commands#build()` would be stored at
+`autoload/cmake/commands.vim`.
+
+
+vim:tw=78:ts=8:ft=help:norl:nospell:

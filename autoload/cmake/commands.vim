@@ -11,9 +11,9 @@ function! cmake#commands#build()
   call cmake#util#echo_msg('Built all targets.')
 endfunc
 
-func! cmake#commands#discover_project()
+"func! cmake#commands#discover_project()
   " TODO: Look for the binary directory in the current directory.
-endfunc
+"endfunc
 
 function! cmake#commands#invoke_target(target)
   call cmake#util#echo_msg("Invoking target '" . a:target . "'...")

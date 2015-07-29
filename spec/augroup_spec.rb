@@ -223,7 +223,6 @@ PENDING_TEST
           FILE
 
           vim.write
-          pending 'Check this out.'
           expect(targets).to include(old_target)
 
           vim.edit 'plugin.cpp'
