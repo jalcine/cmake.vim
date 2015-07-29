@@ -30,7 +30,6 @@ function! cmake#augroup#init()
 endfunction
 
 " Public Function: cmake#augroup#on_vim_enter()
-"
 " Handles actions necessary for setting up Vim for cmake.vim support.
 " NOTE: For now, this just caches the entire project's target information.
 function! cmake#augroup#on_vim_enter()
@@ -45,7 +44,11 @@ function! cmake#augroup#on_vim_enter()
   "   * priming the cache `g:cmake_cache`for future use.
   "   * adding global commands that would useful in creating a new CMake
   "     project.
-  call cmake#targets#cache()
+  if g:cmake_cache_on_start == 1
+    if cmake#util#has_project()
+      call cmake#targets#cache()
+    endif
+  endif
   call cmake#commands#apply()
 endfunction
 

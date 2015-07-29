@@ -42,24 +42,25 @@ func! cmake#buffer#set_options()
 
   if empty(b:cmake_target)
     unlet b:cmake_target
-  else
-    if !exists('b:cmake_binary_dir')
-      let b:cmake_binary_dir = cmake#targets#binary_dir(b:cmake_target)
-    endif
-
-    if !exists('b:cmake_source_dir')
-      let b:cmake_source_dir = cmake#targets#source_dir(b:cmake_target)
-    endif
-
-    if !exists('b:cmake_include_dirs')
-      let b:cmake_include_dirs = cmake#targets#include_dirs(b:cmake_target)
-    endif
-
-    if !exists('b:cmake_libraries')
-      let b:cmake_libraries = cmake#targets#libraries(b:cmake_target)
-    endif
-
-    call cmake#extension#flex({ 'target' : b:cmake_target })
+    return 0
   endif
+
+  if !exists('b:cmake_binary_dir')
+    let b:cmake_binary_dir = cmake#targets#binary_dir(b:cmake_target)
+  endif
+
+  if !exists('b:cmake_source_dir')
+    let b:cmake_source_dir = cmake#targets#source_dir(b:cmake_target)
+  endif
+
+  if !exists('b:cmake_include_dirs')
+    let b:cmake_include_dirs = cmake#targets#include_dirs(b:cmake_target)
+  endif
+
+  if !exists('b:cmake_libraries')
+    let b:cmake_libraries = cmake#targets#libraries(b:cmake_target)
+  endif
+
+  call cmake#extension#flex({ 'target' : b:cmake_target })
   return 1
 endfunc
