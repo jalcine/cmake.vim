@@ -1,6 +1,12 @@
 [![Stories in Ready][waffle:img])][waffle:link]
 # [CMake Interoperability in Vim][site]
 
+> # Searching For a Maintainer
+> This project is not being actively maintained by [Jacky Alcine][jalcine]. If
+> you'd like to contribute to improve this project, please submit pull requests
+> (*Jacky* is still reviewing them) and over time, the most active contributor
+> can take the reigns.
+
 [`cmake.vim 0.5.5`][release] is a Vim plugin that aims to bind [CMake][cmake]
 within Vim for your CMake-based projects. This project has not reached a 1.0.0 
 release and thus isn't fully ready for production.
@@ -85,9 +91,9 @@ firehose so follow with caution!
 [cmake]: http://cmake.org
 [syntastic]: https://github.com/scrooloose/syntastic
 [ycm]: https://github.com/Valloric/YouCompleteMe/
-[jalcine]: http://jalcine.me
+[jalcine]: https://jacky.wtf/
 [vimux]: https://github.com/benmills/vimux
-[site]: http://jalcine.github.io/cmake.vim
+[site]: https://jalcine.github.io/cmake.vim
 [release]: https://github.com/jalcine/cmake.vim/tree/v0.4.1
 [waffle:img]: https://badge.waffle.io/jalcine/cmake.vim.png?label=ready
 [waffle:link]: https://waffle.io/jalcine/cmake.vim
