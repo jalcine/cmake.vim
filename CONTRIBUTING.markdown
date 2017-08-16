@@ -5,9 +5,10 @@ Make sure that what you are experiencing is actually an error and that it lies
 with cmake.vim and not a misconfiguration of your CMake build.
 
 ### Questions ###
-If you have a question be sure to read [the documentation][] first.
+If you have a question be sure to read [the documentation][doc] first.
 Often you will find the answer to it there.
-[the documentation]: ./doc/cmake.txt
+
+[doc]: ./doc/cmake.txt
 
 ### Description ###
 As with bug reports everywhere else:
@@ -20,8 +21,9 @@ You will also need to report which operating system you encountered the issue on
 and which shell you used (type `echo $SHELL` in your terminal if you are unsure).
 
 ### Reproducing ###
-Unless you ran in to a [heisenbug][], it should be possible to reproduce the
+Unless you ran in to a [heisenbug][heisenbug], it should be possible to reproduce the
 bug in a testing environment. 
+
 [heisenbug]: http://en.wikipedia.org/wiki/Heisenbug
 
 ## Pull requests ##
@@ -36,10 +38,11 @@ release version of homeshick.
 ### Code style ###
 TODO
 
-Use the supplied [editorconfig][] file. Most editors have [editorconfig
-plugins][] to apply these settings.
+Use the supplied [editorconfig][editorconfig] file. Most editors have [editorconfig
+plugins][editorconfig-plugins] to apply these settings.
+
 [editorconfig]:         http://editorconfig.org
-[editorconfig plugins]: http://editorconfig.org/#download
+[editorconfig-plugins]: http://editorconfig.org/#download
 
 ### Content ###
 **Every PR should only contain one feature change, bug fix or typo correction.**
@@ -65,5 +68,6 @@ Also consider negative test cases (e.g. what happens when a non-existing
 castlename is passed as an argument?).
 
 You can read about the details of the testing framework
-in the [testing documentation]().
-[testing documentaion]: ./TESTING.markdown
+in the [testing documentation][testing-documentation].
+
+[testing-documentation]: ./TESTING.markdown
